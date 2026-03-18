@@ -773,9 +773,9 @@ jobs:
       matrix:
         include:
           - task: test
-            command: ./gradlew --no-daemon :app:testDebugUnitTest
+            command: bash ./gradlew --no-daemon :app:testDebugUnitTest
           - task: build
-            command: ./gradlew --no-daemon :app:assembleDebug
+            command: bash ./gradlew --no-daemon :app:assembleDebug
     steps:
       - name: Checkout
         uses: actions/checkout@v6
