@@ -1,3 +1,6 @@
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import type { OpenClawConfig } from "../config/config.js";
 import { withEnvAsync } from "../test-utils/env.js";
@@ -74,12 +77,17 @@ describe("runCapability video provider wiring", () => {
   });
 
   it("auto-selects moonshot for video when google is unavailable", async () => {
-    await withEnvAsync(
-      {
-        GEMINI_API_KEY: undefined,
-        MOONSHOT_API_KEY: undefined,
-      },
-      async () => {
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-media-agent-"));
+    try {
+      await withEnvAsync(
+        {
+          GEMINI_API_KEY: undefined,
+          GOOGLE_API_KEY: undefined,
+          MOONSHOT_API_KEY: undefined,
+          OPENCLAW_AGENT_DIR: agentDir,
+          PI_CODING_AGENT_DIR: agentDir,
+        },
+        async () => {
         await withVideoFixture("openclaw-video-auto-moonshot", async ({ ctx, media, cache }) => {
           const cfg = {
             models: {
@@ -105,6 +113,7 @@ describe("runCapability video provider wiring", () => {
             ctx,
             attachments: cache,
             media,
+            agentDir,
             providerRegistry: new Map([
               [
                 "google",
@@ -129,7 +138,10 @@ describe("runCapability video provider wiring", () => {
           expect(result.outputs[0]?.provider).toBe("moonshot");
           expect(result.outputs[0]?.text).toBe("moonshot");
         });
-      },
-    );
+        },
+      );
+    } finally {
+      await fs.rm(agentDir, { recursive: true, force: true });
+    }
   });
 });
