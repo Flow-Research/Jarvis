@@ -150,7 +150,11 @@ async function assertLocalMediaPathAllowed(params: {
         continue;
       }
       const realStat = await fs.stat(realPath);
-      if (stat.ino !== realStat.ino || stat.dev !== realStat.dev) {
+      const sameFileOnDisk =
+        process.platform === "win32"
+          ? stat.ino === realStat.ino
+          : stat.ino === realStat.ino && stat.dev === realStat.dev;
+      if (!sameFileOnDisk) {
         continue;
       }
 

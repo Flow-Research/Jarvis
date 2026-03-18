@@ -1,4 +1,5 @@
 import type { ChildProcess, ExecFileOptions } from "node:child_process";
+import path from "node:path";
 import { promisify } from "node:util";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -121,7 +122,8 @@ describe("ensureOggOpus", () => {
     const ffmpegCall = execCalls.find((call) => call.command === "ffmpeg");
 
     expect(result.cleanup).toBe(true);
-    expect(result.path).toMatch(/^\/tmp\/voice-.*\.ogg$/);
+    expect(path.dirname(result.path)).toBe(path.normalize("/tmp"));
+    expect(path.basename(result.path)).toMatch(/^voice-.*\.ogg$/);
     expect(ffmpegCall).toBeDefined();
     expect(ffmpegCall?.args).toContain("-t");
     expect(ffmpegCall?.args).toContain("1200");

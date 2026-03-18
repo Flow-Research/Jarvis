@@ -48,6 +48,16 @@ const deliveryMocks = vi.hoisted(() => ({
 }));
 export const deliverReplies = deliveryMocks.deliverReplies;
 vi.mock("./bot/delivery.js", () => ({ deliverReplies: deliveryMocks.deliverReplies }));
+
+const replyDispatcherMocks = vi.hoisted(() => ({
+  dispatchReplyWithBufferedBlockDispatcher: vi.fn(async () => {}),
+}));
+export const dispatchReplyWithBufferedBlockDispatcher =
+  replyDispatcherMocks.dispatchReplyWithBufferedBlockDispatcher;
+vi.mock("../../../src/auto-reply/reply/provider-dispatcher.js", () => ({
+  dispatchReplyWithBufferedBlockDispatcher:
+    replyDispatcherMocks.dispatchReplyWithBufferedBlockDispatcher,
+}));
 vi.mock("../../../src/pairing/pairing-store.js", () => ({
   readChannelAllowFromStore: vi.fn(async () => []),
 }));

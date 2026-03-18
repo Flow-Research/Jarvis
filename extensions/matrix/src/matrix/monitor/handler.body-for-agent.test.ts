@@ -1,6 +1,19 @@
 import type { MatrixClient } from "@vector-im/matrix-bot-sdk";
 import type { PluginRuntime, RuntimeEnv, RuntimeLogger } from "openclaw/plugin-sdk/matrix";
 import { describe, expect, it, vi } from "vitest";
+
+const dispatchReplyFromConfigWithSettledDispatcher = vi.hoisted(() =>
+  vi.fn(async () => ({ queuedFinal: false, counts: { final: 0, partial: 0, tool: 0 } })),
+);
+
+vi.mock("openclaw/plugin-sdk/matrix", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("openclaw/plugin-sdk/matrix")>();
+  return {
+    ...actual,
+    dispatchReplyFromConfigWithSettledDispatcher,
+  };
+});
+
 import {
   createMatrixRoomMessageHandler,
   resolveMatrixBaseRouteSession,
