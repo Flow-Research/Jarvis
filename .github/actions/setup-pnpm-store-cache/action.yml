@@ -34,13 +34,14 @@ runs:
           echo "::error::Invalid pnpm-version input: '$PNPM_VERSION'"
           exit 2
         fi
-        corepack enable
         for attempt in 1 2 3; do
-          if corepack prepare "pnpm@$PNPM_VERSION" --activate; then
+          # GitHub-hosted runners install Node in a read-only toolcache, so
+          # `corepack enable` can fail when it tries to rewrite shims.
+          if corepack install --global "pnpm@$PNPM_VERSION"; then
             pnpm -v
             exit 0
           fi
-          echo "corepack prepare failed (attempt $attempt/3). Retrying..."
+          echo "corepack install failed (attempt $attempt/3). Retrying..."
           sleep $((attempt * 10))
         done
         exit 1
