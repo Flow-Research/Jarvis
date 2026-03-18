@@ -82,6 +82,18 @@ vi.mock("../../../src/auto-reply/skill-commands.js", () => ({
   listSkillCommandsForAgents,
 }));
 
+const modelCatalogHoisted = vi.hoisted(() => ({
+  loadModelCatalog: vi.fn(async () => []),
+}));
+export const loadModelCatalog = modelCatalogHoisted.loadModelCatalog;
+vi.mock("../../../src/agents/model-catalog.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../../src/agents/model-catalog.js")>();
+  return {
+    ...actual,
+    loadModelCatalog,
+  };
+});
+
 const systemEventsHoisted = vi.hoisted(() => ({
   enqueueSystemEventSpy: vi.fn(),
 }));
@@ -335,6 +347,8 @@ beforeEach(() => {
   wasSentByBot.mockReturnValue(false);
   listSkillCommandsForAgents.mockReset();
   listSkillCommandsForAgents.mockReturnValue([]);
+  loadModelCatalog.mockReset();
+  loadModelCatalog.mockResolvedValue([]);
   middlewareUseSpy.mockReset();
   sequentializeSpy.mockReset();
   botCtorSpy.mockReset();

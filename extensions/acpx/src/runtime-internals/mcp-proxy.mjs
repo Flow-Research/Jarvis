@@ -9,13 +9,21 @@ function splitCommandLine(value) {
   let quote = null;
   let escaping = false;
 
-  for (const ch of value) {
+  for (let index = 0; index < value.length; index += 1) {
+    const ch = value[index];
+    const next = value[index + 1];
     if (escaping) {
       current += ch;
       escaping = false;
       continue;
     }
     if (ch === "\\" && quote !== "'") {
+      // Preserve Windows-style path separators (e.g., C:\Program Files\...)
+      // unless this backslash is escaping a quote/whitespace/backslash token.
+      if (!next || (!/\s/.test(next) && next !== '"' && next !== "'" && next !== "\\")) {
+        current += ch;
+        continue;
+      }
       escaping = true;
       continue;
     }

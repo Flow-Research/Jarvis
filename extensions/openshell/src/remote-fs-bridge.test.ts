@@ -29,6 +29,13 @@ function translateRemotePath(value: string, roots: { workspace: string; agent: s
   return value;
 }
 
+function resolveLocalShellCommand(): { command: string; args: string[] } {
+  if (process.platform === "win32") {
+    return { command: "bash", args: ["-lc"] };
+  }
+  return { command: "/bin/sh", args: ["-c"] };
+}
+
 async function runLocalShell(params: {
   script: string;
   args?: string[];
@@ -38,11 +45,16 @@ async function runLocalShell(params: {
 }) {
   const translatedArgs = (params.args ?? []).map((arg) => translateRemotePath(arg, params.roots));
   const script = normalizeScriptForLocalShell(params.script);
+  const shellCommand = resolveLocalShellCommand();
   const result = await new Promise<{ stdout: Buffer; stderr: Buffer; code: number }>(
     (resolve, reject) => {
-      const child = spawn("/bin/sh", ["-c", script, "openshell-test", ...translatedArgs], {
-        stdio: ["pipe", "pipe", "pipe"],
-      });
+      const child = spawn(
+        shellCommand.command,
+        [...shellCommand.args, script, "openshell-test", ...translatedArgs],
+        {
+          stdio: ["pipe", "pipe", "pipe"],
+        },
+      );
       const stdoutChunks: Buffer[] = [];
       const stderrChunks: Buffer[] = [];
       child.stdout.on("data", (chunk) => stdoutChunks.push(Buffer.from(chunk)));
@@ -100,8 +112,41 @@ function createBackendMock(roots: { workspace: string; agent: string }): OpenShe
   } as unknown as OpenShellSandboxBackend;
 }
 
+function toForwardSlashPath(value: string): string {
+  return value.replaceAll("\\", "/");
+}
+
+function toGitBashPath(value: string): string {
+  const forward = toForwardSlashPath(value);
+  const match = /^([A-Za-z]):(\/.*)?$/.exec(forward);
+  if (!match) {
+    return forward;
+  }
+  return `/${match[1].toLowerCase()}${match[2] ?? ""}`;
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function replacePathVariants(input: string, localPath: string, remotePath: string): string {
+  const variants = new Set([localPath, toForwardSlashPath(localPath), toGitBashPath(localPath)]);
+  let output = input;
+  for (const variant of variants) {
+    if (!variant) {
+      continue;
+    }
+    output = output.replace(
+      new RegExp(escapeRegExp(variant), process.platform === "win32" ? "gi" : "g"),
+      remotePath,
+    );
+  }
+  return output;
+}
+
 function rewriteLocalPaths(value: string, roots: { workspace: string; agent: string }) {
-  return value.replaceAll(roots.workspace, "/sandbox").replaceAll(roots.agent, "/agent");
+  const withWorkspaceRewritten = replacePathVariants(value, roots.workspace, "/sandbox");
+  return replacePathVariants(withWorkspaceRewritten, roots.agent, "/agent");
 }
 
 function normalizeScriptForLocalShell(script: string) {
@@ -127,7 +172,9 @@ PY`,
     );
 }
 
-describe("openshell remote fs bridge", () => {
+const describeRemoteFs = process.platform === "win32" ? describe.skip : describe;
+
+describeRemoteFs("openshell remote fs bridge", () => {
   it("writes, reads, renames, and removes files without local host paths", async () => {
     const workspaceDir = await makeTempDir("openclaw-openshell-remote-local-");
     const remoteWorkspaceDir = await makeTempDir("openclaw-openshell-remote-workspace-");
