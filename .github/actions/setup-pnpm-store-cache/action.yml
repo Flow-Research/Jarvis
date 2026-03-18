@@ -34,14 +34,27 @@ runs:
           echo "::error::Invalid pnpm-version input: '$PNPM_VERSION'"
           exit 2
         fi
+        if command -v corepack >/dev/null 2>&1; then
+          for attempt in 1 2 3; do
+            # GitHub-hosted runners can expose Node without a writable
+            # corepack shim path. `corepack install --global` avoids rewriting
+            # shims and works when corepack is available.
+            if corepack install --global "pnpm@$PNPM_VERSION"; then
+              pnpm -v
+              exit 0
+            fi
+            echo "corepack install failed (attempt $attempt/3). Retrying..."
+            sleep $((attempt * 10))
+          done
+        fi
+        # Some runner images expose Node/npm but not a `corepack` binary.
+        # Fall back to npm global install to keep CI lanes alive.
         for attempt in 1 2 3; do
-          # GitHub-hosted runners install Node in a read-only toolcache, so
-          # `corepack enable` can fail when it tries to rewrite shims.
-          if corepack install --global "pnpm@$PNPM_VERSION"; then
+          if npm install -g "pnpm@$PNPM_VERSION"; then
             pnpm -v
             exit 0
           fi
-          echo "corepack install failed (attempt $attempt/3). Retrying..."
+          echo "npm install -g pnpm failed (attempt $attempt/3). Retrying..."
           sleep $((attempt * 10))
         done
         exit 1
