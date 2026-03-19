@@ -45,7 +45,15 @@ export async function writeTextAtomic(
     } catch {
       // best-effort; ignore on platforms without chmod
     }
-    await fs.rename(tmp, filePath);
+    try {
+      await fs.rename(tmp, filePath);
+    } catch (error) {
+      const renameError = error as { code?: string };
+      if (renameError.code !== "EPERM" && renameError.code !== "EACCES") {
+        throw error;
+      }
+      await fs.writeFile(filePath, payload, { encoding: "utf8", mode });
+    }
     try {
       await fs.chmod(filePath, mode);
     } catch {

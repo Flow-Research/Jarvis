@@ -2,6 +2,16 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+if ! command -v docker >/dev/null 2>&1; then
+  if [ "${OPENCLAW_INSTALL_SMOKE_REQUIRE_DOCKER:-0}" = "1" ]; then
+    echo "==> docker is required for install-smoke but was not found"
+    exit 1
+  fi
+  echo "==> Skipping install-smoke: docker is unavailable"
+  exit 0
+fi
+
 SMOKE_IMAGE="${OPENCLAW_INSTALL_SMOKE_IMAGE:-${CLAWDBOT_INSTALL_SMOKE_IMAGE:-openclaw-install-smoke:local}}"
 NONROOT_IMAGE="${OPENCLAW_INSTALL_NONROOT_IMAGE:-${CLAWDBOT_INSTALL_NONROOT_IMAGE:-openclaw-install-nonroot:local}}"
 INSTALL_URL="${OPENCLAW_INSTALL_URL:-${CLAWDBOT_INSTALL_URL:-https://openclaw.bot/install.sh}}"
