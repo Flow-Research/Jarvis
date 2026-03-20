@@ -23,6 +23,7 @@ if [[ ! -d "$A2UI_RENDERER_DIR" || ! -d "$A2UI_APP_DIR" ]]; then
   mkdir -p "$(dirname "$OUTPUT_FILE")"
   cat > "$OUTPUT_FILE" <<'EOF'
 /* Source-excluded CI placeholder. */
+window.openclawA2UI = window.openclawA2UI || {};
 export {};
 EOF
   echo "source-excluded-placeholder" > "$HASH_FILE"
