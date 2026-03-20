@@ -73,7 +73,7 @@ describe("git-root", () => {
     await fs.mkdir(nested, { recursive: true });
     await fs.writeFile(path.join(repoRoot, ".git"), "not-a-gitdir-pointer\n", "utf-8");
 
-    expect(findGitRoot(nested)).toBe(repoRoot);
-    expect(resolveGitHeadPath(nested)).toBeNull();
+    expect(findGitRoot(nested, { maxDepth: 2 })).toBe(repoRoot);
+    expect(resolveGitHeadPath(nested, { maxDepth: 2 })).toBeNull();
   });
 });

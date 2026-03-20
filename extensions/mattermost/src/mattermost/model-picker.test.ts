@@ -1,8 +1,4 @@
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/mattermost";
-import { buildModelsProviderData } from "openclaw/plugin-sdk/mattermost";
 import { describe, expect, it } from "vitest";
 import {
   buildMattermostAllowedModelRefs,
@@ -127,38 +123,40 @@ describe("Mattermost model picker", () => {
   });
 
   it("falls back to the routed agent default model when no override is stored", async () => {
-    const testDir = fs.mkdtempSync(path.join(os.tmpdir(), "mm-model-picker-"));
-    try {
-      const cfg: OpenClawConfig = {
-        session: {
-          store: path.join(testDir, "{agentId}.json"),
+    const cfg: OpenClawConfig = {
+      agents: {
+        defaults: {
+          model: "anthropic/claude-opus-4-5",
         },
-        agents: {
-          defaults: {
-            model: "anthropic/claude-opus-4-5",
+        list: [
+          {
+            id: "support",
+            model: "openai/gpt-5",
           },
-          list: [
-            {
-              id: "support",
-              model: "openai/gpt-5",
-            },
-          ],
-        },
-      };
-      const providerData = await buildModelsProviderData(cfg, "support");
+        ],
+      },
+    };
+    const providerData = {
+      byProvider: new Map<string, Set<string>>([
+        ["anthropic", new Set(["claude-opus-4-5"])],
+        ["openai", new Set(["gpt-5"])],
+      ]),
+      providers: ["anthropic", "openai"],
+      resolvedDefault: {
+        provider: "openai",
+        model: "gpt-5",
+      },
+    };
 
-      expect(
-        resolveMattermostModelPickerCurrentModel({
-          cfg,
-          route: {
-            agentId: "support",
-            sessionKey: "agent:support:main",
-          },
-          data: providerData,
-        }),
-      ).toBe("openai/gpt-5");
-    } finally {
-      fs.rmSync(testDir, { recursive: true, force: true });
-    }
+    expect(
+      resolveMattermostModelPickerCurrentModel({
+        cfg,
+        route: {
+          agentId: "support",
+          sessionKey: "agent:support:main",
+        },
+        data: providerData,
+      }),
+    ).toBe("openai/gpt-5");
   });
 });

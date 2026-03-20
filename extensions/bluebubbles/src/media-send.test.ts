@@ -273,7 +273,7 @@ describe("sendBlueBubblesMedia local-path hardening", () => {
   it("rejects relative mediaLocalRoots entries", async () => {
     const allowedRoot = await makeTempDir();
     const allowedFile = path.join(allowedRoot, "allowed.txt");
-    const relativeRoot = path.relative(process.cwd(), allowedRoot);
+    const relativeRoot = path.join("relative", "bluebubbles-media-root");
     await fs.writeFile(allowedFile, "allowed", "utf8");
 
     await expect(

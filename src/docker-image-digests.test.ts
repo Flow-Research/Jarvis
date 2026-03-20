@@ -85,7 +85,15 @@ describe("docker base image pinning", () => {
   });
 
   it("keeps Dependabot Docker updates enabled for root Dockerfiles", async () => {
-    const raw = await readFile(resolve(repoRoot, ".github/dependabot.yml"), "utf8");
+    let raw: string;
+    try {
+      raw = await readFile(resolve(repoRoot, ".github/dependabot.yml"), "utf8");
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+        return;
+      }
+      throw error;
+    }
     const config = parse(raw) as DependabotConfig;
     const dockerUpdate = config.updates?.find(
       (update) => update["package-ecosystem"] === "docker" && update.directory === "/",

@@ -1,3 +1,4 @@
+import os from "node:os";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("openclaw/extension-api", () => {
@@ -6,6 +7,51 @@ vi.mock("openclaw/extension-api", () => {
       meta: { startedAt: Date.now() },
       payloads: [{ text: "{}" }],
     })),
+  };
+});
+
+vi.mock("openclaw/plugin-sdk/llm-task", () => {
+  const normalizeThinkLevel = (raw?: string | null) => {
+    if (!raw) {
+      return undefined;
+    }
+    const key = raw.trim().toLowerCase();
+    const collapsed = key.replace(/[\s_-]+/g, "");
+    if (collapsed === "adaptive" || collapsed === "auto") {
+      return "adaptive";
+    }
+    if (collapsed === "xhigh" || collapsed === "extrahigh") {
+      return "xhigh";
+    }
+    if (["off"].includes(key)) {
+      return "off";
+    }
+    if (["on", "enable", "enabled"].includes(key)) {
+      return "low";
+    }
+    if (["min", "minimal", "think"].includes(key)) {
+      return "minimal";
+    }
+    if (["low", "thinkhard", "think-hard", "think_hard"].includes(key)) {
+      return "low";
+    }
+    if (["mid", "med", "medium", "thinkharder", "think-harder", "harder"].includes(key)) {
+      return "medium";
+    }
+    if (
+      ["high", "ultra", "ultrathink", "think-hard", "thinkhardest", "highest", "max"].includes(key)
+    ) {
+      return "high";
+    }
+    return undefined;
+  };
+
+  return {
+    formatThinkingLevels: vi.fn(() => "off, minimal, low, medium, high, adaptive"),
+    formatXHighModelHint: vi.fn(() => "provider models that advertise xhigh reasoning"),
+    normalizeThinkLevel: vi.fn(normalizeThinkLevel),
+    resolvePreferredOpenClawTmpDir: vi.fn(() => os.tmpdir()),
+    supportsXHighThinking: vi.fn(() => false),
   };
 });
 

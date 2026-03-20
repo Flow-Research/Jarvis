@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createAsyncLock, readJsonFile, writeJsonAtomic, writeTextAtomic } from "./json-files.js";
 
 describe("json file helpers", () => {
@@ -42,6 +42,22 @@ describe("json file helpers", () => {
 
     await writeTextAtomic(filePath, "hello\n", { appendTrailingNewline: true });
     await expect(fs.readFile(filePath, "utf8")).resolves.toBe("hello\n");
+  });
+
+  it("falls back to overwrite when rename is blocked on Windows filesystems", async () => {
+    const base = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-json-files-fallback-"));
+    const filePath = path.join(base, "nested", "note.txt");
+    const renameError = Object.assign(new Error("rename blocked by platform"), {
+      code: "EPERM",
+    }) as NodeJS.ErrnoException;
+    const renameSpy = vi.spyOn(fs, "rename").mockRejectedValueOnce(renameError);
+
+    await writeTextAtomic(filePath, "hello", { appendTrailingNewline: true });
+
+    await expect(fs.readFile(filePath, "utf8")).resolves.toBe("hello\n");
+    expect(renameSpy).toHaveBeenCalledOnce();
+
+    renameSpy.mockRestore();
   });
 
   it("serializes async lock callers even across rejections", async () => {

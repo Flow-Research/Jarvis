@@ -40,7 +40,7 @@ rl.on("close", () => process.exit(0));
 
     const payload = Buffer.from(
       JSON.stringify({
-        targetCommand: `${process.execPath} ${echoServerPath}`,
+        targetCommand: `${JSON.stringify(process.execPath)} ${JSON.stringify(echoServerPath)}`,
         mcpServers: [
           {
             name: "canva",

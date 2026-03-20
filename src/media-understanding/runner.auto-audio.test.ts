@@ -1,3 +1,6 @@
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import type { OpenClawConfig } from "../config/config.js";
 import { buildProviderRegistry, runCapability } from "./runner.js";
@@ -114,13 +117,20 @@ describe("runCapability auto audio entries", () => {
       GROQ_API_KEY: process.env.GROQ_API_KEY,
       DEEPGRAM_API_KEY: process.env.DEEPGRAM_API_KEY,
       GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+      GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
       MISTRAL_API_KEY: process.env.MISTRAL_API_KEY,
+      OPENCLAW_AGENT_DIR: process.env.OPENCLAW_AGENT_DIR,
+      PI_CODING_AGENT_DIR: process.env.PI_CODING_AGENT_DIR,
     };
+    const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-media-agent-"));
     delete process.env.OPENAI_API_KEY;
     delete process.env.GROQ_API_KEY;
     delete process.env.DEEPGRAM_API_KEY;
     delete process.env.GEMINI_API_KEY;
+    delete process.env.GOOGLE_API_KEY;
     process.env.MISTRAL_API_KEY = "mistral-test-key"; // pragma: allowlist secret
+    process.env.OPENCLAW_AGENT_DIR = agentDir;
+    process.env.PI_CODING_AGENT_DIR = agentDir;
     let runResult: Awaited<ReturnType<typeof runCapability>> | undefined;
     try {
       await withAudioFixture("openclaw-auto-audio-mistral", async ({ ctx, media, cache }) => {
@@ -160,6 +170,7 @@ describe("runCapability auto audio entries", () => {
           ctx,
           attachments: cache,
           media,
+          agentDir,
           providerRegistry,
         });
       });
@@ -171,6 +182,7 @@ describe("runCapability auto audio entries", () => {
           process.env[key] = value;
         }
       }
+      await fs.rm(agentDir, { recursive: true, force: true });
     }
     if (!runResult) {
       throw new Error("Expected auto audio mistral result");

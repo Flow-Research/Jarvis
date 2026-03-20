@@ -1,14 +1,29 @@
 import { z } from "zod";
 
-const AllowDenyActionSchema = z.union([z.literal("allow"), z.literal("deny")]);
+type ZodNamespace = typeof z & {
+  literal?: (value: string | number | boolean | null) => unknown;
+};
+
+const createLiteral = (value: string): z.ZodType<string> => {
+  const zod = z as ZodNamespace;
+  if (typeof zod.literal === "function") {
+    return zod.literal(value) as z.ZodType<string>;
+  }
+
+  return z.custom<string>((candidate): candidate is string => candidate === value, {
+    message: `Expected value "${String(value)}"`,
+  });
+};
+
+const AllowDenyActionSchema = z.union([createLiteral("allow"), createLiteral("deny")]);
 
 const AllowDenyChatTypeSchema = z
   .union([
-    z.literal("direct"),
-    z.literal("group"),
-    z.literal("channel"),
+    createLiteral("direct"),
+    createLiteral("group"),
+    createLiteral("channel"),
     /** @deprecated Use `direct` instead. Kept for backward compatibility. */
-    z.literal("dm"),
+    createLiteral("dm"),
   ])
   .optional();
 

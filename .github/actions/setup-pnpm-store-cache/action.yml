@@ -34,9 +34,16 @@ runs:
           echo "::error::Invalid pnpm-version input: '$PNPM_VERSION'"
           exit 2
         fi
-        corepack enable
+        COREPACK_SHIM_DIR="${RUNNER_TEMP:-$PWD/.corepack-bin}"
+        mkdir -p "$COREPACK_SHIM_DIR"
+        echo "$COREPACK_SHIM_DIR" >> "$GITHUB_PATH"
+        export PATH="$COREPACK_SHIM_DIR:$PATH"
         for attempt in 1 2 3; do
+          # GitHub-hosted runners install Node in a read-only toolcache, so
+          # write the corepack shims into the runner temp directory instead.
+          corepack enable --install-directory "$COREPACK_SHIM_DIR"
           if corepack prepare "pnpm@$PNPM_VERSION" --activate; then
+            hash -r
             pnpm -v
             exit 0
           fi
