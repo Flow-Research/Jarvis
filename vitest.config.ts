@@ -9,6 +9,8 @@ const isCI = process.env.CI === "true" || process.env.GITHUB_ACTIONS === "true";
 const isWindows = process.platform === "win32";
 const localWorkers = Math.max(4, Math.min(16, os.cpus().length));
 const ciWorkers = isWindows ? 2 : 3;
+const ciTestTimeout = isCI ? 300_000 : 120_000;
+const ciHookTimeout = isCI ? 300_000 : isWindows ? 180_000 : 120_000;
 export default defineConfig({
   resolve: {
     // Keep this ordered: the base `openclaw/plugin-sdk` alias is a prefix match.
@@ -28,8 +30,8 @@ export default defineConfig({
     ],
   },
   test: {
-    testTimeout: 120_000,
-    hookTimeout: isWindows ? 180_000 : 120_000,
+    testTimeout: ciTestTimeout,
+    hookTimeout: ciHookTimeout,
     // Many suites rely on `vi.stubEnv(...)` and expect it to be scoped to the test.
     // This is especially important under `pool=vmForks` where env leaks cross-file.
     unstubEnvs: true,

@@ -91,6 +91,18 @@ const unitIsolatedFilesRaw = [
   "extensions/imessage/src/monitor.shutdown.unhandled-rejection.test.ts",
   // Mutates process.cwd() and mocks core module loaders; isolate from the shared fast lane.
   "src/infra/git-commit.test.ts",
+  // Long-running Cron + provider usage suites are sensitive to vmFork contention in shard mode.
+  "src/cron/isolated-agent.lane.test.ts",
+  "src/cron/isolated-agent.subagent-model.test.ts",
+  "src/infra/provider-usage.auth.normalizes-keys.test.ts",
+  "src/infra/provider-usage.load.test.ts",
+  // Media-understanding media pipeline tests can spike under shared fast lane load.
+  "src/media-understanding/runner.video.test.ts",
+  "src/media-understanding/runner.auto-audio.test.ts",
+  // Contracts/docs baseline suites are timing-sensitive in parallelized CI shards.
+  "src/plugins/contracts/auth-choice.contract.test.ts",
+  "src/plugins/contracts/loader.contract.test.ts",
+  "src/config/doc-baseline.test.ts",
 ];
 const unitIsolatedFiles = unitIsolatedFilesRaw.filter((file) => fs.existsSync(file));
 
