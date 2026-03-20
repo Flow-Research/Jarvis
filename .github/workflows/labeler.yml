@@ -23,6 +23,9 @@ permissions: {}
 
 jobs:
   label:
+    env:
+      HAS_APP_KEY: ${{ secrets.GH_APP_PRIVATE_KEY != '' }}
+      HAS_APP_KEY_FALLBACK: ${{ secrets.GH_APP_PRIVATE_KEY_FALLBACK != '' }}
     permissions:
       contents: read
       pull-requests: write
@@ -30,13 +33,14 @@ jobs:
     steps:
       - uses: actions/create-github-app-token@v2
         id: app-token
+        if: ${{ env.HAS_APP_KEY == 'true' }}
         continue-on-error: true
         with:
           app-id: "2729701"
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - uses: actions/create-github-app-token@v2
         id: app-token-fallback
-        if: steps.app-token.outcome == 'failure'
+        if: ${{ steps.app-token.outcome == 'failure' && env.HAS_APP_KEY_FALLBACK == 'true' }}
         continue-on-error: true
         with:
           app-id: "2971289"
@@ -380,6 +384,9 @@ jobs:
 
   backfill-pr-labels:
     if: github.event_name == 'workflow_dispatch'
+    env:
+      HAS_APP_KEY: ${{ secrets.GH_APP_PRIVATE_KEY != '' }}
+      HAS_APP_KEY_FALLBACK: ${{ secrets.GH_APP_PRIVATE_KEY_FALLBACK != '' }}
     permissions:
       contents: read
       pull-requests: write
@@ -387,13 +394,14 @@ jobs:
     steps:
       - uses: actions/create-github-app-token@v2
         id: app-token
+        if: ${{ env.HAS_APP_KEY == 'true' }}
         continue-on-error: true
         with:
           app-id: "2729701"
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - uses: actions/create-github-app-token@v2
         id: app-token-fallback
-        if: steps.app-token.outcome == 'failure'
+        if: ${{ steps.app-token.outcome == 'failure' && env.HAS_APP_KEY_FALLBACK == 'true' }}
         continue-on-error: true
         with:
           app-id: "2971289"
@@ -630,19 +638,23 @@ jobs:
             core.info(`Processed ${processed} pull requests.`);
 
   label-issues:
+    env:
+      HAS_APP_KEY: ${{ secrets.GH_APP_PRIVATE_KEY != '' }}
+      HAS_APP_KEY_FALLBACK: ${{ secrets.GH_APP_PRIVATE_KEY_FALLBACK != '' }}
     permissions:
       issues: write
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/create-github-app-token@v2
         id: app-token
+        if: ${{ env.HAS_APP_KEY == 'true' }}
         continue-on-error: true
         with:
           app-id: "2729701"
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - uses: actions/create-github-app-token@v2
         id: app-token-fallback
-        if: steps.app-token.outcome == 'failure'
+        if: ${{ steps.app-token.outcome == 'failure' && env.HAS_APP_KEY_FALLBACK == 'true' }}
         continue-on-error: true
         with:
           app-id: "2971289"
