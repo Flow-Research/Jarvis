@@ -171,10 +171,10 @@ Use these hubs to discover every page, including deep dives and reference docs t
 - [Templates: AGENTS](/reference/templates/AGENTS)
 - [Templates: BOOTSTRAP](/reference/templates/BOOTSTRAP)
 - [Templates: HEARTBEAT](/reference/templates/HEARTBEAT)
-- [Templates: IDENTITY](/reference/templates/IDENTITY)
+- [Templates: IDENTITY](/reference/templates/IDENTITY.dev)
 - [Templates: SOUL](/reference/templates/SOUL)
 - [Templates: TOOLS](/reference/templates/TOOLS)
-- [Templates: USER](/reference/templates/USER)
+- [Templates: USER](/reference/templates/USER.dev)
 
 ## Experiments (exploratory)
 
