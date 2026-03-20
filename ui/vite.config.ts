@@ -31,6 +31,11 @@ export default defineConfig(() => {
       outDir: path.resolve(here, "../dist/control-ui"),
       emptyOutDir: true,
       sourcemap: true,
+      rollupOptions: {
+        // Prevent browser bundle from trying to resolve server-only Playwright internals.
+        external: (id) =>
+          id === "chromium-bidi/lib/cjs/bidiMapper/BidiMapper" || id.startsWith("chromium-bidi/"),
+      },
       // Keep CI/onboard logs clean; current control UI chunking is intentionally above 500 kB.
       chunkSizeWarningLimit: 1024,
     },
