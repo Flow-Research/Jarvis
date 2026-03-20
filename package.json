@@ -28,7 +28,7 @@
     "README.md",
     "assets/",
     "dist/",
-    "docs/",
+    "docs/reference/templates/",
     "extensions/",
     "skills/"
   ],
