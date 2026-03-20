@@ -1,3 +1,4 @@
+import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -73,10 +74,17 @@ describe("loadEnabledBundleMcpConfig", () => {
         cfg: config,
       });
       const resolvedServerPath = await fs.realpath(serverPath);
+      const rawArgs = loaded.config.mcpServers.bundleProbe?.args;
+      const resolvedArgs = (Array.isArray(rawArgs) ? rawArgs : []).map((entry: unknown) => {
+        if (typeof entry !== "string") {
+          return entry;
+        }
+        return fsSync.realpathSync.native(entry);
+      });
 
       expect(loaded.diagnostics).toEqual([]);
       expect(loaded.config.mcpServers.bundleProbe?.command).toBe("node");
-      expect(loaded.config.mcpServers.bundleProbe?.args).toEqual([resolvedServerPath]);
+      expect(resolvedArgs).toEqual([resolvedServerPath]);
     } finally {
       env.restore();
     }

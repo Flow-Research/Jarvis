@@ -21,7 +21,6 @@ import {
 } from "../../../../src/acp/persistent-bindings.route.js";
 import { resolveHumanDelayConfig } from "../../../../src/agents/identity.js";
 import { resolveChunkMode, resolveTextChunkLimit } from "../../../../src/auto-reply/chunk.js";
-import { resolveCommandAuthorization } from "../../../../src/auto-reply/command-auth.js";
 import type {
   ChatCommandDefinition,
   CommandArgDefinition,
@@ -60,7 +59,9 @@ import { loadWebMedia } from "../../../whatsapp/src/media.js";
 import { resolveDiscordMaxLinesPerMessage } from "../accounts.js";
 import { chunkDiscordTextWithMode } from "../chunk.js";
 import {
+  allowListMatches,
   isDiscordGroupAllowedByPolicy,
+  normalizeDiscordAllowList,
   normalizeDiscordSlug,
   resolveDiscordChannelConfigWithFallback,
   resolveDiscordGuildEntry,
@@ -108,33 +109,25 @@ function resolveDiscordNativeCommandAllowlistAccess(params: {
   if (!commandsAllowFrom || typeof commandsAllowFrom !== "object") {
     return { configured: false, allowed: false } as const;
   }
-  const configured =
-    Array.isArray(commandsAllowFrom.discord) || Array.isArray(commandsAllowFrom["*"]);
-  if (!configured) {
+  const rawAllowFrom = Array.isArray(commandsAllowFrom.discord)
+    ? commandsAllowFrom.discord
+    : Array.isArray(commandsAllowFrom["*"])
+      ? commandsAllowFrom["*"]
+      : undefined;
+  if (!rawAllowFrom) {
     return { configured: false, allowed: false } as const;
   }
-
-  const from =
-    params.chatType === "direct"
-      ? `discord:${params.sender.id}`
-      : `discord:${params.chatType}:${params.conversationId ?? "unknown"}`;
-  const auth = resolveCommandAuthorization({
-    ctx: {
-      Provider: "discord",
-      Surface: "discord",
-      OriginatingChannel: "discord",
-      AccountId: params.accountId ?? undefined,
-      ChatType: params.chatType,
-      From: from,
-      SenderId: params.sender.id,
-      SenderUsername: params.sender.name,
-      SenderTag: params.sender.tag,
-    },
-    cfg: params.cfg,
-    // We only want explicit commands.allowFrom authorization here.
-    commandAuthorized: false,
-  });
-  return { configured: true, allowed: auth.isAuthorizedSender } as const;
+  const allowList = normalizeDiscordAllowList(
+    rawAllowFrom.map((entry) => String(entry)),
+    ["discord:", "user:", "pk:"],
+  );
+  if (!allowList) {
+    return { configured: true, allowed: false } as const;
+  }
+  return {
+    configured: true,
+    allowed: allowListMatches(allowList, params.sender),
+  } as const;
 }
 
 function buildDiscordCommandOptions(params: {
