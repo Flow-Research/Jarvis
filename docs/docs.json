@@ -665,7 +665,7 @@
     },
     {
       "source": "/templates/IDENTITY",
-      "destination": "/reference/templates/IDENTITY"
+      "destination": "/reference/templates/IDENTITY.dev"
     },
     {
       "source": "/templates/SOUL",
@@ -677,7 +677,7 @@
     },
     {
       "source": "/templates/USER",
-      "destination": "/reference/templates/USER"
+      "destination": "/reference/templates/USER.dev"
     },
     {
       "source": "/test",
@@ -1317,10 +1317,10 @@
                   "reference/templates/BOOT",
                   "reference/templates/BOOTSTRAP",
                   "reference/templates/HEARTBEAT",
-                  "reference/templates/IDENTITY",
+                  "reference/templates/IDENTITY.dev",
                   "reference/templates/SOUL",
                   "reference/templates/TOOLS",
-                  "reference/templates/USER"
+                  "reference/templates/USER.dev"
                 ]
               },
               {
@@ -1899,10 +1899,10 @@
                   "zh-CN/reference/templates/BOOT",
                   "zh-CN/reference/templates/BOOTSTRAP",
                   "zh-CN/reference/templates/HEARTBEAT",
-                  "zh-CN/reference/templates/IDENTITY",
+                  "zh-CN/reference/templates/IDENTITY.dev",
                   "zh-CN/reference/templates/SOUL",
                   "zh-CN/reference/templates/TOOLS",
-                  "zh-CN/reference/templates/USER"
+                  "zh-CN/reference/templates/USER.dev"
                 ]
               },
               {
