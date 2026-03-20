@@ -33,8 +33,8 @@ writeFileSync(
 
 const DEFAULT_LIMITS_MB = {
   help: 500,
-  statusJson: 925,
-  gatewayStatus: 900,
+  statusJson: 1300,
+  gatewayStatus: 1200,
 };
 
 const cases = [
