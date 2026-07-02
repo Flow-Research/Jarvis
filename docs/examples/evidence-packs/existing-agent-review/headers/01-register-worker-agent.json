@@ -1,0 +1,15 @@
+{
+  "operation_id": "registerWorker",
+  "method": "PUT",
+  "path": "/workers/worker-agent-golden",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-fixture-registrar",
+    "Jarvis-Idempotency-Key": "idem-register-worker-agent-golden",
+    "Jarvis-Request-Timestamp": "2026-06-16T10:00:01Z"
+  },
+  "body_ref": "records.workers.agent",
+  "actor_id": "actor-fixture-registrar",
+  "expected_status": 200
+}

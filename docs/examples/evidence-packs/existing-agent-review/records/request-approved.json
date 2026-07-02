@@ -1,0 +1,56 @@
+{
+  "object_type": "Request",
+  "record": {
+    "id": "req-golden-source",
+    "protocol_version": "v0.1",
+    "work_session_id": "ws-golden-001",
+    "requester_actor_id": "actor-agent-golden",
+    "requester_worker_id": "worker-agent-golden",
+    "target_human_worker_id": "worker-human-golden",
+    "policy_decision_id": "pd-golden-source-denied",
+    "type": "permission",
+    "blocking_scope": "action",
+    "reason_code": "policy_denied",
+    "reason_summary": "External source access is outside current Policy until HumanWorker review.",
+    "requested_action": {
+      "action": "fetch_external_source",
+      "target_ref": "source:external-reference",
+      "scope_ref": "scope:external-source"
+    },
+    "requested_outcome": "Approve external source collection for this WorkSession only.",
+    "risk_class": "medium",
+    "human_decision_needed": "Approve, narrow, deny, correct, or take over the blocked action.",
+    "options": [
+      {
+        "id": "option-approve-current-session",
+        "label": "Approve current WorkSession scope",
+        "effect": "AgentWorker collects the referenced source for this WorkSession only.",
+        "risk_class": "medium",
+        "scope_ref": "scope:external-source"
+      },
+      {
+        "id": "option-deny",
+        "label": "Deny external collection",
+        "effect": "AgentWorker continues with existing evidence and records the limitation.",
+        "risk_class": "low",
+        "scope_ref": "scope:local-worksession"
+      }
+    ],
+    "default_if_no_response": {
+      "action": "continue_with_limited_evidence",
+      "reason": "The blocked action remains stopped and the WorkSession records an evidence limitation.",
+      "limitation_ref": "limitation:external-source-not-reviewed"
+    },
+    "status": "approved",
+    "created_at": "2026-06-16T10:05:00Z",
+    "expires_at": "2026-06-16T10:35:00Z",
+    "missing_permission_or_context": "Policy grant for external source collection",
+    "policy_refs": [
+      "policy-golden-bounded"
+    ],
+    "data_sensitivity": "public",
+    "recommended_option": "option-approve-current-session",
+    "resolved_at": "2026-06-16T10:08:00Z",
+    "resolved_by_review_id": "review-golden-source-approval"
+  }
+}

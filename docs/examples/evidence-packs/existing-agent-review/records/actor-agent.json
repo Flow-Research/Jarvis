@@ -1,0 +1,25 @@
+{
+  "object_type": "Actor",
+  "record": {
+    "id": "actor-agent-golden",
+    "worker_id": "worker-agent-golden",
+    "type": "agent",
+    "event_authority": {
+      "can_append_events": true,
+      "allowed_event_types": [
+        "policy_decision.recorded",
+        "request.created",
+        "evidence.captured",
+        "contribution.recorded"
+      ]
+    },
+    "contribution_scope": {
+      "contribution_roles": [
+        "agent",
+        "shared"
+      ]
+    },
+    "created_at": "2026-06-16T10:00:00Z",
+    "valid_from": "2026-06-16T10:00:00Z"
+  }
+}

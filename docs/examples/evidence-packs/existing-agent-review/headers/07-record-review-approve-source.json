@@ -1,0 +1,19 @@
+{
+  "operation_id": "recordReview",
+  "method": "POST",
+  "path": "/work-sessions/ws-golden-001/reviews",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-golden",
+    "Jarvis-Idempotency-Key": "idem-review-source-golden",
+    "Jarvis-Request-Timestamp": "2026-06-16T10:08:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 3,
+    "Jarvis-Previous-Event-Hash": "hash:event-request-created"
+  },
+  "body_ref": "records.reviews.approve_source",
+  "actor_id": "actor-human-golden",
+  "work_session_id": "ws-golden-001",
+  "expected_status": 201,
+  "expected_event_ref": "event-review-approved"
+}

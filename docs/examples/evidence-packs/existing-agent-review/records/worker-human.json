@@ -1,0 +1,30 @@
+{
+  "object_type": "Worker",
+  "record": {
+    "id": "worker-human-golden",
+    "type": "human",
+    "role": "responsible reviewer",
+    "authority_scope": {
+      "grants": [
+        "policy:own",
+        "review:approve",
+        "takeover:start"
+      ]
+    },
+    "accountability_scope": {
+      "accountable_for": [
+        "objective",
+        "policy",
+        "final_review"
+      ]
+    },
+    "display_name": "HumanWorker Golden",
+    "capabilities": [
+      {
+        "ref": "capability:review",
+        "capability_type": "human_judgment",
+        "required": true
+      }
+    ]
+  }
+}

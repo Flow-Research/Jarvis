@@ -21,8 +21,8 @@ Week 1 protocol lock is complete.
 
 Current protocol status: Jarvis v0.1.0 is released as Protocol Alpha.
 
-Current active work: public docs site foundation and protocol-record
-compatibility evidence planning.
+Current active work: protocol-record compatibility evidence and public docs
+site maintenance.
 
 Release-readiness work for the v0.1.0 tag is complete:
 
@@ -432,7 +432,7 @@ Done when:
 
 ## Public Documentation Site Foundation
 
-Status: in progress.
+Status: complete.
 
 Owner: Documentation
 
@@ -453,6 +453,38 @@ Done when:
 - walkthrough stays non-normative and does not claim host UI implementation or
   protocol proof
 - GitHub Pages workflow validates docs-site JavaScript
+- local validation passes
+
+## Protocol Record Compatibility Evidence Pack
+
+Status: implemented.
+
+Owner: Developer Experience
+
+Output:
+
+- machine-checkable existing-agent evidence pack
+- protocol record envelopes
+- EvidenceManifest export envelope
+- JarvisEvent hash-chain envelope
+- operation header envelopes
+- evidence-pack validator
+
+Done when:
+
+- evidence pack derives from the canonical v0.1 golden-path fixture
+- evidence pack links to the existing-agent proof plan, protocol record
+  examples, conformance checklist, OpenAPI binding, and OpenAPI schemas
+- record files validate through protocol helper validators
+- EvidenceManifest export validates only from a terminal WorkSession source
+- OutcomeReport validates only from a terminal WorkSession source
+- event hash chain validates through JarvisEvent previous-hash and event-hash
+  rules
+- operation headers validate through the v0.1 header gate
+- evidence pack does not define adapter code, wrapper code, runtime behavior,
+  host UI, model calls, tool execution, storage, auth, billing, scoring,
+  payment, deployment, monitoring, host integration, or host workflow
+  behavior
 - local validation passes
 
 ## v0.2 Evidence And Learning Beta

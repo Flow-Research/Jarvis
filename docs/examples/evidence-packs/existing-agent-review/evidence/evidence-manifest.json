@@ -1,0 +1,80 @@
+{
+  "evidence_manifest": {
+    "id": "evidence-manifest-golden",
+    "work_session_id": "ws-golden-001",
+    "generated_by_actor_id": "actor-human-golden",
+    "objective": "Produce an evidence-backed answer with human review and governed learning.",
+    "event_chain_root": "hash:event-worksession-completed",
+    "evidence_item_refs": [
+      {
+        "id": "evidence-source-summary",
+        "work_session_id": "ws-golden-001",
+        "source_event_refs": [
+          "event-evidence-captured"
+        ],
+        "captured_by_actor_id": "actor-agent-golden",
+        "evidence_type": "source_summary",
+        "artifact_ref": "artifact:source-summary",
+        "content_hash": "hash:source-summary",
+        "trust_label": "reviewed",
+        "redaction_state": "redacted",
+        "captured_at": "2026-06-16T10:12:00Z",
+        "limitation_refs": [
+          "limitation:none-recorded"
+        ]
+      }
+    ],
+    "policy_decision_refs": [
+      "pd-golden-source-denied",
+      "pd-golden-source-approved"
+    ],
+    "request_refs": [
+      "req-golden-source"
+    ],
+    "review_refs": [
+      "review-golden-source-approval"
+    ],
+    "takeover_refs": [],
+    "contribution_refs": [
+      "contribution-golden-shared-answer"
+    ],
+    "export_profile": {
+      "profile": "portable_evidence_manifest",
+      "version": "v0.1",
+      "redaction_profile_ref": "redaction:portable-safe"
+    },
+    "generated_at": "2026-06-16T10:26:00Z",
+    "artifact_refs": [
+      "artifact:reviewed-answer",
+      "artifact:source-summary"
+    ],
+    "limitation_refs": [
+      "limitation:none-recorded"
+    ],
+    "redaction_refs": [
+      "redaction:portable-safe"
+    ]
+  },
+  "work_session": {
+    "id": "ws-golden-001",
+    "protocol_version": "v0.1",
+    "created_by_actor_id": "actor-human-golden",
+    "objective": "Produce an evidence-backed answer with human review and governed learning.",
+    "human_worker_id": "worker-human-golden",
+    "agent_worker_id": "worker-agent-golden",
+    "policy_id": "policy-golden-bounded",
+    "status": "completed",
+    "revision": 11,
+    "last_event_hash": "hash:event-worksession-completed",
+    "event_log_ref": "event-log:ws-golden-001",
+    "created_at": "2026-06-16T10:01:00Z",
+    "updated_at": "2026-06-16T10:25:00Z",
+    "source_ref": "source:golden-path-fixture",
+    "context_manifest_ref": "context:task-brief",
+    "contribution_ledger_ref": "ledger:ws-golden-001",
+    "evidence_manifest_ref": "evidence-manifest-golden",
+    "learning_record_refs": [
+      "learning-golden-pair"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "operation_id": "recordPolicyDecision",
+  "method": "POST",
+  "path": "/work-sessions/ws-golden-001/policy-decisions",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-agent-golden",
+    "Jarvis-Idempotency-Key": "idem-policy-denied-golden",
+    "Jarvis-Request-Timestamp": "2026-06-16T10:04:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 1,
+    "Jarvis-Previous-Event-Hash": "hash:event-worksession-created"
+  },
+  "body_ref": "records.policy_decisions.external_source_denied",
+  "actor_id": "actor-agent-golden",
+  "work_session_id": "ws-golden-001",
+  "expected_status": 201,
+  "expected_event_ref": "event-policy-denied"
+}

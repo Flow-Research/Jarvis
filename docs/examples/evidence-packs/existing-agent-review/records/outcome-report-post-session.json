@@ -1,0 +1,45 @@
+{
+  "object_type": "OutcomeReport",
+  "record": {
+    "id": "outcome-report-golden",
+    "work_session_id": "ws-golden-001",
+    "source_ref": "source:completed-worksession:ws-golden-001",
+    "reporter_ref": "reporter:fixture-evaluator",
+    "accepted_by_actor_id": "actor-human-golden",
+    "outcome": "accepted",
+    "learning_record_refs": [
+      "learning-golden-pair"
+    ],
+    "received_at": "2026-06-16T10:30:00Z",
+    "external_system_ref": "external:evaluation-system",
+    "reporter_actor_id": "actor-human-golden",
+    "reason": "Post-session feedback confirms the bounded Request and Review loop improved future source collection.",
+    "reviewer_feedback_refs": [
+      "feedback:bounded-source-loop-accepted"
+    ]
+  },
+  "context": {
+    "workSession": {
+      "id": "ws-golden-001",
+      "protocol_version": "v0.1",
+      "created_by_actor_id": "actor-human-golden",
+      "objective": "Produce an evidence-backed answer with human review and governed learning.",
+      "human_worker_id": "worker-human-golden",
+      "agent_worker_id": "worker-agent-golden",
+      "policy_id": "policy-golden-bounded",
+      "status": "completed",
+      "revision": 11,
+      "last_event_hash": "hash:event-worksession-completed",
+      "event_log_ref": "event-log:ws-golden-001",
+      "created_at": "2026-06-16T10:01:00Z",
+      "updated_at": "2026-06-16T10:25:00Z",
+      "source_ref": "source:golden-path-fixture",
+      "context_manifest_ref": "context:task-brief",
+      "contribution_ledger_ref": "ledger:ws-golden-001",
+      "evidence_manifest_ref": "evidence-manifest-golden",
+      "learning_record_refs": [
+        "learning-golden-pair"
+      ]
+    }
+  }
+}

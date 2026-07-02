@@ -1,0 +1,19 @@
+{
+  "operation_id": "createLearningRecord",
+  "method": "POST",
+  "path": "/work-sessions/ws-golden-001/learning-records",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-golden",
+    "Jarvis-Idempotency-Key": "idem-learning-golden",
+    "Jarvis-Request-Timestamp": "2026-06-16T10:18:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 7,
+    "Jarvis-Previous-Event-Hash": "hash:event-contribution-recorded"
+  },
+  "body_ref": "records.learning_records.pair",
+  "actor_id": "actor-human-golden",
+  "work_session_id": "ws-golden-001",
+  "expected_status": 201,
+  "expected_event_ref": "event-learning-recorded"
+}

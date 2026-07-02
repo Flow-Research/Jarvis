@@ -235,6 +235,11 @@
             <p>How a host maps native collaboration events into Jarvis protocol records while keeping implementation private.</p>
             <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/compatible-host-mapping.md">Read host mapping</a>
           </article>
+          <article>
+            <h3>Evidence Pack</h3>
+            <p>Machine-checkable protocol records for an existing-agent review loop, validated without host runtime code.</p>
+            <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/evidence-packs/existing-agent-review/README.md">Open evidence pack</a>
+          </article>
         </div>
       </section>
 
@@ -250,9 +255,10 @@
             governed learning.
           </p>
         </div>
-        <pre aria-label="Conformance CLI command"><code>npm run test:cli
+        <pre aria-label="Protocol validation commands"><code>npm run test:cli
 node packages/cli/src/index.js validate fixtures docs/conformance/fixtures
-node packages/cli/src/index.js list rejection-ids</code></pre>
+node packages/cli/src/index.js list rejection-ids
+python3 scripts/check_example_evidence_packs.py</code></pre>
       </section>
 
       <section class="sdk-section" id="sdk" aria-labelledby="sdk-title">

@@ -1,0 +1,35 @@
+{
+  "object_type": "HumanWorker",
+  "record": {
+    "worker_id": "worker-human-golden",
+    "actor_id": "actor-human-golden",
+    "role": "policy owner and reviewer",
+    "policy_authority": {
+      "grants": [
+        "policy:own",
+        "policy:narrow"
+      ]
+    },
+    "review_authority": {
+      "grants": [
+        "review:approve",
+        "review:narrow",
+        "review:deny",
+        "takeover:start"
+      ]
+    },
+    "profile_ref": "profile:human-golden",
+    "domain_context_refs": [
+      "context:task-brief"
+    ],
+    "preferences": {
+      "review.default_detail": "evidence_first"
+    },
+    "boundaries": [
+      "external source access requires review"
+    ],
+    "known_patterns": [
+      "ask for bounded approval before external source collection"
+    ]
+  }
+}

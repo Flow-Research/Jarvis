@@ -1,0 +1,238 @@
+{
+  "events": [
+    {
+      "id": "event-worksession-created",
+      "sequence": 1,
+      "type": "work_session.created",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-human-golden",
+      "timestamp": "2026-06-16T10:01:00Z",
+      "payload": {
+        "object_type": "work_session",
+        "object_id": "ws-golden-001",
+        "action": "created",
+        "summary": "WorkSession created with HumanWorker, AgentWorker, objective, and Policy."
+      },
+      "previous_hash": "hash:protocol-genesis",
+      "event_hash": "hash:event-worksession-created",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-policy-denied",
+      "sequence": 2,
+      "type": "policy_decision.recorded",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-agent-golden",
+      "timestamp": "2026-06-16T10:04:00Z",
+      "payload": {
+        "object_type": "policy_decision",
+        "object_id": "pd-golden-source-denied",
+        "action": "deny",
+        "summary": "Policy denied external source collection and required Request."
+      },
+      "previous_hash": "hash:event-worksession-created",
+      "event_hash": "hash:event-policy-denied",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-request-created",
+      "sequence": 3,
+      "type": "request.created",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-agent-golden",
+      "timestamp": "2026-06-16T10:05:00Z",
+      "payload": {
+        "object_type": "request",
+        "object_id": "req-golden-source",
+        "action": "created",
+        "summary": "AgentWorker created scoped Request for HumanWorker approval."
+      },
+      "previous_hash": "hash:event-policy-denied",
+      "event_hash": "hash:event-request-created",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-review-approved",
+      "sequence": 4,
+      "type": "review.recorded",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-human-golden",
+      "timestamp": "2026-06-16T10:08:00Z",
+      "payload": {
+        "object_type": "review",
+        "object_id": "review-golden-source-approval",
+        "action": "approve",
+        "summary": "HumanWorker approved Request with bounded ApprovalScope."
+      },
+      "previous_hash": "hash:event-request-created",
+      "event_hash": "hash:event-review-approved",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-policy-allowed",
+      "sequence": 5,
+      "type": "policy_decision.recorded",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-agent-golden",
+      "timestamp": "2026-06-16T10:08:30Z",
+      "payload": {
+        "object_type": "policy_decision",
+        "object_id": "pd-golden-source-approved",
+        "action": "allow",
+        "summary": "AgentWorker resumed inside bounded ApprovalScope."
+      },
+      "previous_hash": "hash:event-review-approved",
+      "event_hash": "hash:event-policy-allowed",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-evidence-captured",
+      "sequence": 6,
+      "type": "evidence.captured",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-agent-golden",
+      "timestamp": "2026-06-16T10:12:00Z",
+      "payload": {
+        "object_type": "evidence_manifest",
+        "object_id": "evidence-source-summary",
+        "action": "evidence_item_captured",
+        "evidence_refs": [
+          "evidence-source-summary"
+        ],
+        "summary": "AgentWorker captured source summary evidence during work."
+      },
+      "previous_hash": "hash:event-policy-allowed",
+      "event_hash": "hash:event-evidence-captured",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-contribution-recorded",
+      "sequence": 7,
+      "type": "contribution.recorded",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-human-golden",
+      "timestamp": "2026-06-16T10:16:00Z",
+      "payload": {
+        "object_type": "contribution",
+        "object_id": "contribution-golden-shared-answer",
+        "action": "recorded",
+        "summary": "Shared Contribution recorded with human and agent contributor refs."
+      },
+      "previous_hash": "hash:event-evidence-captured",
+      "event_hash": "hash:event-contribution-recorded",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-learning-recorded",
+      "sequence": 8,
+      "type": "learning.recorded",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-human-golden",
+      "timestamp": "2026-06-16T10:18:00Z",
+      "payload": {
+        "object_type": "learning_record",
+        "object_id": "learning-golden-pair",
+        "action": "accepted",
+        "summary": "Pair learning recorded from Request, Review, and evidence capture."
+      },
+      "previous_hash": "hash:event-contribution-recorded",
+      "event_hash": "hash:event-learning-recorded",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-memory-proposal-created",
+      "sequence": 9,
+      "type": "memory_proposal.created",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-human-golden",
+      "timestamp": "2026-06-16T10:19:00Z",
+      "payload": {
+        "object_type": "memory_proposal",
+        "object_id": "memory-proposal-golden",
+        "action": "proposed",
+        "summary": "MemoryProposal keeps durable memory change governed."
+      },
+      "previous_hash": "hash:event-learning-recorded",
+      "event_hash": "hash:event-memory-proposal-created",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-skill-proposal-created",
+      "sequence": 10,
+      "type": "skill_proposal.created",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-human-golden",
+      "timestamp": "2026-06-16T10:20:00Z",
+      "payload": {
+        "object_type": "skill_proposal",
+        "object_id": "skill-proposal-golden",
+        "action": "proposed",
+        "summary": "SkillProposal keeps reusable process change governed."
+      },
+      "previous_hash": "hash:event-memory-proposal-created",
+      "event_hash": "hash:event-skill-proposal-created",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-worksession-completed",
+      "sequence": 11,
+      "type": "work_session.completed",
+      "work_session_id": "ws-golden-001",
+      "actor_id": "actor-human-golden",
+      "timestamp": "2026-06-16T10:25:00Z",
+      "payload": {
+        "object_type": "work_session",
+        "object_id": "ws-golden-001",
+        "action": "completed",
+        "summary": "WorkSession completed before EvidenceManifest export."
+      },
+      "previous_hash": "hash:event-skill-proposal-created",
+      "event_hash": "hash:event-worksession-completed",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    }
+  ]
+}

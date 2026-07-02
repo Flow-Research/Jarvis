@@ -1,0 +1,28 @@
+{
+  "object_type": "LearningRecord",
+  "record": {
+    "id": "learning-golden-pair",
+    "work_session_id": "ws-golden-001",
+    "created_by_actor_id": "actor-human-golden",
+    "subject_type": "pair",
+    "subject_ref": "pair:worker-human-golden+worker-agent-golden",
+    "lesson_type": "bounded_external_source_approval",
+    "source_event_refs": [
+      "event-request-created",
+      "event-review-approved",
+      "event-evidence-captured"
+    ],
+    "review_state": "accepted",
+    "scope": "scope:future-source-collection",
+    "created_at": "2026-06-16T10:18:00Z",
+    "proposed_change": {
+      "pattern": "Ask for bounded external source approval before collecting evidence outside local context."
+    },
+    "memory_proposal_refs": [
+      "memory-proposal-golden"
+    ],
+    "skill_proposal_refs": [
+      "skill-proposal-golden"
+    ]
+  }
+}

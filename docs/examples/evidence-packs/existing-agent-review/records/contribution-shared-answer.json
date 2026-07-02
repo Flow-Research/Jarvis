@@ -1,0 +1,39 @@
+{
+  "object_type": "Contribution",
+  "record": {
+    "id": "contribution-golden-shared-answer",
+    "work_session_id": "ws-golden-001",
+    "contributor_refs": [
+      {
+        "worker_id": "worker-human-golden",
+        "actor_id": "actor-human-golden",
+        "contribution_role": "human"
+      },
+      {
+        "worker_id": "worker-agent-golden",
+        "actor_id": "actor-agent-golden",
+        "contribution_role": "agent"
+      }
+    ],
+    "contributor_type": "shared",
+    "contribution_type": "artifact",
+    "event_refs": [
+      "event-evidence-captured",
+      "event-contribution-recorded"
+    ],
+    "created_at": "2026-06-16T10:16:00Z",
+    "artifact_refs": [
+      "artifact:reviewed-answer"
+    ],
+    "review_refs": [
+      "review-golden-source-approval"
+    ],
+    "evidence_refs": [
+      "evidence-source-summary"
+    ],
+    "confidence": 0.92,
+    "limitations": [
+      "limitation:none-recorded"
+    ]
+  }
+}

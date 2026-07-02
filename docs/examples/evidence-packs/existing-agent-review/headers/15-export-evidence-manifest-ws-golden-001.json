@@ -1,0 +1,13 @@
+{
+  "operation_id": "exportEvidenceManifest",
+  "method": "GET",
+  "path": "/work-sessions/ws-golden-001/export",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-golden"
+  },
+  "actor_id": "actor-human-golden",
+  "work_session_id": "ws-golden-001",
+  "expected_status": 200
+}

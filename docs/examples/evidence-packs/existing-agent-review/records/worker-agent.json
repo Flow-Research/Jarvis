@@ -1,0 +1,29 @@
+{
+  "object_type": "Worker",
+  "record": {
+    "id": "worker-agent-golden",
+    "type": "agent",
+    "role": "bounded executor",
+    "authority_scope": {
+      "grants": [
+        "action:propose",
+        "action:execute_after_policy",
+        "evidence:capture"
+      ]
+    },
+    "accountability_scope": {
+      "accountable_for": [
+        "policy_checked_execution",
+        "evidence_capture"
+      ]
+    },
+    "display_name": "AgentWorker Golden",
+    "capabilities": [
+      {
+        "ref": "capability:source_summary",
+        "capability_type": "research",
+        "required": true
+      }
+    ]
+  }
+}
