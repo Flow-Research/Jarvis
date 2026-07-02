@@ -17,7 +17,7 @@ adapters, wrappers, SDK implementation, or host workflow.
   native collaboration events into Jarvis protocol records while keeping
   implementation private.
 - [evidence-packs/existing-agent-review/README.md](./evidence-packs/existing-agent-review/README.md)
-  - machine-checkable protocol-record evidence pack for the existing-agent
+  machine-checkable protocol-record evidence pack for the existing-agent
   review-resolution loop.
 
 ## Validation

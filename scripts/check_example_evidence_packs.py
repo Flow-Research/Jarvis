@@ -171,6 +171,11 @@ def check_record_entry(
     expected_context_refs = entry.get("context_refs", {})
     if not isinstance(expected_context_refs, dict):
         raise EvidencePackError(f"{rel(manifest_path)}: context_refs MUST be an object")
+    extra_context_keys = sorted(set(context) - set(expected_context_refs))
+    if extra_context_keys:
+        raise EvidencePackError(
+            f"{rel(path)}: context contains keys without a context_ref: {', '.join(extra_context_keys)}"
+        )
     for key, ref in expected_context_refs.items():
         expected = resolve_fixture_ref(fixture, ref)
         if context.get(key) != expected:

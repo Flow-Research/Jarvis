@@ -15,6 +15,7 @@
     "docs/openapi/jarvis-openapi.yaml#/components/schemas/HumanWorker",
     "docs/openapi/jarvis-openapi.yaml#/components/schemas/AgentWorker",
     "docs/openapi/jarvis-openapi.yaml#/components/schemas/WorkSession",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/JarvisEvent",
     "docs/openapi/jarvis-openapi.yaml#/components/schemas/Policy",
     "docs/openapi/jarvis-openapi.yaml#/components/schemas/PolicyDecision",
     "docs/openapi/jarvis-openapi.yaml#/components/schemas/Request",
