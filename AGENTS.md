@@ -310,6 +310,7 @@ Every protocol PR MUST run:
 python3 scripts/check_conformance_fixtures.py
 python3 scripts/check_openapi_contract.py
 python3 scripts/check_markdown_links.py
+python3 scripts/check_docs_site.py
 python3 scripts/check_protocol_wording.py
 git diff --check
 ```

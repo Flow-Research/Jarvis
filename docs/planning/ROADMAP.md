@@ -21,7 +21,8 @@ Week 1 protocol lock is complete.
 
 Current protocol status: Jarvis v0.1.0 is released as Protocol Alpha.
 
-Current active work: public docs site work and implementation proof planning.
+Current active work: public docs site foundation and protocol-record
+compatibility evidence planning.
 
 Release-readiness work for the v0.1.0 tag is complete:
 
@@ -429,6 +430,31 @@ Done when:
   behavior, monitoring, observability, host integration, and host workflow
 - local validation passes
 
+## Public Documentation Site Foundation
+
+Status: in progress.
+
+Owner: Documentation
+
+Output:
+
+- public documentation entry point
+- protocol overview
+- OpenAPI and specification links
+- conformance entry links
+- SDK helper tooling links
+- non-normative interactive walkthrough
+
+Done when:
+
+- public site introduces Jarvis as protocol-only
+- public site links to the OpenAPI contract, conformance docs, examples,
+  package docs, and release notes
+- walkthrough stays non-normative and does not claim host UI implementation or
+  protocol proof
+- GitHub Pages workflow validates docs-site JavaScript
+- local validation passes
+
 ## v0.2 Evidence And Learning Beta
 
 Goal: strengthen the compounding loop.
@@ -546,5 +572,5 @@ and example record mappers.
    Jarvis.
 7. Keep every Jarvis SDK discussion limited to protocol implementation helpers.
 8. Continue public documentation site work inside protocol-owned scope.
-9. Start implementation proof only through Jarvis protocol records, not host
+9. Start compatibility evidence only through Jarvis protocol records, not host
    runtime ownership.

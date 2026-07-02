@@ -1,4 +1,4 @@
-name: Deploy Jarvis demo to GitHub Pages
+name: Deploy Jarvis docs site to GitHub Pages
 
 on:
   push:
@@ -34,7 +34,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install Python dependencies
-        run: python -m pip install pyyaml
+        run: python -m pip install pyyaml==6.0.1
 
       - name: Validate conformance fixtures
         run: python3 scripts/check_conformance_fixtures.py
@@ -45,13 +45,16 @@ jobs:
       - name: Validate Markdown links
         run: python3 scripts/check_markdown_links.py
 
+      - name: Validate docs site
+        run: python3 scripts/check_docs_site.py
+
       - name: Validate protocol wording
         run: python3 scripts/check_protocol_wording.py
 
       - name: Check committed whitespace
         run: git diff-tree --check --no-commit-id --root -r HEAD
 
-      - name: Validate demo JavaScript syntax
+      - name: Validate docs site JavaScript syntax
         run: node --check demo/assets/app.js
 
       - name: Configure Pages

@@ -3,48 +3,312 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Jarvis</title>
+    <title>Jarvis Protocol Documentation</title>
     <meta
       name="description"
-      content="A non-normative public walkthrough of Jarvis as the human-agent collaboration and learning-loop protocol."
+      content="Jarvis protocol documentation for governed human-agent collaboration, reviewable requests, portable evidence, and shared learning."
     />
-    <link rel="icon" href="./assets/favicon.svg?v=protocol7" type="image/svg+xml" />
-    <link rel="stylesheet" href="./assets/styles.css?v=protocol7" />
+    <link rel="icon" href="./assets/favicon.svg?v=docs1" type="image/svg+xml" />
+    <link rel="stylesheet" href="./assets/styles.css?v=docs1" />
   </head>
   <body>
     <canvas id="signalCanvas" aria-hidden="true"></canvas>
     <main class="shell">
-      <header class="topbar" aria-label="Jarvis walkthrough header">
-        <a class="brand" href="./">
+      <header class="topbar" aria-label="Jarvis documentation header">
+        <a class="brand" href="./" aria-label="Jarvis documentation home">
           <span class="brand-mark">J</span>
           <span>
             <strong>Jarvis</strong>
-            <small>protocol walkthrough</small>
+            <small>protocol docs</small>
           </span>
         </a>
-        <div class="topbar-meta">
-          <span>Example WorkSession WS-1042</span>
-          <span>OpenAPI 3.1 binding</span>
-          <span id="topbarStatus">created</span>
-        </div>
+        <nav class="topnav" aria-label="Primary documentation links">
+          <a href="#start">Start</a>
+          <a href="#protocol">Protocol</a>
+          <a href="#spec">Spec</a>
+          <a href="#examples">Examples</a>
+          <a href="#conformance">Conformance</a>
+          <a href="#sdk">SDK</a>
+          <a href="#walkthrough">Walkthrough</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
       </header>
 
-      <section class="hero-grid" aria-labelledby="page-title">
+      <section class="hero-grid" id="start" aria-labelledby="page-title">
         <div class="hero-copy">
           <p class="kicker">Human-agent collaboration and learning loop</p>
-          <h1 id="page-title">
-            Jarvis
-          </h1>
+          <h1 id="page-title">Jarvis Protocol Documentation</h1>
           <p class="hero-text">
-            MCP connects agents to tools. A2A connects agents to agents.
-            AG-UI connects agents to UI. Jarvis records how HumanWorkers and
-            AgentWorkers collaborate, produce evidence, and learn.
+            Jarvis defines how HumanWorkers and AgentWorkers collaborate inside
+            governed WorkSessions, create scoped Requests when blocked, capture
+            human Review and Takeover, record attributable Contribution, export
+            portable EvidenceManifest records, and carry governed Learning into
+            future work.
           </p>
           <p class="demo-boundary">
-            Non-normative walkthrough. Not protocol proof. Not a host UI
-            implementation.
+            Jarvis is a protocol. Hosts own UI, auth, storage, execution, model
+            calls, tool execution, monitoring, deployment, and host workflow.
           </p>
-          <div class="hero-actions" aria-label="Walkthrough controls">
+          <div class="hero-actions" aria-label="Documentation entry links">
+            <a
+              class="command primary"
+              href="https://raw.githubusercontent.com/Flow-Research/jarvis/main/docs/openapi/jarvis-openapi.yaml"
+            >
+              OpenAPI Spec
+            </a>
+            <a
+              class="command"
+              href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/checklist.md"
+            >
+              Conformance Checklist
+            </a>
+            <a class="command" href="#walkthrough-controls">Run Walkthrough</a>
+            <a class="command ghost" href="https://github.com/Flow-Research/jarvis">
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        <aside class="mission-panel" aria-label="Protocol Alpha status">
+          <div class="mission-header">
+            <span class="pulse"></span>
+            <span>Protocol Alpha</span>
+          </div>
+          <dl class="mission-grid">
+            <div>
+              <dt>Version</dt>
+              <dd>v0.1.0</dd>
+            </div>
+            <div>
+              <dt>Binding</dt>
+              <dd>OpenAPI 3.1</dd>
+            </div>
+            <div>
+              <dt>Evidence</dt>
+              <dd>portable</dd>
+            </div>
+            <div>
+              <dt>Status</dt>
+              <dd>Protocol Alpha</dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
+
+      <section class="doc-grid" aria-label="Start here documentation cards">
+        <article class="doc-card">
+          <span>01</span>
+          <h2>Read the protocol spine</h2>
+          <p>
+            Start with the core objects and Request protocol. They define the
+            human-agent pair, WorkSession, policy gate, review loop, evidence,
+            and governed learning.
+          </p>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">
+            Core objects
+          </a>
+        </article>
+        <article class="doc-card">
+          <span>02</span>
+          <h2>Use the machine contract</h2>
+          <p>
+            OpenAPI 3.1 is the primary machine-readable communication binding
+            for operations, headers, schemas, errors, and examples.
+          </p>
+          <a href="https://raw.githubusercontent.com/Flow-Research/jarvis/main/docs/openapi/jarvis-openapi.yaml">OpenAPI YAML</a>
+        </article>
+        <article class="doc-card">
+          <span>03</span>
+          <h2>Prove compatibility</h2>
+          <p>
+            Compatible implementations pass the conformance checklist and
+            fixture expectations without adopting a Jarvis-owned runtime.
+          </p>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/README.md">Conformance docs</a>
+        </article>
+        <article class="doc-card">
+          <span>04</span>
+          <h2>Run helper tooling</h2>
+          <p>
+            The SDK helper packages validate protocol records, headers,
+            EvidenceManifest exports, event chains, and conformance fixtures.
+          </p>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/packages/README.md">Packages</a>
+        </article>
+      </section>
+
+      <section class="protocol-section" id="protocol" aria-labelledby="protocol-title">
+        <div class="section-copy">
+          <p class="kicker">Protocol model</p>
+          <h2 id="protocol-title">The unit is the human-agent team.</h2>
+          <p>
+            Jarvis does not define a personal agent, model runtime, planner, or
+            workspace product. Jarvis defines the shared record that lets a
+            human and an agent work together with policy, review, attribution,
+            evidence, and learning.
+          </p>
+        </div>
+        <div class="spine-list" aria-label="Jarvis protocol layers">
+          <article>
+            <strong>HumanWorker + AgentWorker</strong>
+            <p>Workers participate as protocol actors with authority and contribution scope.</p>
+          </article>
+          <article>
+            <strong>WorkSession</strong>
+            <p>The durable protocol record for goals, events, requests, reviews, evidence, and learning.</p>
+          </article>
+          <article>
+            <strong>PolicyDecision</strong>
+            <p>Every AgentWorker action that affects a WorkSession records policy state before acceptance.</p>
+          </article>
+          <article>
+            <strong>Request, Review, Takeover</strong>
+            <p>Blocked scope routes to human judgment; authority stays bounded and attributable.</p>
+          </article>
+          <article>
+            <strong>Contribution + EvidenceManifest</strong>
+            <p>Jarvis records who did what and exports portable evidence without host-private fields.</p>
+          </article>
+          <article>
+            <strong>LearningRecord + Proposals</strong>
+            <p>Human, agent, and pair learning move forward only through governed protocol records.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="spec-grid" id="spec" aria-labelledby="spec-title">
+        <div class="section-copy">
+          <p class="kicker">Spec entry points</p>
+          <h2 id="spec-title">Read the contract from the same paths implementers use.</h2>
+        </div>
+        <div class="link-table" aria-label="Specification links">
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/14-protocol-lock.md">
+            <span>Protocol Lock</span>
+            <small>Locked v0.1 protocol decisions and boundaries</small>
+          </a>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">
+            <span>Communication Binding</span>
+            <small>HTTP operations, headers, versioning, and error envelope</small>
+          </a>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/12-request-protocol.md">
+            <span>Request Protocol</span>
+            <small>Scoped deferral, Review, Takeover, and anti-livelock rules</small>
+          </a>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/13-contribution-evidence-learning.md">
+            <span>Evidence + Learning</span>
+            <small>Contribution, EvidenceManifest, LearningRecord, and proposals</small>
+          </a>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/protocol-records.md">
+            <span>Protocol Records</span>
+            <small>Concrete v0.1 record examples</small>
+          </a>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/releases/v0.1.0.md">
+            <span>Release Notes</span>
+            <small>Protocol Alpha release scope and limits</small>
+          </a>
+        </div>
+      </section>
+
+      <section class="examples-section" id="examples" aria-labelledby="examples-title">
+        <div class="section-copy">
+          <p class="kicker">Examples</p>
+          <h2 id="examples-title">Map real work into protocol records.</h2>
+          <p>
+            Examples show how existing agents and hosts participate through
+            Jarvis records without becoming Jarvis-owned agents, adapters, or
+            runtimes.
+          </p>
+        </div>
+        <div class="example-grid" aria-label="Example documentation links">
+          <article>
+            <h3>Protocol Records</h3>
+            <p>Concrete Worker, Actor, WorkSession, Request, Review, Contribution, EvidenceManifest, and LearningRecord examples.</p>
+            <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/protocol-records.md">Read record examples</a>
+          </article>
+          <article>
+            <h3>Existing Agent Compatibility</h3>
+            <p>How an existing agent participates through Jarvis records without being rewritten as a Jarvis agent.</p>
+            <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/existing-agent-compatibility.md">Read compatibility example</a>
+          </article>
+          <article>
+            <h3>Compatible Host Mapping</h3>
+            <p>How a host maps native collaboration events into Jarvis protocol records while keeping implementation private.</p>
+            <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/compatible-host-mapping.md">Read host mapping</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="conformance-band" id="conformance" aria-labelledby="conformance-title">
+        <div>
+          <p class="kicker">Conformance</p>
+          <h2 id="conformance-title">Compatibility is proven through records.</h2>
+          <p>
+            A compatible implementation proves required headers, Actor
+            authority, WorkSession revision, previous event hash, PolicyDecision
+            preconditions, Request resolution, Takeover lock epochs,
+            Contribution attribution, EvidenceManifest export safety, and
+            governed learning.
+          </p>
+        </div>
+        <pre aria-label="Conformance CLI command"><code>npm run test:cli
+node packages/cli/src/index.js validate fixtures docs/conformance/fixtures
+node packages/cli/src/index.js list rejection-ids</code></pre>
+      </section>
+
+      <section class="sdk-section" id="sdk" aria-labelledby="sdk-title">
+        <div class="section-copy">
+          <p class="kicker">SDK helper tooling</p>
+          <h2 id="sdk-title">Helpers implement the protocol contract. They do not run agents.</h2>
+          <p>
+            Jarvis helper packages provide generated OpenAPI surfaces,
+            validators, event helpers, hash-chain helpers, header checks,
+            EvidenceManifest checks, protocol errors, fixture snapshots, and a
+            conformance runner CLI.
+          </p>
+        </div>
+        <div class="package-grid" aria-label="SDK helper packages">
+          <article>
+            <h3>TypeScript</h3>
+            <p>Protocol types, validators, event helpers, header checks, and fixture snapshots.</p>
+            <a href="https://github.com/Flow-Research/jarvis/blob/main/packages/typescript/README.md">Read TypeScript package</a>
+          </article>
+          <article>
+            <h3>Python</h3>
+            <p>Protocol models, validators, hash-chain helpers, and fixture validation.</p>
+            <a href="https://github.com/Flow-Research/jarvis/blob/main/packages/python/README.md">Read Python package</a>
+          </article>
+          <article>
+            <h3>CLI</h3>
+            <p>Conformance fixture runner and protocol helper commands for local checks.</p>
+            <a href="https://github.com/Flow-Research/jarvis/blob/main/packages/cli/README.md">Read CLI package</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="simulator" id="walkthrough" aria-label="Jarvis protocol walkthrough">
+        <nav class="sequence" aria-label="WorkSession steps">
+          <div class="section-label">Interactive walkthrough</div>
+          <ol id="timeline"></ol>
+        </nav>
+
+        <section class="operating-stage" aria-label="Protocol record path">
+          <div class="stage-top">
+            <div>
+              <span class="section-label">Current phase</span>
+              <h2 id="stepTitle">Mutation Headers</h2>
+            </div>
+            <div class="stage-counters" aria-label="Walkthrough state">
+              <span class="counter" id="stepCounter">01 / 12</span>
+              <span class="counter" id="topbarStatus">created</span>
+              <span class="counter" id="missionState">Ready</span>
+              <span class="counter" id="evidenceCount">01 item</span>
+            </div>
+          </div>
+          <div
+            class="walkthrough-controls"
+            id="walkthrough-controls"
+            aria-label="Walkthrough controls"
+          >
             <button class="command primary" id="startBtn" type="button">
               Start Walkthrough
             </button>
@@ -59,48 +323,6 @@
               Autoplay
             </button>
             <button class="command ghost" id="resetBtn" type="button">Reset</button>
-          </div>
-        </div>
-
-        <aside class="mission-panel" aria-label="Walkthrough state">
-          <div class="mission-header">
-            <span class="pulse"></span>
-            <span id="missionState">Ready</span>
-          </div>
-          <dl class="mission-grid">
-            <div>
-              <dt>Workers</dt>
-              <dd>Human + Agent</dd>
-            </div>
-            <div>
-              <dt>Protocol</dt>
-              <dd>Jarvis v0.1</dd>
-            </div>
-            <div>
-              <dt>Evidence</dt>
-              <dd id="evidenceCount">01 item</dd>
-            </div>
-            <div>
-              <dt>Autonomy</dt>
-              <dd>bounded</dd>
-            </div>
-          </dl>
-        </aside>
-      </section>
-
-      <section class="simulator" aria-label="Jarvis protocol walkthrough">
-        <nav class="sequence" aria-label="WorkSession steps">
-          <div class="section-label">OpenAPI record path</div>
-          <ol id="timeline"></ol>
-        </nav>
-
-        <section class="operating-stage" aria-label="Protocol record path">
-          <div class="stage-top">
-            <div>
-              <span class="section-label">Current phase</span>
-              <h2 id="stepTitle">Mutation Headers</h2>
-            </div>
-            <span class="counter" id="stepCounter">01 / 12</span>
           </div>
 
           <div class="protocol-map" aria-label="Human-agent protocol map">
@@ -154,7 +376,7 @@
 
         <aside class="right-stack" aria-label="Record rails">
           <section class="rail policy-rail" aria-labelledby="policyTitle">
-              <div class="rail-head">
+            <div class="rail-head">
               <span class="section-label">Mutation gate</span>
               <h3 id="policyTitle">Protocol checks</h3>
             </div>
@@ -182,43 +404,22 @@
         </aside>
       </section>
 
-      <section class="story-strip" aria-label="Jarvis model summary">
+      <section class="boundary-strip" aria-label="Jarvis boundary summary">
         <article>
-          <span>01</span>
-          <h3>WorkSession is the record</h3>
-          <p>
-            WorkSession is the durable protocol record for human-agent work:
-            goals, events, requests, reviews, contributions, evidence, and
-            learning.
-          </p>
+          <span>Jarvis owns</span>
+          <p>protocol records, lifecycle rules, OpenAPI binding, errors, conformance, evidence, and governed learning.</p>
         </article>
         <article>
-          <span>02</span>
-          <h3>Policy governs autonomy</h3>
-          <p>
-            The AgentWorker works inside human-defined policy. Outside policy,
-            it creates a Request instead of acting silently.
-          </p>
+          <span>Hosts own</span>
+          <p>UI, identity, auth, storage, runtime, tools, models, monitoring, deployment, and workflow.</p>
         </article>
         <article>
-          <span>03</span>
-          <h3>Learning is governed</h3>
-          <p>
-            Human learning, agent learning, and pair learning stay governed
-            through LearningRecord, MemoryProposal, and SkillProposal records.
-          </p>
-        </article>
-        <article>
-          <span>04</span>
-          <h3>Evidence travels with work</h3>
-          <p>
-            Jarvis records what happened as it happens. EvidenceManifest gives
-            the human worker and agent worker a portable evidence record.
-          </p>
+          <span>Alpha limit</span>
+          <p>v0.1.0 does not certify implementations, designate an official host, or claim production adoption.</p>
         </article>
       </section>
     </main>
 
-    <script src="./assets/app.js?v=protocol7"></script>
+    <script src="./assets/app.js?v=docs1"></script>
   </body>
 </html>
