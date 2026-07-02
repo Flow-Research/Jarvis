@@ -24,9 +24,10 @@
 - [ ] `python3 scripts/check_conformance_fixtures.py`
 - [ ] `python3 scripts/check_openapi_contract.py`
 - [ ] `python3 scripts/check_markdown_links.py`
+- [ ] `python3 scripts/check_docs_site.py` if docs site files changed
 - [ ] `python3 scripts/check_protocol_wording.py`
 - [ ] `python3 scripts/check_sdk_boundary.py` if SDK boundary, package, helper, or fixture snapshot paths changed
 - [ ] `npm --workspace @jarvis-protocol/sdk test` if TypeScript helper paths changed
 - [ ] `npm run test:python` if Python helper paths changed
 - [ ] `git diff --check`
-- [ ] `node --check demo/assets/app.js` if demo JavaScript changed
+- [ ] `node --check demo/assets/app.js` if docs site JavaScript changed

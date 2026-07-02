@@ -39,6 +39,9 @@ jobs:
       - name: Validate Markdown links
         run: python3 scripts/check_markdown_links.py
 
+      - name: Validate docs site
+        run: python3 scripts/check_docs_site.py
+
       - name: Validate protocol wording
         run: python3 scripts/check_protocol_wording.py
 
@@ -66,5 +69,5 @@ jobs:
             git diff-tree --check --no-commit-id --root -r HEAD
           fi
 
-      - name: Validate demo JavaScript syntax
+      - name: Validate docs site JavaScript syntax
         run: node --check demo/assets/app.js

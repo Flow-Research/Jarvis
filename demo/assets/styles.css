@@ -24,6 +24,7 @@
 html {
   min-width: 320px;
   background: var(--void);
+  scroll-behavior: smooth;
 }
 
 body {
@@ -73,6 +74,10 @@ button {
   font: inherit;
 }
 
+a {
+  color: inherit;
+}
+
 #signalCanvas {
   position: fixed;
   inset: 0;
@@ -96,6 +101,54 @@ button {
   justify-content: space-between;
   gap: 18px;
   border-bottom: 1px solid var(--line);
+}
+
+.topnav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.topnav a,
+.status-chip {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgb(16 23 17 / 72%);
+  color: #c8d3c8;
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.topnav a {
+  padding: 0 12px;
+}
+
+.topnav a:hover {
+  border-color: rgb(120 247 180 / 62%);
+  color: var(--ink);
+}
+
+.topnav a:focus-visible,
+.command:focus-visible,
+.doc-card a:focus-visible,
+.link-table a:focus-visible,
+.example-grid a:focus-visible,
+.package-grid a:focus-visible,
+.brand:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
+}
+
+.status-chip {
+  justify-content: center;
+  min-width: 86px;
+  padding: 0 10px;
+  color: var(--mint);
 }
 
 .brand {
@@ -177,10 +230,10 @@ button {
 }
 
 .hero-copy h1 {
-  max-width: 1040px;
+  max-width: 1120px;
   margin: 14px 0 18px;
-  font-size: clamp(3.2rem, 8vw, 8.7rem);
-  line-height: 0.88;
+  font-size: clamp(3.1rem, 6.8vw, 7rem);
+  line-height: 0.94;
   letter-spacing: 0;
   text-wrap: balance;
   overflow-wrap: break-word;
@@ -222,6 +275,7 @@ button {
   background: rgb(244 240 230 / 7%);
   color: var(--ink);
   font-weight: 900;
+  text-decoration: none;
   padding: 0 16px;
   cursor: pointer;
   transition:
@@ -254,7 +308,11 @@ button {
 
 .mission-panel,
 .simulator,
-.story-strip article,
+.doc-card,
+.spine-list article,
+.example-grid article,
+.package-grid article,
+.boundary-strip article,
 .rail,
 .operating-stage,
 .sequence {
@@ -264,6 +322,199 @@ button {
     rgb(8 12 9 / 82%);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 10px 0 14px;
+}
+
+.doc-card {
+  min-height: 260px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.doc-card span,
+.boundary-strip span {
+  color: var(--mint);
+  font-weight: 950;
+}
+
+.doc-card h2,
+.example-grid h3,
+.package-grid h3,
+.boundary-strip p,
+.spine-list p {
+  margin: 0;
+}
+
+.doc-card h2 {
+  font-size: 1.16rem;
+  line-height: 1.2;
+}
+
+.doc-card p,
+.spine-list p,
+.example-grid p,
+.package-grid p,
+.boundary-strip p,
+.section-copy p,
+.conformance-band p {
+  color: var(--muted);
+  line-height: 1.62;
+}
+
+.doc-card a,
+.link-table a,
+.example-grid a,
+.package-grid a {
+  color: var(--mint);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.doc-card a:hover,
+.link-table a:hover,
+.example-grid a:hover,
+.package-grid a:hover {
+  color: var(--cyan);
+}
+
+.protocol-section,
+.spec-grid,
+.examples-section,
+.sdk-section,
+.conformance-band {
+  display: grid;
+  gap: 18px;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 5%), rgb(255 255 255 / 2%)),
+    rgb(8 12 9 / 76%);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.protocol-section,
+.spec-grid,
+.examples-section,
+.sdk-section {
+  grid-template-columns: minmax(360px, 0.56fr) minmax(0, 1fr);
+  padding: 22px;
+}
+
+.section-copy h2,
+.conformance-band h2 {
+  margin: 10px 0 0;
+  font-size: clamp(1.8rem, 3.2vw, 3.45rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.section-copy p,
+.conformance-band p {
+  margin: 18px 0 0;
+  max-width: 760px;
+}
+
+.spine-list,
+.example-grid,
+.package-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.spine-list article,
+.example-grid article,
+.package-grid article {
+  min-height: 145px;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.spine-list strong,
+.example-grid h3,
+.package-grid h3 {
+  color: var(--ink);
+  font-size: 1.02rem;
+}
+.link-table {
+  display: grid;
+  gap: 10px;
+}
+
+.link-table a {
+  min-height: 72px;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 4%);
+}
+
+.link-table span {
+  color: var(--ink);
+  font-weight: 950;
+}
+
+.link-table small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.conformance-band {
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  padding: 22px;
+}
+
+.conformance-band pre {
+  min-width: 0;
+  overflow: auto;
+  margin: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #050704;
+  color: var(--bone);
+  line-height: 1.65;
+}
+
+.package-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.example-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.example-grid article,
+.package-grid article {
+  min-height: 210px;
+}
+
+.walkthrough-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 16px;
+  scroll-margin-top: 18px;
 }
 
 .mission-panel {
@@ -449,6 +700,14 @@ button {
   gap: 14px;
   align-items: start;
   margin-bottom: 16px;
+}
+
+.stage-counters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  max-width: 420px;
 }
 
 .stage-top h2 {
@@ -841,9 +1100,30 @@ button {
   line-height: 1.58;
 }
 
+.boundary-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.boundary-strip article {
+  min-height: 160px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  border-radius: 8px;
+  padding: 18px;
+}
+
 @media (max-width: 1260px) {
   .hero-grid,
-  .simulator {
+  .simulator,
+  .protocol-section,
+  .spec-grid,
+  .examples-section,
+  .sdk-section,
+  .conformance-band {
     grid-template-columns: 1fr;
   }
 
@@ -852,7 +1132,11 @@ button {
   }
 
   .right-stack,
-  .story-strip {
+  .story-strip,
+  .doc-grid,
+  .example-grid,
+  .package-grid,
+  .boundary-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -874,6 +1158,19 @@ button {
   .stage-top {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .stage-counters {
+    justify-content: flex-start;
+    max-width: 100%;
+  }
+
+  .topnav {
+    justify-content: flex-start;
+  }
+
+  .status-chip {
+    min-width: 0;
   }
 
   .topbar-meta {
@@ -906,8 +1203,8 @@ button {
 
   .hero-copy h1 {
     max-width: 100%;
-    font-size: clamp(2.55rem, 10.8vw, 3rem);
-    line-height: 0.95;
+    font-size: clamp(1.92rem, 8.1vw, 2.18rem);
+    line-height: 1.08;
     text-wrap: auto;
   }
 
@@ -936,6 +1233,11 @@ button {
   .mission-grid,
   .right-stack,
   .story-strip,
+  .doc-grid,
+  .spine-list,
+  .example-grid,
+  .package-grid,
+  .boundary-strip,
   .phase-brief,
   .sequence ol {
     grid-template-columns: 1fr;
@@ -943,9 +1245,19 @@ button {
 
   .mission-panel,
   .simulator,
+  .protocol-section,
+  .spec-grid,
+  .examples-section,
+  .sdk-section,
+  .conformance-band,
   .operating-stage,
   .sequence,
   .rail,
+  .doc-card,
+  .spine-list article,
+  .example-grid article,
+  .package-grid article,
+  .boundary-strip article,
   .story-strip article {
     width: 100%;
     max-width: 100%;
@@ -963,8 +1275,23 @@ button {
   }
 
   .simulator,
-  .operating-stage {
+  .operating-stage,
+  .protocol-section,
+  .spec-grid,
+  .examples-section,
+  .sdk-section,
+  .conformance-band {
     padding: 10px;
+  }
+
+  .section-copy h2,
+  .conformance-band h2 {
+    font-size: clamp(1.9rem, 10vw, 2.55rem);
+  }
+
+  .walkthrough-controls {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .protocol-map {
@@ -1014,6 +1341,24 @@ button {
   }
 
   .data-beam {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+
+  #signalCanvas {
     display: none;
   }
 }

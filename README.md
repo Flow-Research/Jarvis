@@ -30,16 +30,19 @@ Release materials:
 - [SECURITY.md](./SECURITY.md)
 - [docs/releases/v0.1.0.md](./docs/releases/v0.1.0.md)
 
-## Interactive Simulation
+## Public Documentation Site
 
-The simulation is non-normative public explanation. It is not protocol proof
-and it is not a host UI implementation.
+The public documentation site is the first entry point for the protocol,
+OpenAPI contract, conformance surface, SDK helper tooling, examples, release
+status, and non-normative walkthrough.
 
-Open the live simulation here:
+Open the live documentation site here:
 
 https://flow-research.github.io/jarvis/
 
-The page is served directly by GitHub Pages from this repository.
+The walkthrough on the site is non-normative public explanation. It is not
+protocol proof and it is not a host UI implementation. The page is served
+directly by GitHub Pages from this repository.
 
 ## One-Line Definition
 
@@ -314,9 +317,14 @@ Jarvis-owned agents.
   positioning lock.
 - [docs/architecture_brief/](./docs/architecture_brief/) - shareable protocol
   architecture brief and PDF.
+- [docs/openapi/](./docs/openapi/) - OpenAPI 3.1 communication binding.
 - [docs/conformance/](./docs/conformance/) - compatibility mapping,
   conformance entries, fixtures, validator requirements, and existing-agent
   proof plan.
+- [docs/examples/](./docs/examples/) - protocol record, existing-agent
+  compatibility, and compatible-host mapping examples.
+- [packages/](./packages/) - TypeScript, Python, and CLI protocol helper
+  packages.
 - [docs/reviews/](./docs/reviews/) - protocol readiness and acceptance review
   criteria.
 - [docs/releases/](./docs/releases/) - protocol release notes and validation
