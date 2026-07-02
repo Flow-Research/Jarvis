@@ -1,0 +1,51 @@
+{
+  "object_type": "SkillProposal",
+  "record": {
+    "id": "skill-proposal-golden",
+    "work_session_id": "ws-golden-001",
+    "proposed_by_actor_id": "actor-human-golden",
+    "proposed_for": "pair",
+    "skill_scope": "scope:future-source-collection",
+    "skill_name": "bounded_external_source_collection",
+    "trigger_conditions": [
+      "AgentWorker needs evidence outside local context",
+      "Policy denies or requires review for the action"
+    ],
+    "procedure": [
+      "Record PolicyDecision before action acceptance",
+      "Create scoped Request with risk, options, and fallback",
+      "Wait for Review approval or narrowing",
+      "Execute only inside ApprovalScope",
+      "Capture evidence refs during work"
+    ],
+    "review_checks": [
+      "Request references blocking PolicyDecision",
+      "ApprovalScope binds action hash, WorkSession, Actor, expiry, and max uses",
+      "EvidenceManifest excludes host-private fields"
+    ],
+    "failure_cases": [
+      "Request resolves without Review",
+      "Evidence appears after the fact",
+      "Skill activates without review"
+    ],
+    "provenance": [
+      "event-request-created",
+      "event-review-approved",
+      "event-evidence-captured",
+      "learning-golden-pair"
+    ],
+    "status": "pending_review",
+    "created_at": "2026-06-16T10:20:00Z",
+    "required_tools": [
+      "tool:source-reader"
+    ],
+    "source_event_refs": [
+      "event-request-created",
+      "event-review-approved",
+      "event-evidence-captured"
+    ],
+    "learning_record_refs": [
+      "learning-golden-pair"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "operation_id": "createRequest",
+  "method": "POST",
+  "path": "/work-sessions/ws-golden-001/requests",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-agent-golden",
+    "Jarvis-Idempotency-Key": "idem-request-source-golden",
+    "Jarvis-Request-Timestamp": "2026-06-16T10:05:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 2,
+    "Jarvis-Previous-Event-Hash": "hash:event-policy-denied"
+  },
+  "body_ref": "records.requests.pending",
+  "actor_id": "actor-agent-golden",
+  "work_session_id": "ws-golden-001",
+  "expected_status": 201,
+  "expected_event_ref": "event-request-created"
+}

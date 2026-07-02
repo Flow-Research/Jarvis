@@ -1,0 +1,15 @@
+{
+  "operation_id": "submitOutcomeReport",
+  "method": "POST",
+  "path": "/outcome-reports",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-golden",
+    "Jarvis-Idempotency-Key": "idem-outcome-report-golden",
+    "Jarvis-Request-Timestamp": "2026-06-16T10:30:00Z"
+  },
+  "body_ref": "records.outcome_reports.post_session",
+  "actor_id": "actor-human-golden",
+  "expected_status": 202
+}

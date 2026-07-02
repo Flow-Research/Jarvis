@@ -1,0 +1,56 @@
+{
+  "object_type": "Policy",
+  "record": {
+    "id": "policy-golden-bounded",
+    "owner_worker_id": "worker-human-golden",
+    "created_by_actor_id": "actor-human-golden",
+    "autonomy_level": "bounded_execute",
+    "allowed_actions": [
+      {
+        "action": "draft_answer",
+        "scope_ref": "scope:local-worksession",
+        "grant_refs": [
+          "grant:local-context-read"
+        ]
+      }
+    ],
+    "denied_actions": [
+      {
+        "action": "fetch_external_source",
+        "scope_ref": "scope:external-source"
+      }
+    ],
+    "review_required_actions": [
+      {
+        "action": "submit_final_artifact",
+        "scope_ref": "scope:final-submission"
+      }
+    ],
+    "risk_classes": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "escalation_rules": [
+      {
+        "trigger": "external_source_access",
+        "risk_class": "medium",
+        "required_action": "create_request",
+        "reviewer_ref": "worker-human-golden",
+        "reason": "HumanWorker review gates external source collection."
+      }
+    ],
+    "created_at": "2026-06-16T10:00:00Z",
+    "tool_grants": [
+      "grant:local-context-read"
+    ],
+    "memory_grants": [
+      "grant:read-confirmed-memory"
+    ],
+    "request_limits": {
+      "max_pending_requests": 3,
+      "max_repeated_denials": 1,
+      "default_expiry_seconds": 1800
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "object_type": "AgentWorker",
+  "record": {
+    "worker_id": "worker-agent-golden",
+    "actor_id": "actor-agent-golden",
+    "agent_ref": "agent:golden-agent",
+    "role": "bounded research and drafting agent",
+    "capability_refs": [
+      {
+        "ref": "capability:source_summary",
+        "capability_type": "research",
+        "required": true
+      }
+    ],
+    "autonomy_level": "bounded_execute",
+    "operating_constraints": [
+      "record PolicyDecision before action affects WorkSession state",
+      "create Request when Policy denies action",
+      "capture evidence during work"
+    ],
+    "tool_access_profile": "tool-profile:policy-bounded",
+    "memory_access_profile": "memory-profile:read-only"
+  }
+}

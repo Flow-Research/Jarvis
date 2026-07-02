@@ -1,0 +1,19 @@
+{
+  "operation_id": "appendJarvisEvent",
+  "method": "POST",
+  "path": "/work-sessions/ws-golden-001/events",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-golden",
+    "Jarvis-Idempotency-Key": "idem-worksession-completed-golden",
+    "Jarvis-Request-Timestamp": "2026-06-16T10:25:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 10,
+    "Jarvis-Previous-Event-Hash": "hash:event-skill-proposal-created"
+  },
+  "body_ref": "records.jarvis_events.worksession_completed",
+  "actor_id": "actor-human-golden",
+  "work_session_id": "ws-golden-001",
+  "expected_status": 201,
+  "expected_event_ref": "event-worksession-completed"
+}

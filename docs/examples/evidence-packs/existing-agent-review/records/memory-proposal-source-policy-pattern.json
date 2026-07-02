@@ -1,0 +1,30 @@
+{
+  "object_type": "MemoryProposal",
+  "record": {
+    "id": "memory-proposal-golden",
+    "work_session_id": "ws-golden-001",
+    "proposed_by_actor_id": "actor-human-golden",
+    "proposed_for": "pair",
+    "memory_scope": "scope:future-source-collection",
+    "memory_type": "collaboration_pattern",
+    "content": {
+      "pattern": "External source collection requires bounded approval tied to WorkSession, Actor, action hash, expiry, and max uses."
+    },
+    "provenance": [
+      "event-request-created",
+      "event-review-approved",
+      "learning-golden-pair"
+    ],
+    "confidence": 0.9,
+    "review_required": true,
+    "status": "pending_review",
+    "created_at": "2026-06-16T10:19:00Z",
+    "source_event_refs": [
+      "event-review-approved",
+      "event-learning-recorded"
+    ],
+    "learning_record_refs": [
+      "learning-golden-pair"
+    ]
+  }
+}

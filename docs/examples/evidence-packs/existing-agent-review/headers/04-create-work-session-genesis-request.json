@@ -1,0 +1,19 @@
+{
+  "operation_id": "createWorkSession",
+  "method": "POST",
+  "path": "/work-sessions",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-golden",
+    "Jarvis-Idempotency-Key": "idem-create-worksession-golden",
+    "Jarvis-Request-Timestamp": "2026-06-16T10:01:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 0,
+    "Jarvis-Previous-Event-Hash": "hash:protocol-genesis"
+  },
+  "body_ref": "records.work_sessions.genesis_request",
+  "actor_id": "actor-human-golden",
+  "work_session_id": "ws-golden-001",
+  "expected_status": 201,
+  "expected_event_ref": "event-worksession-created"
+}

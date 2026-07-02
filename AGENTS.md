@@ -311,14 +311,19 @@ python3 scripts/check_conformance_fixtures.py
 python3 scripts/check_openapi_contract.py
 python3 scripts/check_markdown_links.py
 python3 scripts/check_docs_site.py
+python3 scripts/check_example_evidence_packs.py
 python3 scripts/check_protocol_wording.py
+python3 scripts/check_sdk_boundary.py
 git diff --check
 ```
 
 Fixture changes MUST run `python3 scripts/check_conformance_fixtures.py`.
 
-SDK boundary, package, helper, and fixture-snapshot changes MUST run
-`python3 scripts/check_sdk_boundary.py`.
+Example evidence pack changes MUST run
+`python3 scripts/check_example_evidence_packs.py`.
+
+SDK boundary, package, helper, and fixture-snapshot changes MUST still treat
+`python3 scripts/check_sdk_boundary.py` as a blocking gate.
 
 TypeScript helper changes MUST run
 `npm --workspace @jarvis-protocol/sdk test`.

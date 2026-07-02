@@ -322,7 +322,7 @@ Jarvis-owned agents.
   conformance entries, fixtures, validator requirements, and existing-agent
   proof plan.
 - [docs/examples/](./docs/examples/) - protocol record, existing-agent
-  compatibility, and compatible-host mapping examples.
+  compatibility, compatible-host mapping examples, and evidence packs.
 - [packages/](./packages/) - TypeScript, Python, and CLI protocol helper
   packages.
 - [docs/reviews/](./docs/reviews/) - protocol readiness and acceptance review
@@ -338,7 +338,10 @@ Every protocol PR MUST run:
 python3 scripts/check_conformance_fixtures.py
 python3 scripts/check_openapi_contract.py
 python3 scripts/check_markdown_links.py
+python3 scripts/check_docs_site.py
+python3 scripts/check_example_evidence_packs.py
 python3 scripts/check_protocol_wording.py
+python3 scripts/check_sdk_boundary.py
 git diff --check
 ```
 

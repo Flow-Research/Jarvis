@@ -1,0 +1,19 @@
+{
+  "operation_id": "appendJarvisEvent",
+  "method": "POST",
+  "path": "/work-sessions/ws-golden-001/events",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-agent-golden",
+    "Jarvis-Idempotency-Key": "idem-evidence-captured-golden",
+    "Jarvis-Request-Timestamp": "2026-06-16T10:12:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 5,
+    "Jarvis-Previous-Event-Hash": "hash:event-policy-allowed"
+  },
+  "body_ref": "records.jarvis_events.evidence_captured",
+  "actor_id": "actor-agent-golden",
+  "work_session_id": "ws-golden-001",
+  "expected_status": 201,
+  "expected_event_ref": "event-evidence-captured"
+}

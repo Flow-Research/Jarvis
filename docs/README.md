@@ -50,6 +50,17 @@ and existing-agent compatibility proof.
 - [conformance/existing-agent-proof-plan.md](./conformance/existing-agent-proof-plan.md)
 - [conformance/fixtures/README.md](./conformance/fixtures/README.md)
 
+## Examples
+
+Examples show protocol records and record-compatibility evidence without
+defining host-owned execution.
+
+- [examples/README.md](./examples/README.md)
+- [examples/protocol-records.md](./examples/protocol-records.md)
+- [examples/existing-agent-compatibility.md](./examples/existing-agent-compatibility.md)
+- [examples/compatible-host-mapping.md](./examples/compatible-host-mapping.md)
+- [examples/evidence-packs/existing-agent-review/README.md](./examples/evidence-packs/existing-agent-review/README.md)
+
 ## OpenAPI
 
 The OpenAPI directory contains the v0.1 machine-readable communication binding.
