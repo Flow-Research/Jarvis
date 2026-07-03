@@ -74,7 +74,9 @@ def main() -> int:
     parsed = {path: parse_html(path) for path in html_files}
     failures: list[str] = []
 
-    if not OPENAPI_SITE_COPY.exists():
+    if not OPENAPI_SOURCE.exists():
+        failures.append(f"{OPENAPI_SOURCE.relative_to(ROOT)}: missing OpenAPI source file")
+    elif not OPENAPI_SITE_COPY.exists():
         failures.append(f"{OPENAPI_SITE_COPY.relative_to(ROOT)}: missing OpenAPI site snapshot")
     elif OPENAPI_SITE_COPY.read_bytes() != OPENAPI_SOURCE.read_bytes():
         failures.append(
@@ -97,7 +99,7 @@ def main() -> int:
                     failures.append(
                         f"{path.relative_to(ROOT)}: OpenAPI iframe MUST render {OPENAPI_SITE_COPY.relative_to(ROOT)}"
                     )
-                    continue
+                continue
             if value.startswith("https://"):
                 if not github_target_exists(value):
                     failures.append(f"{path.relative_to(ROOT)}: unsupported or broken external {attr}: {value}")
