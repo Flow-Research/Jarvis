@@ -193,6 +193,12 @@ const ACTOR_BODY_FIELD_BY_OPERATION = Object.freeze({
 
 const PROTOCOL_ERROR_IDS = new Set(SCHEMA_ENUMS.ProtocolErrorId ?? []);
 
+const DEFAULT_CANONICALIZATION = Object.freeze({
+  serialization: "json-c14n",
+  hash_method: "sha256",
+  profile_ref: "canonicalization:v0.1",
+});
+
 export class JarvisProtocolValidationError extends Error {
   constructor(error) {
     super(error.reason);
@@ -237,6 +243,318 @@ function fail(errorId, options = {}) {
 
 function pass() {
   return validationResult([]);
+}
+
+function assertValid(result) {
+  if (!result.valid) {
+    throw new JarvisProtocolValidationError(
+      result.errors[0] ?? protocolError("invalid_export"),
+    );
+  }
+}
+
+function helperError(field, reason) {
+  return new JarvisProtocolValidationError(protocolError("invalid_export", {
+    objectType: "ProtocolHelper",
+    field,
+    reason,
+  }));
+}
+
+function successfulStatus(binding) {
+  return [...binding.statuses].sort((left, right) => left - right).find((status) => status < 400);
+}
+
+function operationWorkSessionScoped(binding) {
+  return binding.path.startsWith("/work-sessions");
+}
+
+function buildHeadersForOperation(binding, options) {
+  if (options.headers) {
+    return options.headers;
+  }
+  const shared = {
+    actorId: options.actorId,
+    authorization: options.authorization,
+    protocolVersion: options.protocolVersion,
+    validationOptions: options.validationOptions,
+  };
+  if (binding.method === "GET") {
+    return createReadHeaders(shared);
+  }
+  if (!operationWorkSessionScoped(binding)) {
+    return createNonWorkSessionMutationHeaders({
+      ...shared,
+      idempotencyKey: options.idempotencyKey,
+      requestTimestamp: options.requestTimestamp,
+    });
+  }
+  return createWorkSessionMutationHeaders({
+    ...shared,
+    idempotencyKey: options.idempotencyKey,
+    requestTimestamp: options.requestTimestamp,
+    expectedWorkSessionRevision: options.expectedWorkSessionRevision,
+    previousEventHash: options.previousEventHash,
+  });
+}
+
+function pathParamsForOperation(options) {
+  return {
+    ...(options.pathParams ?? {}),
+    worker_id: options.workerId ?? options.pathParams?.worker_id,
+    actor_id: options.targetActorId ?? options.pathParams?.actor_id,
+    work_session_id: options.workSessionId ?? options.pathParams?.work_session_id,
+  };
+}
+
+function invalidEventHashError(field, reason) {
+  return new JarvisProtocolValidationError(protocolError("invalid_event_hash", {
+    objectType: "JarvisEvent",
+    field,
+    reason,
+  }));
+}
+
+function invalidEvidenceRootError(field, reason) {
+  return new JarvisProtocolValidationError(protocolError("invalid_evidence_export_state", {
+    objectType: "EvidenceManifest",
+    field,
+    reason,
+  }));
+}
+
+function lastEventForWorkSession(events, workSessionId) {
+  if (!Array.isArray(events) || events.length === 0) {
+    return null;
+  }
+  if (!isNonEmptyString(workSessionId)) {
+    throw helperError("work_session_id", "work_session_id is required when JarvisEvents are supplied.");
+  }
+  const mismatch = events.find((event) => {
+    return isPlainObject(event) && event.work_session_id !== workSessionId;
+  });
+  if (mismatch) {
+    throw helperError("events.work_session_id", "JarvisEvents MUST belong to the target WorkSession.");
+  }
+  return [...events]
+    .filter((event) => isPlainObject(event) && isInteger(event.sequence))
+    .sort((left, right) => right.sequence - left.sequence)[0] ?? null;
+}
+
+function eventHashFor(eventWithoutHash, callerHash) {
+  const computedHash = hashProtocolValue(eventWithoutHash);
+  if (callerHash !== undefined && callerHash !== computedHash) {
+    throw invalidEventHashError(
+      "event_hash",
+      "JarvisEvent.event_hash MUST match the canonical hash of the event body.",
+    );
+  }
+  return computedHash;
+}
+
+function assertManifestRoot(workSession, events, eventChainRoot) {
+  const workSessionHash = workSession?.last_event_hash;
+  if (!isNonEmptyString(workSessionHash)) {
+    throw invalidEvidenceRootError(
+      "work_session.last_event_hash",
+      "EvidenceManifest export requires a terminal WorkSession last_event_hash.",
+    );
+  }
+  if (eventChainRoot !== undefined && eventChainRoot !== workSessionHash) {
+    throw invalidEvidenceRootError(
+      "event_chain_root",
+      "EvidenceManifest.event_chain_root MUST match WorkSession.last_event_hash.",
+    );
+  }
+  if (Array.isArray(events) && events.length > 0) {
+    assertValid(validateEventHashChain(events));
+    const previous = lastEventForWorkSession(events, workSession?.id);
+    if (previous?.event_hash !== workSessionHash) {
+      throw invalidEvidenceRootError(
+        "event_chain_root",
+        "EvidenceManifest event chain root MUST match the terminal WorkSession last_event_hash.",
+      );
+    }
+  }
+  return workSessionHash;
+}
+
+export function createReadHeaders(options = {}) {
+  const headers = {
+    Authorization: options.authorization,
+    "Jarvis-Protocol-Version": options.protocolVersion ?? PROTOCOL_VERSION,
+    "Jarvis-Actor-Id": options.actorId,
+  };
+  assertValid(validateReadHeaders(headers, options.validationOptions));
+  return headers;
+}
+
+export function createNonWorkSessionMutationHeaders(options = {}) {
+  const headers = {
+    Authorization: options.authorization,
+    "Jarvis-Protocol-Version": options.protocolVersion ?? PROTOCOL_VERSION,
+    "Jarvis-Actor-Id": options.actorId,
+    "Jarvis-Idempotency-Key": options.idempotencyKey,
+    "Jarvis-Request-Timestamp": options.requestTimestamp,
+  };
+  assertValid(validateMutationHeaders(headers, {
+    ...(options.validationOptions ?? {}),
+    workSessionScoped: false,
+  }));
+  return headers;
+}
+
+export function createWorkSessionMutationHeaders(options = {}) {
+  const headers = {
+    Authorization: options.authorization,
+    "Jarvis-Protocol-Version": options.protocolVersion ?? PROTOCOL_VERSION,
+    "Jarvis-Actor-Id": options.actorId,
+    "Jarvis-Idempotency-Key": options.idempotencyKey,
+    "Jarvis-Request-Timestamp": options.requestTimestamp,
+    "Jarvis-Expected-WorkSession-Revision": options.expectedWorkSessionRevision,
+    "Jarvis-Previous-Event-Hash": options.previousEventHash,
+  };
+  assertValid(validateMutationHeaders(headers, options.validationOptions));
+  return headers;
+}
+
+export function createMutationHeaders(options = {}) {
+  if (options.workSessionScoped === false) {
+    return createNonWorkSessionMutationHeaders(options);
+  }
+  return createWorkSessionMutationHeaders(options);
+}
+
+export function getOperationBinding(operationId) {
+  const binding = OPERATION_BINDINGS_BY_ID[operationId];
+  if (!binding) {
+    throw helperError("operation_id", "operation_id MUST exist in the Jarvis OpenAPI binding.");
+  }
+  return {
+    method: binding.method,
+    path: binding.path,
+    statuses: [...binding.statuses].sort((left, right) => left - right),
+  };
+}
+
+export function createOperationPath(operationId, pathParams = {}) {
+  const binding = getOperationBinding(operationId);
+  return binding.path.replace(/\{([^/]+)\}/g, (_match, key) => {
+    const value = pathParams[key];
+    if (!isNonEmptyString(value)) {
+      throw helperError(`path.${key}`, `${key} is required for ${operationId}.`);
+    }
+    return encodeURIComponent(value);
+  });
+}
+
+export function createOperationEnvelope(options = {}) {
+  const operationId = options.operationId;
+  const binding = getOperationBinding(operationId);
+  const path = options.path ?? createOperationPath(operationId, pathParamsForOperation(options));
+  const headers = buildHeadersForOperation(OPERATION_BINDINGS_BY_ID[operationId], options);
+  const pathValues = operationPathValues({ operation_id: operationId, path });
+  const operation = {
+    operation_id: operationId,
+    method: binding.method,
+    path,
+    headers,
+    actor_id: options.actorId,
+    expected_status: options.expectedStatus ?? successfulStatus(OPERATION_BINDINGS_BY_ID[operationId]),
+  };
+  if (options.expectedErrorId) {
+    operation.expected_error_id = options.expectedErrorId;
+  }
+  if (options.expectedErrorField) {
+    operation.expected_error_field = options.expectedErrorField;
+  }
+  if (options.workSessionId ?? pathValues.work_session_id) {
+    operation.work_session_id = options.workSessionId ?? pathValues.work_session_id;
+  }
+  if (options.bodyRef) {
+    operation.body_ref = options.bodyRef;
+  }
+  if (options.attemptedTakeoverLockEpoch !== undefined) {
+    operation.attempted_takeover_lock_epoch = options.attemptedTakeoverLockEpoch;
+  }
+  const bindingError = operationBindingError(operation);
+  if (bindingError) {
+    throw new JarvisProtocolValidationError(bindingError);
+  }
+  assertValid(validateOperationHeaders(operation, options.validationOptions));
+  return operation;
+}
+
+export function createJarvisEvent(options = {}) {
+  const hashInput = {
+    id: options.id,
+    sequence: options.sequence,
+    type: options.type,
+    work_session_id: options.workSessionId,
+    actor_id: options.actorId,
+    timestamp: options.timestamp,
+    payload: options.payload,
+    previous_hash: options.previousHash ?? "hash:protocol-genesis",
+    canonicalization: options.canonicalization ?? DEFAULT_CANONICALIZATION,
+  };
+  if (options.traceContext) {
+    hashInput.trace_context = options.traceContext;
+  }
+  const event = {
+    ...hashInput,
+    event_hash: eventHashFor(hashInput, options.eventHash),
+  };
+  if (options.actorSignature) {
+    event.actor_signature = options.actorSignature;
+  }
+  if (options.signingKeyRef) {
+    event.signing_key_ref = options.signingKeyRef;
+  }
+  assertValid(validateProtocolRecord("JarvisEvent", event));
+  return event;
+}
+
+export function createNextJarvisEvent(options = {}) {
+  const previous = lastEventForWorkSession(options.events ?? [], options.workSessionId);
+  return createJarvisEvent({
+    ...options,
+    sequence: options.sequence ?? (previous ? previous.sequence + 1 : 1),
+    previousHash: options.previousHash ?? (previous ? previous.event_hash : "hash:protocol-genesis"),
+  });
+}
+
+export function createEvidenceManifest(options = {}) {
+  const workSession = options.workSession;
+  const root = assertManifestRoot(workSession, options.events ?? [], options.eventChainRoot);
+  const manifest = {
+    id: options.id,
+    work_session_id: options.workSessionId ?? workSession?.id,
+    generated_by_actor_id: options.generatedByActorId,
+    objective: options.objective ?? workSession?.objective,
+    event_chain_root: root,
+    evidence_item_refs: options.evidenceItemRefs ?? [],
+    policy_decision_refs: options.policyDecisionRefs ?? [],
+    request_refs: options.requestRefs ?? [],
+    review_refs: options.reviewRefs ?? [],
+    takeover_refs: options.takeoverRefs ?? [],
+    contribution_refs: options.contributionRefs ?? [],
+    export_profile: options.exportProfile ?? {
+      profile: "portable_evidence_manifest",
+      version: PROTOCOL_VERSION,
+    },
+    generated_at: options.generatedAt,
+  };
+  if (options.artifactRefs) {
+    manifest.artifact_refs = options.artifactRefs;
+  }
+  if (options.limitationRefs) {
+    manifest.limitation_refs = options.limitationRefs;
+  }
+  if (options.redactionRefs) {
+    manifest.redaction_refs = options.redactionRefs;
+  }
+  assertValid(validateEvidenceManifest(manifest, { workSession }));
+  return manifest;
 }
 
 function isPlainObject(value) {
@@ -337,6 +655,26 @@ function operationPathMatchesTemplate(template, path) {
   return new RegExp(pattern).test(path);
 }
 
+function operationPathValues(operation) {
+  const binding = OPERATION_BINDINGS_BY_ID[operation?.operation_id];
+  if (!binding || !isNonEmptyString(operation?.path)) {
+    return {};
+  }
+  const templateSegments = binding.path.split("/");
+  const pathSegments = operation.path.split("/");
+  if (templateSegments.length !== pathSegments.length) {
+    return {};
+  }
+  const values = {};
+  for (let index = 0; index < templateSegments.length; index += 1) {
+    const match = templateSegments[index].match(/^\{([^/]+)\}$/);
+    if (match) {
+      values[match[1]] = decodeURIComponent(pathSegments[index]);
+    }
+  }
+  return values;
+}
+
 function operationBindingError(operation) {
   const operationId = operation?.operation_id;
   const binding = OPERATION_BINDINGS_BY_ID[operationId];
@@ -366,6 +704,17 @@ function operationBindingError(operation) {
       objectType: "FixtureOperation",
       field: "expected_status",
       reason: "Fixture operation expected_status MUST match the Jarvis OpenAPI binding.",
+    });
+  }
+  const pathValues = operationPathValues(operation);
+  if (
+    isNonEmptyString(pathValues.work_session_id)
+    && operation.work_session_id !== pathValues.work_session_id
+  ) {
+    return protocolError("path_body_id_mismatch", {
+      objectType: "FixtureOperation",
+      field: "work_session_id",
+      reason: "operation.work_session_id MUST match the concrete WorkSession path id.",
     });
   }
   return null;
@@ -438,6 +787,17 @@ function evidenceManifestSourceWorkSession(fixture, evidenceManifest, operation)
 }
 
 function operationBodyBindingError(operation, body) {
+  const pathValues = operationPathValues(operation);
+  if (
+    isNonEmptyString(pathValues.work_session_id)
+    && isPlainObject(body)
+    && body.work_session_id !== pathValues.work_session_id
+  ) {
+    return protocolError("path_body_id_mismatch", {
+      field: "work_session_id",
+      reason: "body.work_session_id MUST match the concrete WorkSession path id.",
+    });
+  }
   const actorBodyField = ACTOR_BODY_FIELD_BY_OPERATION[operation?.operation_id];
   if (!actorBodyField || !isPlainObject(body)) {
     return null;
@@ -562,6 +922,13 @@ function evidenceManifestExportError(evidenceManifest, workSession) {
       reason: "EvidenceManifest source WorkSession id MUST match EvidenceManifest.work_session_id.",
     });
   }
+  if (workSession?.last_event_hash && evidenceManifest?.event_chain_root !== workSession.last_event_hash) {
+    return protocolError("invalid_evidence_export_state", {
+      objectType: "EvidenceManifest",
+      field: "event_chain_root",
+      reason: "EvidenceManifest.event_chain_root MUST match WorkSession.last_event_hash.",
+    });
+  }
   return null;
 }
 
@@ -614,7 +981,7 @@ export function validateSchemaRecord(objectType, record) {
   }
   const required = SCHEMA_REQUIRED_FIELDS[objectType] ?? [];
   for (const field of required) {
-    if (!(field in record)) {
+    if (!(field in record) || record[field] === undefined || record[field] === null) {
       return fail("invalid_export", {
         objectType,
         field,
@@ -683,7 +1050,7 @@ export function validateHeaders(headers, options = {}) {
   }
   const requiredHeaders = options.requiredHeaders ?? WORKSESSION_MUTATION_HEADERS;
   for (const header of requiredHeaders) {
-    if (!(header in headers)) {
+    if (!(header in headers) || headers[header] === undefined || headers[header] === null) {
       return fail(MISSING_HEADER_ERROR_IDS[header] ?? "invalid_export", {
         field: `headers.${header}`,
         reason: `${header} is required.`,
@@ -747,13 +1114,13 @@ export function validateHeaders(headers, options = {}) {
   return pass();
 }
 
-export function validateOperationHeaders(operation) {
+export function validateOperationHeaders(operation, options = {}) {
   const method = operationMethod(operation);
   const path = operationPath(operation);
   const workSessionScoped = path.startsWith("/work-sessions");
   const headerResult = method === "GET"
-    ? validateReadHeaders(operation?.headers)
-    : validateMutationHeaders(operation?.headers, { workSessionScoped });
+    ? validateReadHeaders(operation?.headers, options)
+    : validateMutationHeaders(operation?.headers, { ...options, workSessionScoped });
   if (!headerResult.valid) {
     return headerResult;
   }
@@ -915,6 +1282,13 @@ export function validateEvidenceManifest(evidenceManifest, options = {}) {
   const exportError = evidenceManifestExportError(evidenceManifest, options.workSession);
   if (exportError) {
     return validationResult([exportError]);
+  }
+  if (!Array.isArray(evidenceManifest.evidence_item_refs) || evidenceManifest.evidence_item_refs.length === 0) {
+    return fail("invalid_export", {
+      objectType: "EvidenceManifest",
+      field: "evidence_item_refs",
+      reason: "EvidenceManifest.evidence_item_refs MUST contain at least one evidence item.",
+    });
   }
   if (Array.isArray(evidenceManifest.evidence_item_refs)) {
     for (let index = 0; index < evidenceManifest.evidence_item_refs.length; index += 1) {

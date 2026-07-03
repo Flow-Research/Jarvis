@@ -41,6 +41,38 @@ export interface HeaderValidationOptions {
   maxFutureSkewMs?: number;
 }
 
+export interface BaseHeaderOptions {
+  actorId: string;
+  authorization: string;
+  protocolVersion?: string;
+  validationOptions?: HeaderValidationOptions;
+}
+
+export interface MutationHeaderBaseOptions extends BaseHeaderOptions {
+  idempotencyKey: string;
+  requestTimestamp: string;
+}
+
+export interface NonWorkSessionMutationHeaderOptions extends MutationHeaderBaseOptions {
+  workSessionScoped?: false;
+}
+
+export interface WorkSessionMutationHeaderOptions extends MutationHeaderBaseOptions {
+  workSessionScoped?: true;
+  expectedWorkSessionRevision: number;
+  previousEventHash: string;
+}
+
+export type MutationHeaderOptions =
+  | NonWorkSessionMutationHeaderOptions
+  | WorkSessionMutationHeaderOptions;
+
+export interface OperationBinding {
+  method: string;
+  path: string;
+  statuses: number[];
+}
+
 export interface FixtureOperation {
   operation_id: string;
   method: string;
@@ -53,6 +85,71 @@ export interface FixtureOperation {
   work_session_id?: string;
   body_ref?: string;
   attempted_takeover_lock_epoch?: number;
+}
+
+export interface OperationEnvelopeOptions {
+  operationId: string;
+  actorId: string;
+  authorization?: string;
+  protocolVersion?: string;
+  headers?: Record<string, unknown>;
+  path?: string;
+  pathParams?: Record<string, string>;
+  workerId?: string;
+  targetActorId?: string;
+  workSessionId?: string;
+  idempotencyKey?: string;
+  requestTimestamp?: string;
+  expectedWorkSessionRevision?: number;
+  previousEventHash?: string;
+  expectedStatus?: number;
+  expectedErrorId?: ProtocolErrorId;
+  expectedErrorField?: string;
+  bodyRef?: string;
+  attemptedTakeoverLockEpoch?: number;
+  validationOptions?: HeaderValidationOptions;
+}
+
+export interface JarvisEventOptions {
+  id: string;
+  sequence: number;
+  type: string;
+  workSessionId: string;
+  actorId: string;
+  timestamp: string;
+  payload: JarvisEvent["payload"];
+  previousHash?: string;
+  eventHash?: string;
+  canonicalization?: JarvisEvent["canonicalization"];
+  traceContext?: JarvisEvent["trace_context"];
+  actorSignature?: string;
+  signingKeyRef?: string;
+}
+
+export interface NextJarvisEventOptions extends Omit<JarvisEventOptions, "sequence"> {
+  events?: JarvisEvent[];
+  sequence?: number;
+}
+
+export interface EvidenceManifestOptions {
+  id: string;
+  workSession: WorkSession;
+  generatedByActorId: string;
+  generatedAt: string;
+  objective?: string;
+  workSessionId?: string;
+  events?: JarvisEvent[];
+  eventChainRoot?: string;
+  evidenceItemRefs?: EvidenceManifest["evidence_item_refs"];
+  policyDecisionRefs?: string[];
+  requestRefs?: string[];
+  reviewRefs?: string[];
+  takeoverRefs?: string[];
+  contributionRefs?: string[];
+  artifactRefs?: string[];
+  limitationRefs?: string[];
+  redactionRefs?: string[];
+  exportProfile?: EvidenceManifest["export_profile"];
 }
 
 export interface ConformanceFixture {
@@ -95,6 +192,34 @@ export declare function protocolError(
 
 export declare function validationResult(errors: ProtocolError[]): ValidationResult;
 
+export declare function createReadHeaders(
+  options: BaseHeaderOptions,
+): Record<string, unknown>;
+
+export declare function createNonWorkSessionMutationHeaders(
+  options: NonWorkSessionMutationHeaderOptions,
+): Record<string, unknown>;
+
+export declare function createWorkSessionMutationHeaders(
+  options: WorkSessionMutationHeaderOptions,
+): Record<string, unknown>;
+
+export declare function createMutationHeaders(
+  options: MutationHeaderOptions | NonWorkSessionMutationHeaderOptions,
+): Record<string, unknown>;
+
+export declare function getOperationBinding(operationId: string): OperationBinding;
+export declare function createOperationPath(
+  operationId: string,
+  pathParams?: Record<string, string>,
+): string;
+export declare function createOperationEnvelope(
+  options: OperationEnvelopeOptions,
+): FixtureOperation;
+export declare function createJarvisEvent(options: JarvisEventOptions): JarvisEvent;
+export declare function createNextJarvisEvent(options: NextJarvisEventOptions): JarvisEvent;
+export declare function createEvidenceManifest(options: EvidenceManifestOptions): EvidenceManifest;
+
 export declare function findForbiddenHostPrivateField(
   value: unknown,
   basePath?: string,
@@ -120,7 +245,10 @@ export declare function validateReadHeaders(
   options?: HeaderValidationOptions,
 ): ValidationResult;
 
-export declare function validateOperationHeaders(operation: FixtureOperation): ValidationResult;
+export declare function validateOperationHeaders(
+  operation: FixtureOperation,
+  options?: HeaderValidationOptions,
+): ValidationResult;
 export declare function validateRequest(request: Request): ValidationResult;
 export declare function validateApprovalScope(
   approvalScope: ApprovalScope,
