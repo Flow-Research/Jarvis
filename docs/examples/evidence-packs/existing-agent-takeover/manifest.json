@@ -71,7 +71,7 @@
       "source_ref": "records.work_sessions.takeover_active"
     },
     {
-      "path": "records/work-session-reconciliation-required.json",
+      "path": "records/work-session-reconciling.json",
       "object_type": "WorkSession",
       "source_ref": "records.work_sessions.reconciliation_required"
     },
