@@ -34,6 +34,13 @@ class FixtureValidationTests(unittest.TestCase):
         self.assertFalse(result.valid)
         self.assertEqual(result.errors[0]["error_id"], "invalid_transition")
 
+    def test_takeover_path_fixture_requires_resumed_reconciliation_refs(self) -> None:
+        fixture = read_json(FIXTURE_ROOT / "valid/takeover-path.json")
+        fixture["records"]["takeovers"]["resumed"]["reconciliation_refs"] = []
+        result = validate_fixture(fixture)
+        self.assertFalse(result.valid)
+        self.assertEqual(result.errors[0]["error_id"], "missing_reconciliation_refs")
+
     def test_golden_path_outcome_report_requires_terminal_work_session(self) -> None:
         fixture = read_json(FIXTURE_ROOT / "valid/golden-path.json")
         fixture["records"]["work_sessions"]["outcome_active"] = {

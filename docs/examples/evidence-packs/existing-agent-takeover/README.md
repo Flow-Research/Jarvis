@@ -49,6 +49,10 @@ Record files use the helper-compatible envelope:
 ```json
 {
   "object_type": "Takeover",
+  "context": {
+    "work_session": {},
+    "request": {}
+  },
   "record": {}
 }
 ```

@@ -1397,6 +1397,15 @@ def _takeover_path_lifecycle_error(fixture: Mapping[str, Any]) -> dict[str, Any]
     expected_states = ["human_active", "reconciliation_required", "resumed"]
     for takeover, expected_state in zip(takeovers, expected_states, strict=True):
         affected_scope = takeover.get("affected_scope", {})
+        requested_action = request.get("requested_action", {})
+        if not isinstance(affected_scope, dict) or not isinstance(requested_action, dict):
+            return protocol_error(
+                "invalid_transition",
+                {
+                    "field": f"records.takeovers.{expected_state}.affected_scope",
+                    "reason": "Takeover lifecycle states MUST bind object affected_scope and requested_action fields.",
+                },
+            )
         if (
             takeover.get("id") != request.get("resolved_by_takeover_id")
             or takeover.get("request_id") != request.get("id")
@@ -1404,8 +1413,7 @@ def _takeover_path_lifecycle_error(fixture: Mapping[str, Any]) -> dict[str, Any]
             or takeover.get("state") != expected_state
             or takeover.get("lock_epoch") != human_active.get("lock_epoch")
             or affected_scope.get("blocking_scope") != request.get("blocking_scope")
-            or affected_scope.get("scope_ref")
-            != request.get("requested_action", {}).get("scope_ref")
+            or affected_scope.get("scope_ref") != requested_action.get("scope_ref")
             or affected_scope.get("normalized_action_hash")
             != "hash:action-final-submission"
         ):

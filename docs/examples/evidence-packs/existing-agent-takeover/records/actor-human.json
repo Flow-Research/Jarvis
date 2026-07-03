@@ -1,5 +1,6 @@
 {
   "object_type": "Actor",
+  "context": {},
   "record": {
     "id": "actor-human-takeover",
     "worker_id": "worker-human-takeover",
@@ -9,6 +10,7 @@
       "allowed_event_types": [
         "work_session.created",
         "takeover.started",
+        "takeover.reconciliation_required",
         "takeover.resumed",
         "contribution.recorded",
         "learning.recorded",

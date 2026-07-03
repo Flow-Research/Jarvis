@@ -33,6 +33,14 @@ test("takeover-path fixture requires reconciliation before resume", () => {
   assert.equal(result.errors[0]?.error_id, "invalid_transition");
 });
 
+test("takeover-path fixture requires resumed reconciliation refs", () => {
+  const fixture = readJson(join(fixtureRoot, "valid/takeover-path.json"));
+  fixture.records.takeovers.resumed.reconciliation_refs = [];
+  const result = validateFixture(fixture);
+  assert.equal(result.valid, false);
+  assert.equal(result.errors[0]?.error_id, "missing_reconciliation_refs");
+});
+
 test("golden-path OutcomeReport requires a terminal WorkSession source", () => {
   const fixture = readJson(join(fixtureRoot, "valid/golden-path.json"));
   fixture.records.work_sessions.outcome_active = {

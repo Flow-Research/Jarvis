@@ -17,7 +17,7 @@
     "reason": "HumanWorker completed direct control and returned reconciliation refs.",
     "lock_epoch": 2,
     "state": "resumed",
-    "created_at": "2026-06-17T10:09:00Z",
+    "created_at": "2026-06-17T10:12:00Z",
     "resumed_by_actor_id": "actor-human-takeover",
     "reconciliation_notes": "HumanWorker edited final claim and approved AgentWorker continuation inside reconciled scope.",
     "reconciliation_refs": [
