@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Versioning and Extensions | Jarvis v0.1</title>
+    <meta name="description" content="Jarvis v0.1 version negotiation, capability negotiation, and extension rules." />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../#openapi">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
+      <section class="spec-hero"><div><p class="kicker">Versioning and extensions</p><h1>Compatibility requires explicit version and capability checks.</h1><p>Jarvis v0.1 uses OpenAPI 3.1 as the machine binding and rejects silent downgrade, unsupported required capability, and extension core-field override.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages"><a href="./">Introduction</a><a href="./terminology.html">Terminology</a><a href="./protocol-objects.html">Protocol objects</a><a href="./worksession-lifecycle.html">WorkSession lifecycle</a><a href="./policy-decision.html">Policy and PolicyDecision</a><a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a><a href="./contribution-evidence.html">Contribution and EvidenceManifest</a><a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a><a href="./outcome-report.html">OutcomeReport</a><a href="./versioning-extensions.html" aria-current="page">Versioning and extensions</a><a href="./security-zero-trust.html">Security and zero trust</a></nav>
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>Version rules</h2>
+            <ul>
+              <li><code>Jarvis-Protocol-Version</code> identifies the protocol line.</li>
+              <li>OpenAPI <code>info.version</code> identifies the OpenAPI artifact version.</li>
+              <li>Compatible implementations MUST NOT silently downgrade a request.</li>
+              <li>Unsupported protocol version rejects as <code>unsupported_protocol_version</code>.</li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>Capability negotiation</h2>
+            <p><code>Jarvis-Required-Capabilities</code> binds a request to capabilities the caller requires. Compatible minor version proceeds only when required capabilities match.</p>
+            <div class="rule-grid">
+              <div class="rule-card"><h3>Supported capability</h3><p>The implementation proceeds only when the capability is supported and the operation allows capability negotiation.</p></div>
+              <div class="rule-card"><h3>Unsupported capability</h3><p>The protocol rejects unsupported required capability as <code>unsupported_capability</code>.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Extension rules</h2>
+            <ul>
+              <li>Extensions add protocol-visible fields only under valid extension namespaces.</li>
+              <li>Extensions MUST NOT override core protocol fields.</li>
+              <li>Extensions MUST NOT define runtime, workflow, UI, auth, storage, model calls, tool execution, billing, scoring, payment, or deployment behavior.</li>
+              <li>Invalid extension namespace rejects as <code>invalid_extension_namespace</code>.</li>
+              <li>Extension core field override rejects as <code>extension_core_field_override</code>.</li>
+            </ul>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">Source: OpenAPI binding</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/14-protocol-lock.md">Source: protocol lock</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

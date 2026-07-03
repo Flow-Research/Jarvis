@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Policy and PolicyDecision | Jarvis v0.1</title>
+    <meta name="description" content="Jarvis v0.1 Policy and PolicyDecision rules for governed AgentWorker action." />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../#openapi">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
+      <section class="spec-hero"><div><p class="kicker">Policy and PolicyDecision</p><h1>Policy gates accepted agent action.</h1><p>Jarvis records human-defined policy and requires PolicyDecision before an AgentWorker action that affects a WorkSession becomes protocol state.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages"><a href="./">Introduction</a><a href="./terminology.html">Terminology</a><a href="./protocol-objects.html">Protocol objects</a><a href="./worksession-lifecycle.html">WorkSession lifecycle</a><a href="./policy-decision.html" aria-current="page">Policy and PolicyDecision</a><a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a><a href="./contribution-evidence.html">Contribution and EvidenceManifest</a><a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a><a href="./outcome-report.html">OutcomeReport</a><a href="./versioning-extensions.html">Versioning and extensions</a><a href="./security-zero-trust.html">Security and zero trust</a></nav>
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>Policy records</h2>
+            <p>Policy records define the human-owned boundary for AgentWorker autonomy.</p>
+            <div class="field-grid">
+              <div class="field-card"><h3>Required fields</h3><p><code>id</code>, <code>owner_worker_id</code>, <code>created_by_actor_id</code>, <code>autonomy_level</code>, <code>allowed_actions</code>, <code>denied_actions</code>, <code>review_required_actions</code>, <code>risk_classes</code>, <code>escalation_rules</code>, <code>created_at</code></p></div>
+              <div class="field-card"><h3>Optional protocol context</h3><p><code>tool_grants</code>, <code>memory_grants</code>, <code>external_send_rules</code>, <code>request_limits</code>, and <code>extensions</code></p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>PolicyDecision records</h2>
+            <p>PolicyDecision records why a requested AgentWorker action is allowed, denied, narrowed, or sent for human review.</p>
+            <p>PolicyDecision required fields are <code>id</code>, <code>work_session_id</code>, <code>actor_id</code>, <code>policy_id</code>, <code>requested_action</code>, <code>normalized_action_hash</code>, <code>risk_class</code>, <code>result</code>, <code>reason</code>, and <code>created_at</code>.</p>
+            <div class="rule-grid">
+              <div class="rule-card"><h3>allow</h3><p>The AgentWorker action fits Policy and becomes eligible for accepted protocol state after mutation checks pass.</p></div>
+              <div class="rule-card"><h3>deny</h3><p>The AgentWorker action stays blocked. Denial creates or references a Request.</p></div>
+              <div class="rule-card"><h3>narrow</h3><p>The action is allowed only inside a smaller bounded scope.</p></div>
+              <div class="rule-card"><h3>review_required</h3><p>The action requires HumanWorker input through Request, Review, or Takeover before the blocked scope continues.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Compatibility expectations</h2>
+            <ul>
+              <li>Compatible implementations MUST record PolicyDecision before accepted AgentWorker action state.</li>
+              <li>Actor-bearing mutation bodies MUST match <code>Jarvis-Actor-Id</code>.</li>
+              <li>The protocol rejects missing PolicyDecision before accepted AgentWorker action state.</li>
+              <li>The protocol rejects hidden policy traces, provider secrets, database ids, runtime decision objects, and credentials in portable records.</li>
+            </ul>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/03-autonomy-policy.md">Source: autonomy policy</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">Source: field lock</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">Source: OpenAPI binding</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

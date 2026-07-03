@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Terminology | Jarvis v0.1</title>
+    <meta name="description" content="Jarvis v0.1 terminology for HumanWorker, AgentWorker, WorkSession, Policy, Request, Review, Evidence, and Learning." />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar" aria-label="Jarvis specification header">
+        <a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a>
+        <nav class="topnav" aria-label="Specification navigation">
+          <a href="../">Home</a>
+          <a href="./">Spec</a>
+          <a href="../#openapi">OpenAPI</a>
+          <a href="../#conformance">Conformance</a>
+          <a href="../#boundary">Boundary</a>
+        </nav>
+        <span class="status-chip">v0.1</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">Terminology</p>
+          <h1>Protocol terms have fixed meaning.</h1>
+          <p>Jarvis uses worker, actor, session, policy, request, review, evidence, and learning terms to describe portable human-agent collaboration records.</p>
+        </div>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages">
+          <a href="./">Introduction</a>
+          <a href="./terminology.html" aria-current="page">Terminology</a>
+          <a href="./protocol-objects.html">Protocol objects</a>
+          <a href="./worksession-lifecycle.html">WorkSession lifecycle</a>
+          <a href="./policy-decision.html">Policy and PolicyDecision</a>
+          <a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a>
+          <a href="./contribution-evidence.html">Contribution and EvidenceManifest</a>
+          <a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a>
+          <a href="./outcome-report.html">OutcomeReport</a>
+          <a href="./versioning-extensions.html">Versioning and extensions</a>
+          <a href="./security-zero-trust.html">Security and zero trust</a>
+        </nav>
+
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>Core terms</h2>
+            <div class="field-grid">
+              <div class="field-card"><h3>Worker</h3><p>A protocol participant. Worker records identify who or what participates and the authority and accountability attached to that participant.</p></div>
+              <div class="field-card"><h3>Actor</h3><p>An acting identity for protocol events and contributions. Actor records bind accepted state to authority and contribution scope.</p></div>
+              <div class="field-card"><h3>HumanWorker</h3><p>The accountable human participant. HumanWorker owns direction, policy authority, review authority, correction, and takeover judgment.</p></div>
+              <div class="field-card"><h3>AgentWorker</h3><p>The agent participant. AgentWorker contributes planning, research, drafting, evidence collection, and governed improvement proposals through host-owned execution.</p></div>
+              <div class="field-card"><h3>Host</h3><p>The implementation environment. Hosts own UI, identity, auth, storage, execution, tools, models, monitoring, deployment, and workflow.</p></div>
+              <div class="field-card"><h3>Compatible implementation</h3><p>A host or external system that produces, validates, rejects, exports, and preserves Jarvis-compatible protocol records.</p></div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Work terms</h2>
+            <div class="rule-grid">
+              <div class="rule-card"><h3>WorkSession</h3><p>The durable record of a focused unit of human-agent work. WorkSession is the source of truth for protocol state.</p></div>
+              <div class="rule-card"><h3>JarvisEvent</h3><p>An append-only event with sequence, Actor, timestamp, payload, previous hash, and event hash.</p></div>
+              <div class="rule-card"><h3>Policy</h3><p>The human-owned boundary for autonomous AgentWorker action.</p></div>
+              <div class="rule-card"><h3>PolicyDecision</h3><p>The protocol record that explains why an AgentWorker action is allowed, denied, narrowed, or sent for human review.</p></div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Control and proof terms</h2>
+            <ul>
+              <li><code>Request</code> records scoped deferral when AgentWorker cannot continue safely without human input.</li>
+              <li><code>Review</code> records human judgment over a Request, artifact, action, contribution, evidence item, or outcome.</li>
+              <li><code>ApprovalScope</code> bounds Review-approved continuation to a specific request, action, Actor, WorkSession, expiry, and max use count.</li>
+              <li><code>Takeover</code> records direct human control over a scope and blocks stale autonomous continuation with a lock epoch.</li>
+              <li><code>Contribution</code> records who did what and preserves individual refs for shared work.</li>
+              <li><code>EvidenceManifest</code> exports portable proof without host-private fields.</li>
+              <li><code>LearningRecord</code> records what the human, agent, or pair learned from source events.</li>
+              <li><code>MemoryProposal</code> and <code>SkillProposal</code> keep future behavior changes governed.</li>
+              <li><code>OutcomeReport</code> carries post-session feedback into governed LearningRecords without mutating sealed records.</li>
+            </ul>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">Source: core objects</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/12-request-protocol.md">Source: request protocol</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
