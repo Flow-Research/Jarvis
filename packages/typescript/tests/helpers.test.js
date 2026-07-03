@@ -84,6 +84,10 @@ test("operation helper binds OpenAPI method path status headers and actor", () =
     createOperationPath("exportEvidenceManifest", { work_session_id: "ws-test" }),
     "/work-sessions/ws-test/export",
   );
+  assert.equal(
+    createOperationPath("exportEvidenceManifest", { work_session_id: "ws-!'()*" }),
+    "/work-sessions/ws-%21%27%28%29%2A/export",
+  );
 
   const operation = createOperationEnvelope({
     operationId: "exportEvidenceManifest",
@@ -104,6 +108,26 @@ test("operation helper binds OpenAPI method path status headers and actor", () =
     expected_status: 200,
     work_session_id: "ws-test",
   });
+  assert.equal(validateOperationHeaders(operation).valid, true);
+});
+
+test("operation helper preserves caller-provided headers", () => {
+  const headers = createWorkSessionMutationHeaders({
+    actorId: "actor-human-test",
+    authorization: AUTHORIZATION,
+    idempotencyKey: "idem-test",
+    requestTimestamp: "2026-06-16T10:00:00Z",
+    expectedWorkSessionRevision: 0,
+    previousEventHash: "hash:protocol-genesis",
+  });
+  const operation = createOperationEnvelope({
+    operationId: "appendJarvisEvent",
+    actorId: "actor-human-test",
+    headers,
+    workSessionId: "ws-test",
+    bodyRef: "records.jarvis_events.created",
+  });
+  assert.equal(operation.headers, headers);
   assert.equal(validateOperationHeaders(operation).valid, true);
 });
 

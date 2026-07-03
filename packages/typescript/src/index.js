@@ -437,6 +437,12 @@ export function getOperationBinding(operationId) {
   };
 }
 
+function encodePathParam(value) {
+  return encodeURIComponent(value).replace(/[!'()*]/g, (char) => {
+    return `%${char.charCodeAt(0).toString(16).toUpperCase()}`;
+  });
+}
+
 export function createOperationPath(operationId, pathParams = {}) {
   const binding = getOperationBinding(operationId);
   return binding.path.replace(/\{([^/]+)\}/g, (_match, key) => {
@@ -444,7 +450,7 @@ export function createOperationPath(operationId, pathParams = {}) {
     if (!isNonEmptyString(value)) {
       throw helperError(`path.${key}`, `${key} is required for ${operationId}.`);
     }
-    return encodeURIComponent(value);
+    return encodePathParam(value);
   });
 }
 
