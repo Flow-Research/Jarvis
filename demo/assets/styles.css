@@ -500,7 +500,8 @@ a {
 .example-grid,
 .package-grid,
 .reference-grid,
-.implementation-steps {
+.implementation-steps,
+.guide-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
@@ -550,12 +551,6 @@ a {
 
 .reference-grid p {
   margin-top: 8px;
-}
-
-.guide-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
 }
 
 .guide-grid a {

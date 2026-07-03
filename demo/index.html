@@ -274,9 +274,11 @@
               <li>Jarvis-Previous-Event-Hash</li>
             </ul>
             <p>
-              Worker registration, Actor registration, and OutcomeReport use the
-              non-WorkSession mutation header set and MUST NOT require fake
-              revision or previous-hash values.
+              Non-WorkSession mutation headers are Jarvis-Protocol-Version,
+              Jarvis-Actor-Id, Jarvis-Idempotency-Key, and
+              Jarvis-Request-Timestamp. Worker registration, Actor registration,
+              and OutcomeReport MUST NOT require fake revision or previous-hash
+              values.
             </p>
           </article>
           <article>
