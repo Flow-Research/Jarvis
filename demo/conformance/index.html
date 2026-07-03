@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Conformance | Jarvis v0.1</title>
+    <meta
+      name="description"
+      content="Jarvis v0.1 conformance overview for compatible implementations, fixtures, checklist gates, and public compatibility claims."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=conformance1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=conformance1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span><strong>Jarvis</strong><small>conformance</small></span>
+        </a>
+        <nav class="topnav" aria-label="Conformance navigation">
+          <a href="../">Home</a>
+          <a href="../spec/">Spec</a>
+          <a href="../openapi/">OpenAPI</a>
+          <a href="./" aria-current="page">Conformance</a>
+          <a href="../#boundary">Boundary</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">Record-backed compatibility</p>
+          <h1>Compatible implementations prove protocol behavior.</h1>
+          <p>
+            Jarvis conformance proves protocol records, operation headers,
+            Actor authority, WorkSession revision, event hash links, Request
+            resolution, Takeover safety, EvidenceManifest export boundaries,
+            and governed learning. It does not certify host runtime, UI,
+            storage, auth backend, model calls, tool execution, billing,
+            scoring, payment, deployment, adapters, wrappers, or SDK
+            implementation.
+          </p>
+        </div>
+        <div class="inline-actions">
+          <a class="command primary" href="./golden-path.html">Golden path</a>
+          <a class="command" href="./fixtures.html">Fixture list</a>
+        </div>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Conformance pages">
+          <a href="./" aria-current="page">Overview</a>
+          <a href="./golden-path.html">Golden path</a>
+          <a href="./failure-modes.html">Failure modes</a>
+          <a href="./fixtures.html">Fixture list</a>
+          <a href="./compatibility-claim.html">Compatibility claim</a>
+          <a href="./existing-agent-compatibility.html">Existing-agent compatibility</a>
+          <a href="./compatible-host-mapping.html">Compatible host mapping</a>
+        </nav>
+
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>What a compatible implementation proves</h2>
+            <div class="rule-grid">
+              <div class="rule-card">
+                <h3>Participant and authority records</h3>
+                <p>Worker and Actor records represent protocol-visible HumanWorkers, AgentWorkers, and accepted protocol operations.</p>
+              </div>
+              <div class="rule-card">
+                <h3>Zero-trust mutation gates</h3>
+                <p>WorkSession-scoped mutations validate protocol version, Actor, idempotency, timestamp, expected revision, and previous event hash.</p>
+              </div>
+              <div class="rule-card">
+                <h3>Policy before agent state</h3>
+                <p>Every AgentWorker action that affects a WorkSession records PolicyDecision before accepted protocol state.</p>
+              </div>
+              <div class="rule-card">
+                <h3>Human judgment over blocked work</h3>
+                <p>Request resolves only through Review or Takeover, with bounded ApprovalScope or lock-epoch reconciliation when required.</p>
+              </div>
+              <div class="rule-card">
+                <h3>Portable evidence</h3>
+                <p>EvidenceManifest exports event-backed proof and rejects host-private fields, credentials, secrets, raw runtime state, and private scores.</p>
+              </div>
+              <div class="rule-card">
+                <h3>Governed learning</h3>
+                <p>LearningRecord, MemoryProposal, SkillProposal, and OutcomeReport preserve human, agent, and pair learning without silent mutation.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Fixture-backed and checklist-only proof</h2>
+            <div class="field-grid">
+              <div class="field-card">
+                <h3>Fixture-backed proof</h3>
+                <p>Golden-path and failure-mode fixtures give machine-checkable record examples for accepted and rejected behavior.</p>
+                <p><a href="./fixtures.html">Open fixture list</a></p>
+              </div>
+              <div class="field-card">
+                <h3>Checklist-only proof</h3>
+                <p>Some required protocol errors and unsupported capability rules remain checklist requirements without fixture coverage in v0.1.0.</p>
+                <p><a href="./compatibility-claim.html">Open claim format</a></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Conformance boundary</h2>
+            <ul>
+              <li>Jarvis defines conformance expectations.</li>
+              <li>Jarvis v0.1.0 does not certify implementations.</li>
+              <li>Jarvis v0.1.0 does not designate an official host.</li>
+              <li>Jarvis v0.1.0 does not claim production adoption.</li>
+              <li>Jarvis v0.1.0 does not establish governance claims.</li>
+              <li>Hosts own native execution and implementation behavior.</li>
+            </ul>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Conformance pages</h2>
+            <div class="link-table" aria-label="Conformance page links">
+              <a href="./golden-path.html"><span>Golden path</span><small>Accepted collaboration loop proof</small></a>
+              <a href="./failure-modes.html"><span>Failure modes</span><small>Required rejection behavior and error ids</small></a>
+              <a href="./fixtures.html"><span>Fixture list</span><small>Valid and invalid fixture set</small></a>
+              <a href="./compatibility-claim.html"><span>Compatibility claim</span><small>Public claim format and forbidden claims</small></a>
+              <a href="./existing-agent-compatibility.html"><span>Existing-agent compatibility</span><small>Native agents keep native execution and emit Jarvis records</small></a>
+              <a href="./compatible-host-mapping.html"><span>Compatible host mapping</span><small>Different host shapes produce equivalent Jarvis records</small></a>
+            </div>
+          </article>
+
+          <article class="spec-panel" id="sources">
+            <h2>Source contracts</h2>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/README.md">Source: conformance README</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/checklist.md">Source: public conformance checklist</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/README.md">Source: fixtures README</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

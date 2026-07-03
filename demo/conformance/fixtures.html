@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fixture List | Jarvis Conformance</title>
+    <meta name="description" content="Jarvis v0.1 conformance fixture list for valid and invalid protocol proof records." />
+    <link rel="icon" href="../assets/favicon.svg?v=conformance1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=conformance1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>conformance</small></span></a><nav class="topnav" aria-label="Conformance navigation"><a href="../">Home</a><a href="../spec/">Spec</a><a href="../openapi/">OpenAPI</a><a href="./" aria-current="location">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1.0</span></header>
+      <section class="spec-hero"><div><p class="kicker">Fixture list</p><h1>Fixtures are protocol proof records.</h1><p>Jarvis fixtures validate protocol envelopes, OpenAPI operation binding, required headers, assertion refs, fixture-backed rejection ids, event hash links, export boundaries, and expected protocol outcomes. Fixtures do not execute host behavior.</p></div><a class="command primary" href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/README.md">Open fixtures</a></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Conformance pages"><a href="./">Overview</a><a href="./golden-path.html">Golden path</a><a href="./failure-modes.html">Failure modes</a><a href="./fixtures.html" aria-current="page">Fixture list</a><a href="./compatibility-claim.html">Compatibility claim</a><a href="./existing-agent-compatibility.html">Existing-agent compatibility</a><a href="./compatible-host-mapping.html">Compatible host mapping</a></nav>
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Valid fixtures</h2>
+            <div class="link-table">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/valid/golden-path.json"><span>golden-path.json</span><small>Accepted collaboration loop</small></a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/valid/takeover-path.json"><span>takeover-path.json</span><small>Accepted Takeover path and reconciliation proof</small></a>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Invalid fixtures</h2>
+            <div class="schema-list" aria-label="Invalid fixture names">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/forbidden-host-private-export-field.json">forbidden-host-private-export-field.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/invalid-approval-scope.json">invalid-approval-scope.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/invalid-evidence-export-state.json">invalid-evidence-export-state.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/invalid-previous-event-hash.json">invalid-previous-event-hash.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/missing-actor.json">missing-actor.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/missing-expected-work-session-revision.json">missing-expected-work-session-revision.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/missing-idempotency-key.json">missing-idempotency-key.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/missing-policy-decision.json">missing-policy-decision.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/missing-policy.json">missing-policy.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/missing-previous-event-hash.json">missing-previous-event-hash.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/missing-protocol-version.json">missing-protocol-version.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/missing-request-timestamp.json">missing-request-timestamp.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/missing-review-resolution.json">missing-review-resolution.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/missing-takeover-resolution.json">missing-takeover-resolution.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/outcome-report-requires-terminal-source.json">outcome-report-requires-terminal-source.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/outcome-report-without-learning-record.json">outcome-report-without-learning-record.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/sealed-evidence-mutation.json">sealed-evidence-mutation.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/sealed-work-session-mutation.json">sealed-work-session-mutation.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/silent-memory-mutation.json">silent-memory-mutation.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/silent-skill-activation.json">silent-skill-activation.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/stale-request-timestamp.json">stale-request-timestamp.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/stale-takeover-continuation.json">stale-takeover-continuation.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/stale-work-session-revision.json">stale-work-session-revision.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/unauthorized-actor.json">unauthorized-actor.json</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/unresolved-request.json">unresolved-request.json</a>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Fixture envelope</h2>
+            <pre class="code-sample"><code>fixture_id
+protocol_version
+kind
+title
+description
+source_contract_refs
+host_shape_ref
+records
+operations
+assertions
+expected_result
+expected_error_id
+expected_error_field</code></pre>
+            <p>Valid fixtures omit <code>expected_error_id</code> and <code>expected_error_field</code>. Invalid fixtures include one primary <code>expected_error_id</code>.</p>
+          </article>
+          <article class="spec-panel">
+            <h2>Validation command</h2>
+            <pre class="code-sample"><code>python3 scripts/check_conformance_fixtures.py</code></pre>
+          </article>
+          <article class="spec-panel">
+            <h2>Source contract</h2>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/README.md">Source: fixtures README</a><a href="https://github.com/Flow-Research/jarvis/blob/main/scripts/check_conformance_fixtures.py">Source: fixture validator</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

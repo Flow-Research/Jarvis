@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Compatibility Claim | Jarvis Conformance</title>
+    <meta name="description" content="Jarvis v0.1 public compatibility claim format and forbidden conformance claims." />
+    <link rel="icon" href="../assets/favicon.svg?v=conformance1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=conformance1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>conformance</small></span></a><nav class="topnav" aria-label="Conformance navigation"><a href="../">Home</a><a href="../spec/">Spec</a><a href="../openapi/">OpenAPI</a><a href="./" aria-current="location">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1.0</span></header>
+      <section class="spec-hero"><div><p class="kicker">Public compatibility claim</p><h1>Compatibility claims state the exact proof surface.</h1><p>Jarvis v0.1.0 permits evidence-backed compatibility claims only. The claim identifies implementation, protocol line, conformance surface, verification date, verifier status, and evidence reference.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Conformance pages"><a href="./">Overview</a><a href="./golden-path.html">Golden path</a><a href="./failure-modes.html">Failure modes</a><a href="./fixtures.html">Fixture list</a><a href="./compatibility-claim.html" aria-current="page">Compatibility claim</a><a href="./existing-agent-compatibility.html">Existing-agent compatibility</a><a href="./compatible-host-mapping.html">Compatible host mapping</a></nav>
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Required format</h2>
+            <pre class="code-sample"><code>Implementation: &lt;name&gt; &lt;implementation-version&gt;
+Protocol compatibility: Jarvis v0.1
+Conformance surface: &lt;checklist-fixtures-or-proof-plan&gt;
+Verification date: &lt;verification-date&gt;
+Verifier: &lt;verifier-or-self-attested-status&gt;
+Evidence: &lt;evidence-ref&gt;</code></pre>
+          </article>
+          <article class="spec-panel">
+            <h2>Allowed claim basis</h2>
+            <ul>
+              <li>Public conformance checklist.</li>
+              <li>Golden-path fixture.</li>
+              <li>Failure-mode fixture set.</li>
+              <li>Existing-agent proof plan.</li>
+              <li>Compatible host mapping proof.</li>
+              <li>Evidence pack or validator output reference.</li>
+            </ul>
+            <p>The claim MUST name protocol version, conformance surface, fixture or checklist basis, verification date, retained evidence reference or artifact hash, implementation version, and verifier identity or explicit self-attested status.</p>
+            <p>Claims without independent verification MUST say <code>self-attested</code>.</p>
+          </article>
+          <article class="spec-panel">
+            <h2>Required proof list</h2>
+            <ul>
+              <li>PolicyDecision before accepted AgentWorker protocol state.</li>
+              <li>Request for blocked scope.</li>
+              <li>Review or Takeover resolution.</li>
+              <li>Takeover stale-continuation rejection.</li>
+              <li>Contribution attribution.</li>
+              <li>EvidenceManifest portable export boundary.</li>
+              <li>LearningRecord for human, agent, or pair learning.</li>
+              <li>Governed MemoryProposal and SkillProposal.</li>
+              <li>OutcomeReport references governed LearningRecord records.</li>
+              <li>Actor/body binding.</li>
+              <li>Required mutation headers.</li>
+              <li>Event hash chain.</li>
+              <li>Protocol error envelope.</li>
+              <li>Forbidden host-private export rejection.</li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>Rejected claims</h2>
+            <ul>
+              <li>Certified Jarvis implementation.</li>
+              <li>Official Jarvis host.</li>
+              <li>Production adoption proven by Jarvis.</li>
+              <li>Foundation governance approval.</li>
+              <li>Runtime, adapter, wrapper, SDK implementation, model routing, tool execution, storage, auth, UI, billing, scoring, payment, or deployment compatibility.</li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>Source contract</h2>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/checklist.md">Source: public conformance checklist</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/releases/v0.1.0.md">Source: v0.1.0 release notes</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

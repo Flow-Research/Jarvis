@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Failure Modes | Jarvis Conformance</title>
+    <meta name="description" content="Jarvis v0.1 failure-mode conformance rejections and protocol error ids." />
+    <link rel="icon" href="../assets/favicon.svg?v=conformance1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=conformance1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>conformance</small></span></a><nav class="topnav" aria-label="Conformance navigation"><a href="../">Home</a><a href="../spec/">Spec</a><a href="../openapi/">OpenAPI</a><a href="./" aria-current="location">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1.0</span></header>
+      <section class="spec-hero"><div><p class="kicker">Failure modes</p><h1>Compatible implementations reject unsafe protocol records.</h1><p>Failure-mode conformance protects the human-agent collaboration and learning loop from fake compatibility, silent learning changes, missing authority, incomplete evidence, stale continuation, and sealed-record mutation.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Conformance pages"><a href="./">Overview</a><a href="./golden-path.html">Golden path</a><a href="./failure-modes.html" aria-current="page">Failure modes</a><a href="./fixtures.html">Fixture list</a><a href="./compatibility-claim.html">Compatibility claim</a><a href="./existing-agent-compatibility.html">Existing-agent compatibility</a><a href="./compatible-host-mapping.html">Compatible host mapping</a></nav>
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Required rejections</h2>
+            <div class="field-grid">
+              <div class="field-card"><h3>Headers and authority</h3><p>Reject missing protocol version, missing Actor header, invalid Actor authority, missing idempotency key, missing request timestamp, stale request timestamp, missing expected WorkSession revision, and missing previous event hash.</p></div>
+              <div class="field-card"><h3>Policy and control</h3><p>Reject missing Policy, missing PolicyDecision before AgentWorker state change, Request resolved without Review or Takeover, terminal state with unresolved Request, and approval without bounded ApprovalScope.</p></div>
+              <div class="field-card"><h3>Revision and takeover</h3><p>Reject stale WorkSession revision, previous event hash mismatch, and stale Takeover continuation.</p></div>
+              <div class="field-card"><h3>Evidence and learning</h3><p>Reject invalid EvidenceManifest export state, sealed WorkSession mutation, sealed EvidenceManifest mutation, host-private export fields, silent memory mutation, silent skill activation, OutcomeReport without LearningRecord, and OutcomeReport with non-terminal source WorkSession.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Fixture-backed rejection ids</h2>
+            <div class="schema-list" aria-label="Required rejection ids">
+              <span>missing_protocol_version</span><span>missing_actor</span><span>unauthorized_actor</span><span>missing_idempotency_key</span><span>missing_request_timestamp</span><span>stale_request_timestamp</span><span>missing_expected_work_session_revision</span><span>missing_previous_event_hash</span><span>missing_policy</span><span>missing_policy_decision</span><span>missing_review_resolution</span><span>missing_takeover_resolution</span><span>request_unresolved</span><span>invalid_approval_scope</span><span>stale_work_session_revision</span><span>invalid_previous_event_hash</span><span>stale_takeover_epoch</span><span>invalid_evidence_export_state</span><span>sealed_work_session_mutation</span><span>sealed_evidence_mutation</span><span>forbidden_host_private_field</span><span>silent_memory_mutation</span><span>silent_skill_activation</span><span>outcome_report_without_learning_record</span><span>outcome_report_requires_terminal_source</span>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Checklist-only protocol error ids</h2>
+            <p>These ids exist in the OpenAPI contract without dedicated invalid fixtures in the current v0.1 fixture set. Compatible implementations MUST still reject them when the relevant condition appears. Public conformance reports MUST NOT claim fixture coverage for these ids unless fixtures are added.</p>
+            <div class="schema-list" aria-label="Checklist-only protocol error ids">
+              <span>invalid_transition</span><span>unknown_state</span><span>unsupported_protocol_version</span><span>path_body_id_mismatch</span><span>actor_body_id_mismatch</span><span>missing_objective</span><span>policy_denied</span><span>review_required</span><span>invalid_request_transition</span><span>missing_superseding_request</span><span>approval_scope_expired</span><span>approval_scope_mismatch</span><span>invalid_event_hash</span><span>duplicate_idempotency_key_mismatch</span><span>request_livelock</span><span>duplicate_request_mismatch</span><span>missing_jarvis_event</span><span>missing_blocked_scope_resolution_refs</span><span>missing_reconciliation_refs</span><span>mutation_after_closed</span><span>invalid_export</span><span>invalid_export_state</span><span>missing_contribution_actor</span><span>invalid_contributor_refs</span><span>shared_contribution_without_individual_refs</span><span>duplicate_contributor_ref</span><span>evidence_after_the_fact</span><span>missing_evidence_event_refs</span><span>duplicate_evidence_item_ref</span><span>forbidden_export_field</span><span>model_self_confirmed_memory</span><span>tool_self_confirmed_memory</span><span>skill_expands_tool_access_without_policy_review</span><span>unsupported_capability</span><span>invalid_extension_namespace</span><span>extension_core_field_override</span>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Required error envelope</h2>
+            <pre class="code-sample"><code>error_id
+protocol_version
+object_type
+field
+reason
+remediation
+trace_id</code></pre>
+            <p>Protocol error responses MUST exclude host-private fields.</p>
+          </article>
+          <article class="spec-panel">
+            <h2>Source contract</h2>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/failure-modes.md">Source: failure-mode conformance entry</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/README.md">Source: fixture list</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
