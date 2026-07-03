@@ -767,6 +767,88 @@ a {
   outline: 2px solid var(--mint);
   outline-offset: 3px;
 }
+
+.operation-table,
+.header-matrix {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.operation-table > div,
+.header-matrix > div {
+  min-height: 150px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 4%);
+  padding: 16px;
+}
+
+.operation-table p,
+.header-matrix li {
+  color: var(--muted);
+  line-height: 1.58;
+}
+
+.operation-table p {
+  margin: 10px 0 0;
+}
+
+.header-matrix ul {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+
+.schema-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.schema-list span {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgb(120 247 180 / 8%);
+  color: #c8d3c8;
+  padding: 0 12px;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.code-sample,
+.openapi-frame {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgb(5 7 4 / 80%);
+  color: var(--bone);
+}
+
+.code-sample {
+  min-height: 220px;
+  margin: 16px 0 0;
+  overflow: auto;
+  padding: 16px;
+  line-height: 1.55;
+}
+
+.openapi-frame {
+  min-height: 640px;
+  margin-top: 16px;
+}
+
+.openapi-frame:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
+}
+
 .link-table {
   display: grid;
   gap: 10px;
@@ -1477,9 +1559,9 @@ a {
 
 @media (max-width: 760px) {
   .shell {
-    width: min(340px, calc(100vw - 20px));
+    width: calc(100% - 20px);
     max-width: none;
-    margin: 0;
+    margin: 0 auto;
     padding: 10px;
     overflow: visible;
   }
@@ -1661,7 +1743,9 @@ a {
 
   .spec-side,
   .rule-grid,
-  .field-grid {
+  .field-grid,
+  .operation-table,
+  .header-matrix {
     grid-template-columns: 1fr;
   }
 

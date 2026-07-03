@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenAPI Reference | Jarvis v0.1</title>
+    <meta
+      name="description"
+      content="Rendered Jarvis v0.1 OpenAPI reference for protocol operations, schemas, headers, HostAuth, and errors."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=openapi1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=openapi1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span>
+            <strong>Jarvis</strong>
+            <small>OpenAPI reference</small>
+          </span>
+        </a>
+        <nav class="topnav" aria-label="OpenAPI reference navigation">
+          <a href="../">Home</a>
+          <a href="../spec/">Spec</a>
+          <a href="./" aria-current="page">OpenAPI</a>
+          <a href="../#conformance">Conformance</a>
+          <a href="../#boundary">Boundary</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">OpenAPI 3.1 communication binding</p>
+          <h1>OpenAPI is the machine-readable Jarvis contract.</h1>
+          <p>
+            Jarvis uses OpenAPI 3.1.1 to define protocol operations, schemas,
+            required headers, HostAuth, error envelopes, and examples.
+            OpenAPI defines record exchange. It does not define a host runtime,
+            SDK implementation, model router, tool executor, storage backend,
+            or UI.
+          </p>
+        </div>
+        <div class="inline-actions">
+          <a class="command primary" href="./jarvis-openapi.yaml">Open YAML</a>
+          <a
+            class="command"
+            href="https://raw.githubusercontent.com/Flow-Research/jarvis/main/docs/openapi/jarvis-openapi.yaml"
+          >
+            Raw source
+          </a>
+        </div>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="OpenAPI reference sections">
+          <a href="#version-lines">Version lines</a>
+          <a href="#operations">Operations</a>
+          <a href="#schemas">Schemas</a>
+          <a href="#security">Security and headers</a>
+          <a href="#errors">Error envelope</a>
+          <a href="#yaml">Rendered YAML</a>
+          <a href="#sources">Sources</a>
+        </nav>
+
+        <div class="spec-main">
+          <article class="spec-panel" id="version-lines">
+            <h2>Version lines</h2>
+            <div class="rule-grid">
+              <div class="rule-card">
+                <h3><code>info.version: 0.1.0</code></h3>
+                <p>
+                  This is the OpenAPI artifact version. It identifies the
+                  published v0.1.0 document.
+                </p>
+              </div>
+              <div class="rule-card">
+                <h3><code>x-jarvis-protocol.version: v0.1</code></h3>
+                <p>
+                  This is the Jarvis protocol line. Compatible implementations
+                  negotiate protocol behavior against this value.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel" id="operations">
+            <h2>Protocol operations</h2>
+            <div class="operation-table" aria-label="OpenAPI operation groups">
+              <div>
+                <h3>Worker and Actor refs</h3>
+                <p><code>PUT /workers/{worker_id}</code> registers Worker protocol references.</p>
+                <p><code>PUT /actors/{actor_id}</code> registers Actor authority references.</p>
+              </div>
+              <div>
+                <h3>WorkSession lifecycle</h3>
+                <p><code>POST /work-sessions</code> creates the genesis WorkSession.</p>
+                <p><code>GET /work-sessions/{work_session_id}</code> reads WorkSession protocol state.</p>
+                <p><code>POST /work-sessions/{work_session_id}/events</code> appends JarvisEvent records.</p>
+              </div>
+              <div>
+                <h3>Control plane</h3>
+                <p><code>POST /work-sessions/{work_session_id}/policy-decisions</code> records PolicyDecision.</p>
+                <p><code>POST /work-sessions/{work_session_id}/requests</code> records Request.</p>
+                <p><code>POST /work-sessions/{work_session_id}/reviews</code> records Review.</p>
+                <p><code>POST /work-sessions/{work_session_id}/takeovers</code> records Takeover.</p>
+              </div>
+              <div>
+                <h3>Evidence and learning</h3>
+                <p><code>POST /work-sessions/{work_session_id}/contributions</code> records Contribution.</p>
+                <p><code>POST /work-sessions/{work_session_id}/learning-records</code> records LearningRecord.</p>
+                <p><code>POST /work-sessions/{work_session_id}/memory-proposals</code> and <code>POST /work-sessions/{work_session_id}/skill-proposals</code> record governed proposals.</p>
+                <p><code>GET /work-sessions/{work_session_id}/export</code> exports EvidenceManifest.</p>
+              </div>
+              <div>
+                <h3>Post-session feedback</h3>
+                <p><code>POST /outcome-reports</code> records external outcome feedback without mutating sealed WorkSession or EvidenceManifest records.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel" id="schemas">
+            <h2>Protocol schemas</h2>
+            <p>
+              OpenAPI schemas define the portable protocol records that
+              compatible implementations exchange and validate.
+            </p>
+            <div class="schema-list" aria-label="OpenAPI schemas">
+              <span>Worker</span>
+              <span>Actor</span>
+              <span>HumanWorker</span>
+              <span>AgentWorker</span>
+              <span>WorkSession</span>
+              <span>JarvisEvent</span>
+              <span>Policy</span>
+              <span>PolicyDecision</span>
+              <span>Request</span>
+              <span>Review</span>
+              <span>ApprovalScope</span>
+              <span>Takeover</span>
+              <span>Contribution</span>
+              <span>EvidenceManifest</span>
+              <span>LearningRecord</span>
+              <span>MemoryProposal</span>
+              <span>SkillProposal</span>
+              <span>OutcomeReport</span>
+              <span>ProtocolError</span>
+            </div>
+          </article>
+
+          <article class="spec-panel" id="security">
+            <h2>Security and headers</h2>
+            <div class="rule-grid">
+              <div class="rule-card">
+                <h3>HostAuth</h3>
+                <p>
+                  Every operation uses the HostAuth security scheme. Hosts own
+                  the actual authentication system. Jarvis records the protocol
+                  requirement.
+                </p>
+              </div>
+              <div class="rule-card">
+                <h3>ActorHeader</h3>
+                <p>
+                  <code>Jarvis-Actor-Id</code> identifies the protocol Actor
+                  whose authority is checked and recorded.
+                </p>
+              </div>
+            </div>
+            <div class="header-matrix" aria-label="Required header matrix">
+              <div>
+                <h3>WorkSession-scoped mutation</h3>
+                <ul>
+                  <li><code>Jarvis-Protocol-Version</code></li>
+                  <li><code>Jarvis-Actor-Id</code></li>
+                  <li><code>Jarvis-Idempotency-Key</code></li>
+                  <li><code>Jarvis-Request-Timestamp</code></li>
+                  <li><code>Jarvis-Expected-WorkSession-Revision</code></li>
+                  <li><code>Jarvis-Previous-Event-Hash</code></li>
+                </ul>
+              </div>
+              <div>
+                <h3>Genesis WorkSession mutation</h3>
+                <ul>
+                  <li><code>Jarvis-Expected-WorkSession-Revision: 0</code></li>
+                  <li><code>Jarvis-Previous-Event-Hash: hash:protocol-genesis</code></li>
+                  <li>Accepted state starts as <code>active</code> at revision <code>1</code>.</li>
+                </ul>
+              </div>
+              <div>
+                <h3>Non-WorkSession mutation</h3>
+                <ul>
+                  <li><code>Jarvis-Protocol-Version</code></li>
+                  <li><code>Jarvis-Actor-Id</code></li>
+                  <li><code>Jarvis-Idempotency-Key</code></li>
+                  <li><code>Jarvis-Request-Timestamp</code></li>
+                </ul>
+              </div>
+              <div>
+                <h3>Read and export</h3>
+                <ul>
+                  <li><code>Jarvis-Protocol-Version</code></li>
+                  <li><code>Jarvis-Actor-Id</code></li>
+                  <li>Mutation-only headers are rejected as requirements for read operations.</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel" id="errors">
+            <h2>Error envelope example</h2>
+            <p>
+              Protocol errors use a stable envelope so incompatible behavior is
+              explicit and machine-checkable.
+            </p>
+            <pre class="code-sample" aria-label="Protocol error envelope example"><code>{
+  "error_id": "missing_expected_work_session_revision",
+  "protocol_version": "v0.1",
+  "object_type": "WorkSession",
+  "field": "headers.Jarvis-Expected-WorkSession-Revision",
+  "reason": "WorkSession-scoped mutation requires expected revision.",
+  "remediation": "Retry with the current WorkSession revision.",
+  "trace_id": "trace-example"
+}</code></pre>
+          </article>
+
+          <article class="spec-panel" id="yaml">
+            <h2>Rendered YAML</h2>
+            <p>
+              This frame renders the published site snapshot of
+              <code>docs/openapi/jarvis-openapi.yaml</code>. The docs-site
+              checker rejects drift between this snapshot and the source file.
+            </p>
+            <iframe
+              class="openapi-frame"
+              src="./jarvis-openapi.yaml"
+              title="Rendered Jarvis OpenAPI YAML"
+            ></iframe>
+          </article>
+
+          <article class="spec-panel" id="sources">
+            <h2>Sources</h2>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/openapi/README.md">Source: OpenAPI README</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">Source: communication binding</a>
+              <a href="https://raw.githubusercontent.com/Flow-Research/jarvis/main/docs/openapi/jarvis-openapi.yaml">Source: YAML</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
