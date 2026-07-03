@@ -843,6 +843,12 @@ a {
   min-height: 640px;
   margin-top: 16px;
 }
+
+.openapi-frame:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
+}
+
 .link-table {
   display: grid;
   gap: 10px;
@@ -1553,9 +1559,9 @@ a {
 
 @media (max-width: 760px) {
   .shell {
-    width: min(340px, calc(100vw - 20px));
+    width: calc(100% - 20px);
     max-width: none;
-    margin: 0;
+    margin: 0 auto;
     padding: 10px;
     overflow: visible;
   }
