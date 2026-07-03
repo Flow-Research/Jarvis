@@ -14,6 +14,22 @@ OPENAPI_SITE_COPY = SITE_ROOT / "openapi" / "jarvis-openapi.yaml"
 RAW_PREFIX = "/Flow-Research/jarvis/main/"
 BLOB_PREFIX = "/Flow-Research/jarvis/blob/main/"
 SOURCE_BASE = "https://github.com/Flow-Research/jarvis/blob/main/"
+VOID_TAGS = {
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "param",
+    "source",
+    "track",
+    "wbr",
+}
 CONFORMANCE_SOURCE_REFS = {
     SITE_ROOT / "conformance" / "index.html": (
         "docs/conformance/README.md",
@@ -59,16 +75,15 @@ class SiteParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attr_map = {key: value for key, value in attrs if value is not None}
         classes = set(attr_map.get("class", "").split())
-        if "source-list" in classes:
-            self._source_list_depth = 1
-        elif self._source_list_depth > 0:
+        in_source_list = self._source_list_depth > 0 or "source-list" in classes
+        if in_source_list and tag not in VOID_TAGS:
             self._source_list_depth += 1
         if "id" in attr_map:
             self.ids.add(attr_map["id"])
         for attr in ("href", "src"):
             if attr in attr_map:
                 self.refs.append((tag, attr, attr_map[attr]))
-                if self._source_list_depth > 0:
+                if in_source_list:
                     self.source_list_refs.append((tag, attr, attr_map[attr]))
 
     def handle_endtag(self, tag: str) -> None:
