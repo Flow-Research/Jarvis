@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jarvis Specification | v0.1</title>
+    <meta
+      name="description"
+      content="Jarvis v0.1 protocol specification pages for HumanWorker and AgentWorker collaboration, WorkSessions, Requests, Reviews, Evidence, and shared learning."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar" aria-label="Jarvis specification header">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span>
+            <strong>Jarvis</strong>
+            <small>v0.1 specification</small>
+          </span>
+        </a>
+        <nav class="topnav" aria-label="Specification navigation">
+          <a href="../">Home</a>
+          <a href="./" aria-current="page">Spec</a>
+          <a href="../#openapi">OpenAPI</a>
+          <a href="../#conformance">Conformance</a>
+          <a href="../#boundary">Boundary</a>
+        </nav>
+        <span class="status-chip">v0.1</span>
+      </header>
+
+      <section class="spec-hero" id="top">
+        <div>
+          <p class="kicker">Protocol specification</p>
+          <h1>Jarvis v0.1 protocol specification</h1>
+          <p>
+            Jarvis defines the portable collaboration and learning-loop
+            contracts for HumanWorkers and AgentWorkers. Hosts own
+            implementation. Compatible implementations use these pages with the
+            OpenAPI binding and source protocol docs.
+          </p>
+        </div>
+        <a class="command primary" href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/14-protocol-lock.md">
+          Source Lock
+        </a>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages">
+          <a href="./" aria-current="page">Introduction</a>
+          <a href="./terminology.html">Terminology</a>
+          <a href="./protocol-objects.html">Protocol objects</a>
+          <a href="./worksession-lifecycle.html">WorkSession lifecycle</a>
+          <a href="./policy-decision.html">Policy and PolicyDecision</a>
+          <a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a>
+          <a href="./contribution-evidence.html">Contribution and EvidenceManifest</a>
+          <a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a>
+          <a href="./outcome-report.html">OutcomeReport</a>
+          <a href="./versioning-extensions.html">Versioning and extensions</a>
+          <a href="./security-zero-trust.html">Security and zero trust</a>
+        </nav>
+
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>What Jarvis defines</h2>
+            <p>
+              Jarvis defines how a HumanWorker and an AgentWorker collaborate
+              inside a WorkSession under human-defined Policy. The protocol
+              records PolicyDecision, Request, Review, ApprovalScope, and Takeover, Contribution,
+              EvidenceManifest, LearningRecord, MemoryProposal, SkillProposal,
+              and OutcomeReport records.
+            </p>
+            <div class="rule-grid">
+              <div class="rule-card">
+                <h3>Jarvis owns protocol contracts</h3>
+                <p>Jarvis owns object shape, lifecycle rules, mutation gates, portable evidence, errors, and conformance expectations.</p>
+              </div>
+              <div class="rule-card">
+                <h3>Hosts own implementation</h3>
+                <p>Hosts own UI, identity, auth, storage, model calls, tool execution, monitoring, deployment, and host workflow.</p>
+              </div>
+              <div class="rule-card">
+                <h3>OpenAPI is the machine binding</h3>
+                <p>OpenAPI 3.1 defines operations, schemas, parameters, required headers, security scheme, errors, and examples.</p>
+              </div>
+              <div class="rule-card">
+                <h3>Conformance is record based</h3>
+                <p>Compatible implementations prove behavior through protocol records, event hashes, fixtures, and export checks.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Required reading path</h2>
+            <div class="field-grid">
+              <div class="field-card">
+                <h3>1. Learn terms</h3>
+                <p>Use the terminology page to map workers, actors, events, policy, evidence, and learning.</p>
+                <p><a href="./terminology.html">Open terminology</a></p>
+              </div>
+              <div class="field-card">
+                <h3>2. Learn objects</h3>
+                <p>Use the protocol objects page to see required fields and forbidden host-private fields.</p>
+                <p><a href="./protocol-objects.html">Open protocol objects</a></p>
+              </div>
+              <div class="field-card">
+                <h3>3. Learn control flow</h3>
+                <p>Use WorkSession, PolicyDecision, Request, Review, and Takeover pages to understand accepted state.</p>
+                <p><a href="./request-review-takeover.html">Open control plane</a></p>
+              </div>
+              <div class="field-card">
+                <h3>4. Learn proof and learning</h3>
+                <p>Use Contribution, EvidenceManifest, LearningRecord, MemoryProposal, SkillProposal, and OutcomeReport pages.</p>
+                <p><a href="./contribution-evidence.html">Open evidence</a></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Source contract</h2>
+            <p>
+              These website pages explain the v0.1 protocol contract. The
+              source protocol docs and OpenAPI file remain the authoritative
+              machine and text references for implementers.
+            </p>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">Core objects</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/12-request-protocol.md">Request protocol</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/13-contribution-evidence-learning.md">Evidence and learning</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">OpenAPI binding</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WorkSession Lifecycle | Jarvis v0.1</title>
+    <meta name="description" content="Jarvis v0.1 WorkSession lifecycle, event chain, terminal states, and export rules." />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../#openapi">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
+      <section class="spec-hero"><div><p class="kicker">WorkSession lifecycle</p><h1>WorkSession is the source of truth.</h1><p>A WorkSession records the focused unit of human-agent collaboration, its event chain, revision, policy, requests, reviews, contributions, evidence, and learning.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages"><a href="./">Introduction</a><a href="./terminology.html">Terminology</a><a href="./protocol-objects.html">Protocol objects</a><a href="./worksession-lifecycle.html" aria-current="page">WorkSession lifecycle</a><a href="./policy-decision.html">Policy and PolicyDecision</a><a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a><a href="./contribution-evidence.html">Contribution and EvidenceManifest</a><a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a><a href="./outcome-report.html">OutcomeReport</a><a href="./versioning-extensions.html">Versioning and extensions</a><a href="./security-zero-trust.html">Security and zero trust</a></nav>
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>Lifecycle states</h2>
+            <div class="rule-grid">
+              <div class="rule-card"><h3>active</h3><p>The accepted WorkSession starts as <code>active</code> at revision <code>1</code> after the genesis mutation records <code>work_session.created</code>.</p></div>
+              <div class="rule-card"><h3>waiting_on_human</h3><p>A Request blocks a declared scope while unrelated safe branches remain available inside Policy.</p></div>
+              <div class="rule-card"><h3>takeover</h3><p>HumanWorker controls the affected scope through a Takeover record and lock epoch.</p></div>
+              <div class="rule-card"><h3>reconciling</h3><p>The WorkSession records reconciliation after Takeover before autonomous continuation resumes.</p></div>
+              <div class="rule-card"><h3>completed, failed, cancelled</h3><p>Terminal outcome states allow final EvidenceManifest export when export requirements pass.</p></div>
+              <div class="rule-card"><h3>closed</h3><p><code>closed</code> is the sealed archival state. The protocol rejects mutation after <code>closed</code>.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Event chain rules</h2>
+            <ul>
+              <li>Every accepted WorkSession-scoped state change records the Actor.</li>
+              <li>Every accepted WorkSession-scoped mutation verifies Actor authority.</li>
+              <li>Every accepted WorkSession-scoped mutation checks the current WorkSession revision.</li>
+              <li>Every accepted WorkSession-scoped mutation links to the previous event hash.</li>
+              <li>Every JarvisEvent carries <code>sequence</code>, <code>previous_hash</code>, <code>event_hash</code>, and <code>canonicalization</code>.</li>
+              <li>The protocol rejects stale revision, previous event hash mismatch, missing Actor, and unauthorized Actor.</li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>Export rules</h2>
+            <p>EvidenceManifest export happens only from valid WorkSession states. Export includes protocol evidence and excludes host-private fields.</p>
+            <div class="field-grid">
+              <div class="field-card"><h3>Export includes</h3><p>policy decisions, requests, reviews, takeovers, contributions, artifacts, evidence items, limitations, and event-chain refs.</p></div>
+              <div class="field-card"><h3>Export rejects</h3><p>credentials, secrets, raw runtime state, host-only database ids, deployment details, billing data, private scores, UI state, raw auth tokens, provider secrets, session cookies, and private keys.</p></div>
+            </div>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/04-work-sessions.md">Source: WorkSessions</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">Source: core objects</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

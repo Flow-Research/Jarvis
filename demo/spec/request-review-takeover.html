@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Request, Review, ApprovalScope, and Takeover | Jarvis v0.1</title>
+    <meta name="description" content="Jarvis v0.1 Request, Review, ApprovalScope, and Takeover control-plane rules." />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../#openapi">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
+      <section class="spec-hero"><div><p class="kicker">Control plane</p><h1>Request is scoped deferral, not chat.</h1><p>Request blocks a declared scope when AgentWorker cannot continue safely without HumanWorker input. Review or Takeover resolves the blocked scope.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages"><a href="./">Introduction</a><a href="./terminology.html">Terminology</a><a href="./protocol-objects.html">Protocol objects</a><a href="./worksession-lifecycle.html">WorkSession lifecycle</a><a href="./policy-decision.html">Policy and PolicyDecision</a><a href="./request-review-takeover.html" aria-current="page">Request, Review, ApprovalScope, and Takeover</a><a href="./contribution-evidence.html">Contribution and EvidenceManifest</a><a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a><a href="./outcome-report.html">OutcomeReport</a><a href="./versioning-extensions.html">Versioning and extensions</a><a href="./security-zero-trust.html">Security and zero trust</a></nav>
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>Required fields</h2>
+            <div class="field-grid">
+              <div class="field-card"><h3>Request</h3><p><code>id</code>, <code>protocol_version</code>, <code>work_session_id</code>, <code>requester_actor_id</code>, <code>requester_worker_id</code>, <code>target_human_worker_id</code>, <code>policy_decision_id</code>, <code>type</code>, <code>blocking_scope</code>, <code>reason_code</code>, <code>reason_summary</code>, <code>requested_action</code>, <code>requested_outcome</code>, <code>risk_class</code>, <code>human_decision_needed</code>, <code>options</code>, <code>default_if_no_response</code>, <code>status</code>, <code>created_at</code>, and <code>expires_at</code></p></div>
+              <div class="field-card"><h3>Review</h3><p><code>id</code>, <code>work_session_id</code>, <code>reviewer_actor_id</code>, <code>reviewer_worker_id</code>, <code>target_ref</code>, <code>decision</code>, and <code>created_at</code></p></div>
+              <div class="field-card"><h3>Takeover</h3><p><code>id</code>, <code>work_session_id</code>, <code>requested_by_actor_id</code>, <code>controlling_actor_id</code>, <code>affected_scope</code>, <code>reason</code>, <code>lock_epoch</code>, <code>state</code>, and <code>created_at</code></p></div>
+              <div class="field-card"><h3>ApprovalScope</h3><p><code>request_id</code>, <code>review_id</code>, <code>policy_decision_id</code>, <code>request_revision</code>, <code>request_event_hash</code>, <code>normalized_action_hash</code>, <code>approved_action</code>, <code>allowed_scope</code>, <code>denied_scope</code>, <code>expires_at</code>, <code>max_uses</code>, <code>applies_to_work_session_id</code>, and <code>applies_to_actor_id</code></p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Request rules</h2>
+            <ul>
+              <li>Request is created when AgentWorker needs HumanWorker permission, context, judgment, review, correction, or takeover before safely continuing a specific scope.</li>
+              <li>Request blocks only its declared <code>blocking_scope</code> unless the scope is the full WorkSession.</li>
+              <li>Request records <code>policy_decision_id</code>, risk, options, selected outcome, expiry, and safe fallback.</li>
+              <li>Request is not chat, notification, or authority.</li>
+              <li>The protocol rejects unresolved Request when the blocked scope continues.</li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>Request lifecycle</h2>
+            <div class="rule-grid">
+              <div class="rule-card"><h3>pending</h3><p>Request exists and blocks its declared scope.</p></div>
+              <div class="rule-card"><h3>acknowledged</h3><p>HumanWorker has seen the Request without resolving it.</p></div>
+              <div class="rule-card"><h3>approved, denied, narrowed, answered</h3><p>Review records human judgment and resolves the Request outcome.</p></div>
+              <div class="rule-card"><h3>needs_revision</h3><p>HumanWorker requires the AgentWorker to revise the plan, request, artifact, or output.</p></div>
+              <div class="rule-card"><h3>takeover</h3><p>HumanWorker assumes direct control through Takeover.</p></div>
+              <div class="rule-card"><h3>expired, cancelled, superseded</h3><p>The safe fallback, cancellation, or replacement rule resolves the Request state.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Request resolver refs</h2>
+            <ul>
+              <li><code>resolved_by_review_id</code> is required when Request status is <code>approved</code>, <code>denied</code>, <code>narrowed</code>, <code>answered</code>, or <code>needs_revision</code>.</li>
+              <li><code>resolved_by_takeover_id</code> is required when Request status is <code>takeover</code>.</li>
+              <li><code>closed_by_event_ref</code> is required when Request status is <code>expired</code>, <code>cancelled</code>, or <code>superseded</code>.</li>
+              <li><code>superseded_by_request_id</code> is required when Request status is <code>superseded</code>.</li>
+              <li>The protocol rejects missing resolver refs with <code>missing_review_resolution</code>, <code>missing_takeover_resolution</code>, <code>missing_jarvis_event</code>, or <code>missing_superseding_request</code>.</li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>Review and ApprovalScope</h2>
+            <p>Review records human judgment. ApprovalScope is required when Review approves or narrows a Request.</p>
+            <div class="field-grid">
+              <div class="field-card"><h3>Review decisions</h3><p><code>approve</code>, <code>deny</code>, <code>narrow</code>, <code>answer</code>, <code>correct</code>, <code>takeover</code>, <code>needs_revision</code></p></div>
+              <div class="field-card"><h3>ApprovalScope binds</h3><p><code>request_id</code>, <code>review_id</code>, <code>policy_decision_id</code>, <code>request_revision</code>, <code>request_event_hash</code>, <code>normalized_action_hash</code>, <code>approved_action</code>, <code>allowed_scope</code>, <code>denied_scope</code>, <code>expires_at</code>, <code>max_uses</code>, <code>applies_to_work_session_id</code>, and <code>applies_to_actor_id</code></p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Takeover rules</h2>
+            <ul>
+              <li>Takeover records direct human control over the affected scope.</li>
+              <li>Takeover states are <code>requested</code>, <code>locked</code>, <code>human_active</code>, <code>reconciliation_required</code>, <code>resumed</code>, and <code>closed</code>.</li>
+              <li>Takeover uses <code>lock_epoch</code> to reject stale autonomous continuation.</li>
+              <li>Resumed Takeover requires <code>reconciliation_refs</code>, <code>resumed_by_actor_id</code>, and <code>resolved_at</code>.</li>
+              <li>The protocol rejects stale Takeover continuation and missing Takeover reconciliation.</li>
+            </ul>
+            <p>Allowed transitions are <code>requested -&gt; locked</code>, <code>requested -&gt; closed</code>, <code>locked -&gt; human_active</code>, <code>locked -&gt; reconciliation_required</code>, <code>locked -&gt; closed</code>, <code>human_active -&gt; reconciliation_required</code>, <code>human_active -&gt; closed</code>, <code>reconciliation_required -&gt; resumed</code>, <code>reconciliation_required -&gt; closed</code>, and <code>resumed -&gt; closed</code>.</p>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/12-request-protocol.md">Source: request protocol</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">Source: field lock</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -54,8 +54,11 @@
             calls, tool execution, monitoring, deployment, and host workflow.
           </p>
           <div class="hero-actions" aria-label="Documentation entry links">
+            <a class="command primary" href="./spec/">
+              Read v0.1 Spec
+            </a>
             <a
-              class="command primary"
+              class="command"
               href="https://raw.githubusercontent.com/Flow-Research/jarvis/main/docs/openapi/jarvis-openapi.yaml"
             >
               OpenAPI Spec
@@ -105,13 +108,11 @@
           <span>01</span>
           <h2>Read the protocol spine</h2>
           <p>
-            Start with the core objects and Request protocol. They define the
-            human-agent pair, WorkSession, policy gate, review loop, evidence,
-            and governed learning.
+            Start with the v0.1 specification pages. They define the
+            human-agent pair, WorkSession, policy gate, control plane, evidence,
+            governed learning, and zero-trust rules.
           </p>
-          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">
-            Core objects
-          </a>
+          <a href="./spec/">Open v0.1 specification</a>
         </article>
         <article class="doc-card">
           <span>02</span>
@@ -190,7 +191,7 @@
             <p>Every AgentWorker action that affects a WorkSession records policy state before acceptance.</p>
           </article>
           <article>
-            <strong>Request, Review, Takeover</strong>
+            <strong>Request, Review, ApprovalScope, and Takeover</strong>
             <p>Blocked scope routes to human judgment; authority stays bounded and attributable.</p>
           </article>
           <article>
@@ -210,29 +211,57 @@
           <h2 id="spec-title">Read the contract from the same paths implementers use.</h2>
         </div>
         <div class="link-table" aria-label="Specification links">
+          <a href="./spec/">
+            <span>Introduction</span>
+            <small>Protocol thesis, ownership boundary, and implementation path</small>
+          </a>
+          <a href="./spec/terminology.html">
+            <span>Terminology</span>
+            <small>Worker, Actor, HumanWorker, AgentWorker, Host, and core terms</small>
+          </a>
+          <a href="./spec/protocol-objects.html">
+            <span>Protocol Objects</span>
+            <small>Required fields for the v0.1 object surface</small>
+          </a>
+          <a href="./spec/worksession-lifecycle.html">
+            <span>WorkSession Lifecycle</span>
+            <small>Session states, JarvisEvent chain, and export readiness</small>
+          </a>
+          <a href="./spec/policy-decision.html">
+            <span>Policy and PolicyDecision</span>
+            <small>Human-defined policy and required decision records</small>
+          </a>
+          <a href="./spec/request-review-takeover.html">
+            <span>Request, Review, ApprovalScope, and Takeover</span>
+            <small>Scoped deferral, ApprovalScope, human judgment, and lock epochs</small>
+          </a>
+          <a href="./spec/contribution-evidence.html">
+            <span>Contribution and EvidenceManifest</span>
+            <small>Attribution, EvidenceManifest export, and rejection rules</small>
+          </a>
+          <a href="./spec/learning-proposals.html">
+            <span>LearningRecord, MemoryProposal, and SkillProposal</span>
+            <small>LearningRecord, MemoryProposal, SkillProposal, and review gates</small>
+          </a>
+          <a href="./spec/outcome-report.html">
+            <span>OutcomeReport</span>
+            <small>External feedback ingress and terminal-source requirements</small>
+          </a>
+          <a href="./spec/versioning-extensions.html">
+            <span>Versioning and Extensions</span>
+            <small>Version negotiation, capabilities, namespaces, and extension limits</small>
+          </a>
+          <a href="./spec/security-zero-trust.html">
+            <span>Security and Zero Trust</span>
+            <small>Mutation headers, Actor authority, revision, hash, and export safety</small>
+          </a>
           <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/14-protocol-lock.md">
-            <span>Protocol Lock</span>
+            <span>Source: Protocol Lock</span>
             <small>Locked v0.1 protocol decisions and boundaries</small>
           </a>
           <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">
-            <span>Communication Binding</span>
+            <span>Source: Communication Binding</span>
             <small>HTTP operations, headers, versioning, and error envelope</small>
-          </a>
-          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/12-request-protocol.md">
-            <span>Request Protocol</span>
-            <small>Scoped deferral, Review, Takeover, and anti-livelock rules</small>
-          </a>
-          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/13-contribution-evidence-learning.md">
-            <span>Evidence + Learning</span>
-            <small>Contribution, EvidenceManifest, LearningRecord, and proposals</small>
-          </a>
-          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/protocol-records.md">
-            <span>Protocol Records</span>
-            <small>Concrete v0.1 record examples</small>
-          </a>
-          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/releases/v0.1.0.md">
-            <span>Release Notes</span>
-            <small>Protocol Alpha release scope and limits</small>
           </a>
         </div>
       </section>
@@ -357,7 +386,7 @@
             <small>Map native agent work into Jarvis records without rewriting the agent.</small>
           </a>
           <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/12-request-protocol.md">
-            <span>Request, Review, Takeover</span>
+            <span>Request, Review, ApprovalScope, and Takeover</span>
             <small>Use scoped blockers, human judgment, ApprovalScope, and takeover lock epochs.</small>
           </a>
           <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/13-contribution-evidence-learning.md">

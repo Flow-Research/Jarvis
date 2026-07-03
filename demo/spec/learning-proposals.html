@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LearningRecord, MemoryProposal, and SkillProposal | Jarvis v0.1</title>
+    <meta name="description" content="Jarvis v0.1 LearningRecord, MemoryProposal, and SkillProposal rules." />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../#openapi">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
+      <section class="spec-hero"><div><p class="kicker">LearningRecord, MemoryProposal, and SkillProposal</p><h1>Learning is governed before it changes future work.</h1><p>Jarvis records human, agent, and pair learning. MemoryProposal and SkillProposal keep future behavior changes attributable, reviewed, and bounded.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages"><a href="./">Introduction</a><a href="./terminology.html">Terminology</a><a href="./protocol-objects.html">Protocol objects</a><a href="./worksession-lifecycle.html">WorkSession lifecycle</a><a href="./policy-decision.html">Policy and PolicyDecision</a><a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a><a href="./contribution-evidence.html">Contribution and EvidenceManifest</a><a href="./learning-proposals.html" aria-current="page">LearningRecord, MemoryProposal, and SkillProposal</a><a href="./outcome-report.html">OutcomeReport</a><a href="./versioning-extensions.html">Versioning and extensions</a><a href="./security-zero-trust.html">Security and zero trust</a></nav>
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>LearningRecord</h2>
+            <p>LearningRecord records what improved because of the WorkSession or an accepted OutcomeReport.</p>
+            <div class="field-grid">
+              <div class="field-card"><h3>Required fields</h3><p><code>id</code>, <code>work_session_id</code>, <code>created_by_actor_id</code>, <code>subject_type</code>, <code>subject_ref</code>, <code>lesson_type</code>, <code>source_event_refs</code>, <code>review_state</code>, <code>scope</code>, <code>created_at</code></p></div>
+              <div class="field-card"><h3>Subject types</h3><p><code>human</code>, <code>agent</code>, and <code>pair</code>. Learning belongs to the worker or team that actually learned.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>MemoryProposal</h2>
+            <p>MemoryProposal records a proposed durable memory change. It does not silently write memory.</p>
+            <p>MemoryProposal required fields are <code>id</code>, <code>work_session_id</code>, <code>proposed_by_actor_id</code>, <code>proposed_for</code>, <code>memory_scope</code>, <code>memory_type</code>, <code>content</code>, <code>provenance</code>, <code>confidence</code>, <code>review_required</code>, <code>status</code>, and <code>created_at</code>.</p>
+            <ul>
+              <li><code>review_required</code> records whether human review is required before durable memory effect.</li>
+              <li><code>review_refs</code> is required when status is <code>accepted</code>.</li>
+              <li>The protocol rejects model-derived or tool-derived self-confirmation.</li>
+              <li>The protocol rejects silent memory mutation.</li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>SkillProposal</h2>
+            <p>SkillProposal records a reusable way of working, including trigger conditions, procedure, review checks, failure cases, provenance, and status.</p>
+            <p>SkillProposal required fields are <code>id</code>, <code>work_session_id</code>, <code>proposed_by_actor_id</code>, <code>proposed_for</code>, <code>skill_scope</code>, <code>skill_name</code>, <code>trigger_conditions</code>, <code>procedure</code>, <code>review_checks</code>, <code>failure_cases</code>, <code>provenance</code>, <code>status</code>, and <code>created_at</code>.</p>
+            <ul>
+              <li><code>review_refs</code> is required when status is <code>accepted</code>.</li>
+              <li>SkillProposal cannot activate without review.</li>
+              <li>SkillProposal cannot expand tool access without Policy review.</li>
+              <li>The protocol rejects silent skill activation and unreviewed tool grants.</li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>Compatibility expectations</h2>
+            <div class="rule-grid">
+              <div class="rule-card"><h3>Learning source</h3><p>LearningRecord references source events. OutcomeReport references LearningRecord without appending to a sealed WorkSession event log.</p></div>
+              <div class="rule-card"><h3>Future behavior</h3><p>MemoryProposal and SkillProposal become durable only through governed review state.</p></div>
+            </div>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/13-contribution-evidence-learning.md">Source: learning rules</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">Source: proposal fields</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

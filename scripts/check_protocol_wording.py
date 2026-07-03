@@ -7,7 +7,11 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FILES = [*ROOT.glob("*.md"), *ROOT.joinpath("docs").rglob("*.md")]
+FILES = [
+    *ROOT.glob("*.md"),
+    *ROOT.joinpath("docs").rglob("*.md"),
+    *ROOT.joinpath("demo").rglob("*.html"),
+]
 NORMATIVE_TERMS = {"MUST", "MUST NOT", "SHOULD", "SHOULD NOT", "MAY"}
 NORMATIVE_TERM_PATTERN = re.compile(
     r"`(?:MUST|MUST NOT|SHOULD|SHOULD NOT|MAY)`"

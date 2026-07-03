@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contribution and EvidenceManifest | Jarvis v0.1</title>
+    <meta name="description" content="Jarvis v0.1 Contribution and EvidenceManifestManifest rules." />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../#openapi">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
+      <section class="spec-hero"><div><p class="kicker">Contribution and EvidenceManifest</p><h1>Useful work leaves portable proof.</h1><p>Jarvis records who contributed, which events support the work, and what evidence leaves the host as a portable EvidenceManifest.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages"><a href="./">Introduction</a><a href="./terminology.html">Terminology</a><a href="./protocol-objects.html">Protocol objects</a><a href="./worksession-lifecycle.html">WorkSession lifecycle</a><a href="./policy-decision.html">Policy and PolicyDecision</a><a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a><a href="./contribution-evidence.html" aria-current="page">Contribution and EvidenceManifest</a><a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a><a href="./outcome-report.html">OutcomeReport</a><a href="./versioning-extensions.html">Versioning and extensions</a><a href="./security-zero-trust.html">Security and zero trust</a></nav>
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>Contribution</h2>
+            <p>Contribution records who did what. Shared Contribution preserves the individual HumanWorker and AgentWorker contributor refs.</p>
+            <div class="field-grid">
+              <div class="field-card"><h3>Required fields</h3><p><code>id</code>, <code>work_session_id</code>, <code>contributor_refs</code>, <code>contributor_type</code>, <code>contribution_type</code>, <code>event_refs</code>, <code>created_at</code></p></div>
+              <div class="field-card"><h3>Required contributor refs</h3><p>Each contributor ref carries <code>worker_id</code>, <code>actor_id</code>, and <code>contribution_role</code>.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>EvidenceManifest</h2>
+            <p>EvidenceManifest exports portable proof from a valid WorkSession state. It references the event chain and protocol-visible decisions, requests, reviews, takeovers, contributions, artifacts, limitations, and evidence items.</p>
+            <p>EvidenceManifest required fields are <code>id</code>, <code>work_session_id</code>, <code>generated_by_actor_id</code>, <code>objective</code>, <code>event_chain_root</code>, <code>evidence_item_refs</code>, <code>policy_decision_refs</code>, <code>request_refs</code>, <code>review_refs</code>, <code>takeover_refs</code>, <code>contribution_refs</code>, <code>export_profile</code>, and <code>generated_at</code>.</p>
+            <div class="rule-grid">
+              <div class="rule-card"><h3>Export includes</h3><p><code>event_chain_root</code>, <code>evidence_item_refs</code>, <code>policy_decision_refs</code>, <code>request_refs</code>, <code>review_refs</code>, <code>takeover_refs</code>, and <code>contribution_refs</code>.</p></div>
+              <div class="rule-card"><h3>EvidenceItemRef includes</h3><p><code>source_event_refs</code>, <code>captured_by_actor_id</code>, <code>evidence_type</code>, <code>artifact_ref</code>, <code>content_hash</code>, <code>trust_label</code>, <code>redaction_state</code>, and <code>captured_at</code>.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Rejection rules</h2>
+            <ul>
+              <li>The protocol rejects missing Contribution Actor.</li>
+              <li>The protocol rejects shared Contribution without individual contributor refs.</li>
+              <li>The protocol rejects EvidenceManifest export from invalid WorkSession states.</li>
+              <li>The protocol rejects EvidenceManifest mutation after sealing.</li>
+              <li>The protocol rejects forbidden export fields, including credentials, secrets, raw runtime state, host-only database ids, deployment details, billing data, private scores, UI state, raw auth tokens, provider secrets, session cookies, and private keys.</li>
+            </ul>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/13-contribution-evidence-learning.md">Source: evidence and learning</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/failure-modes.md">Source: failure modes</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

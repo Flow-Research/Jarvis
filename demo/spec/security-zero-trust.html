@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Security and Zero Trust | Jarvis v0.1</title>
+    <meta name="description" content="Jarvis v0.1 security, mutation headers, Actor authority, revision, previous hash, and export safety rules." />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../#openapi">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
+      <section class="spec-hero"><div><p class="kicker">Security and zero trust</p><h1>Every accepted mutation proves authority and state.</h1><p>Jarvis starts from zero trust. Compatible implementations verify headers, Actor authority, revision, previous event hash, idempotency, timestamp, and export safety.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages"><a href="./">Introduction</a><a href="./terminology.html">Terminology</a><a href="./protocol-objects.html">Protocol objects</a><a href="./worksession-lifecycle.html">WorkSession lifecycle</a><a href="./policy-decision.html">Policy and PolicyDecision</a><a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a><a href="./contribution-evidence.html">Contribution and EvidenceManifest</a><a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a><a href="./outcome-report.html">OutcomeReport</a><a href="./versioning-extensions.html">Versioning and extensions</a><a href="./security-zero-trust.html" aria-current="page">Security and zero trust</a></nav>
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>WorkSession-scoped mutation headers</h2>
+            <p>Every WorkSession-scoped mutating operation requires host authentication and these protocol headers:</p>
+            <ul>
+              <li><code>Jarvis-Protocol-Version</code></li>
+              <li><code>Jarvis-Actor-Id</code></li>
+              <li><code>Jarvis-Idempotency-Key</code></li>
+              <li><code>Jarvis-Request-Timestamp</code></li>
+              <li><code>Jarvis-Expected-WorkSession-Revision</code></li>
+              <li><code>Jarvis-Previous-Event-Hash</code></li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>WorkSession genesis rule</h2>
+            <p><code>createWorkSession</code> is the genesis WorkSession mutation. Compatible implementations MUST require <code>Jarvis-Expected-WorkSession-Revision</code> set to <code>0</code> and <code>Jarvis-Previous-Event-Hash</code> set to <code>hash:protocol-genesis</code>.</p>
+            <p>The accepted WorkSession snapshot starts as <code>active</code> at revision <code>1</code> with first event type <code>work_session.created</code>.</p>
+          </article>
+          <article class="spec-panel">
+            <h2>Non-WorkSession mutation headers</h2>
+            <p>Worker registration, Actor registration, and OutcomeReport submission require host authentication and the non-WorkSession mutation header set:</p>
+            <ul>
+              <li><code>Jarvis-Protocol-Version</code></li>
+              <li><code>Jarvis-Actor-Id</code></li>
+              <li><code>Jarvis-Idempotency-Key</code></li>
+              <li><code>Jarvis-Request-Timestamp</code></li>
+            </ul>
+            <p>They MUST NOT require fake WorkSession revision or previous event hash values.</p>
+          </article>
+          <article class="spec-panel">
+            <h2>Read and export headers</h2>
+            <p>WorkSession-scoped read operations and EvidenceManifest export reads require host authentication, <code>Jarvis-Protocol-Version</code>, and <code>Jarvis-Actor-Id</code>.</p>
+            <p>Read and export operations MUST NOT require mutation-only idempotency, expected revision, or previous event hash headers.</p>
+          </article>
+          <article class="spec-panel">
+            <h2>Accepted state checks</h2>
+            <div class="rule-grid">
+              <div class="rule-card"><h3>Actor</h3><p>Every accepted state change records the Actor and verifies authority.</p></div>
+              <div class="rule-card"><h3>Body match</h3><p>Actor-bearing mutation bodies match <code>Jarvis-Actor-Id</code>.</p></div>
+              <div class="rule-card"><h3>Revision</h3><p>WorkSession-scoped mutation checks the current revision against <code>Jarvis-Expected-WorkSession-Revision</code>.</p></div>
+              <div class="rule-card"><h3>Hash chain</h3><p>WorkSession-scoped mutation links to <code>Jarvis-Previous-Event-Hash</code>.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Rejection rules</h2>
+            <ul>
+              <li>The protocol rejects missing protocol version, Actor, idempotency key, timestamp, expected revision, or previous event hash when required.</li>
+              <li>The protocol rejects stale request timestamp, stale WorkSession revision, previous event hash mismatch, unauthorized Actor, and Actor mismatch.</li>
+              <li>The protocol rejects forbidden host-private fields in portable records and exports.</li>
+              <li>The protocol rejects sealed WorkSession and EvidenceManifest mutation.</li>
+            </ul>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">Source: security binding</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/checklist.md">Source: conformance checklist</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

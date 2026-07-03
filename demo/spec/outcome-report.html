@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OutcomeReport | Jarvis v0.1</title>
+    <meta name="description" content="Jarvis v0.1 OutcomeReport extension object rules." />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../#openapi">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
+      <section class="spec-hero"><div><p class="kicker">OutcomeReport</p><h1>Post-session feedback enters without mutating sealed work.</h1><p>OutcomeReport is a v0.1 extension protocol object for attributable feedback after a WorkSession reaches a terminal state.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages"><a href="./">Introduction</a><a href="./terminology.html">Terminology</a><a href="./protocol-objects.html">Protocol objects</a><a href="./worksession-lifecycle.html">WorkSession lifecycle</a><a href="./policy-decision.html">Policy and PolicyDecision</a><a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a><a href="./contribution-evidence.html">Contribution and EvidenceManifest</a><a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a><a href="./outcome-report.html" aria-current="page">OutcomeReport</a><a href="./versioning-extensions.html">Versioning and extensions</a><a href="./security-zero-trust.html">Security and zero trust</a></nav>
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>Required fields</h2>
+            <p><code>id</code>, <code>work_session_id</code>, <code>source_ref</code>, <code>reporter_ref</code>, <code>accepted_by_actor_id</code>, <code>outcome</code>, <code>learning_record_refs</code>, and <code>received_at</code>.</p>
+            <p><code>source_ref</code> identifies a terminal source: completed, failed, cancelled, or closed WorkSession, WorkSession export, external task record, evaluation record, or portable work reference whose outcome is being reported.</p>
+          </article>
+          <article class="spec-panel">
+            <h2>Rules</h2>
+            <ul>
+              <li>OutcomeReport arrives after a WorkSession is completed, failed, cancelled, or closed.</li>
+              <li>OutcomeReport does not mutate the sealed WorkSession.</li>
+              <li>OutcomeReport does not mutate the sealed EvidenceManifest.</li>
+              <li>OutcomeReport MUST reference at least one governed LearningRecord through <code>learning_record_refs</code>.</li>
+              <li>OutcomeReport uses the non-WorkSession mutation header set.</li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>Boundaries</h2>
+            <div class="rule-grid">
+              <div class="rule-card"><h3>Jarvis owns</h3><p>Jarvis owns the feedback ingress record, source link, accepted Actor, outcome enum, LearningRecord refs, and rejection rules.</p></div>
+              <div class="rule-card"><h3>Jarvis does not own</h3><p>OutcomeReport is not evaluation logic, scoring, payment, settlement, routing, or marketplace behavior.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Rejection rules</h2>
+            <ul>
+              <li>The protocol rejects OutcomeReport without LearningRecord reference.</li>
+              <li>The protocol rejects OutcomeReport when <code>source_ref</code> points to a mutable source WorkSession.</li>
+              <li>The protocol rejects sealed WorkSession mutation and sealed EvidenceManifest mutation.</li>
+            </ul>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/13-contribution-evidence-learning.md">Source: OutcomeReport rules</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/failure-modes.md">Source: failure modes</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

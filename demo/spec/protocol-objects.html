@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Protocol Objects | Jarvis v0.1</title>
+    <meta name="description" content="Jarvis v0.1 protocol objects and required fields." />
+    <link rel="icon" href="../assets/favicon.svg?v=spec1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=spec1" />
+  </head>
+  <body>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../#openapi">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
+      <section class="spec-hero"><div><p class="kicker">Protocol objects</p><h1>Objects define portable collaboration state.</h1><p>Compatible implementations MUST preserve required fields, reject forbidden host-private fields, and keep object names aligned with OpenAPI.</p></div></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Specification pages">
+          <a href="./">Introduction</a><a href="./terminology.html">Terminology</a><a href="./protocol-objects.html" aria-current="page">Protocol objects</a><a href="./worksession-lifecycle.html">WorkSession lifecycle</a><a href="./policy-decision.html">Policy and PolicyDecision</a><a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a><a href="./contribution-evidence.html">Contribution and EvidenceManifest</a><a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a><a href="./outcome-report.html">OutcomeReport</a><a href="./versioning-extensions.html">Versioning and extensions</a><a href="./security-zero-trust.html">Security and zero trust</a>
+        </nav>
+        <div class="spec-main">
+          <article class="spec-panel">
+            <h2>Participant objects</h2>
+            <div class="field-grid">
+              <div class="field-card"><h3>Worker</h3><p><code>id</code>, <code>type</code>, <code>role</code>, <code>authority_scope</code>, <code>accountability_scope</code></p></div>
+              <div class="field-card"><h3>Actor</h3><p><code>id</code>, <code>worker_id</code>, <code>type</code>, <code>event_authority</code>, <code>contribution_scope</code>, <code>created_at</code></p></div>
+              <div class="field-card"><h3>HumanWorker</h3><p><code>worker_id</code>, <code>actor_id</code>, <code>role</code>, <code>policy_authority</code>, <code>review_authority</code></p></div>
+              <div class="field-card"><h3>AgentWorker</h3><p><code>worker_id</code>, <code>actor_id</code>, <code>agent_ref</code>, <code>role</code>, <code>capability_refs</code>, <code>autonomy_level</code>, <code>operating_constraints</code></p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Session, event, and policy objects</h2>
+            <div class="field-grid">
+              <div class="field-card"><h3>WorkSession</h3><p><code>id</code>, <code>protocol_version</code>, <code>created_by_actor_id</code>, <code>objective</code>, <code>human_worker_id</code>, <code>agent_worker_id</code>, <code>policy_id</code>, <code>status</code>, <code>revision</code>, <code>last_event_hash</code>, <code>event_log_ref</code>, <code>created_at</code>, <code>updated_at</code></p></div>
+              <div class="field-card"><h3>JarvisEvent</h3><p><code>id</code>, <code>sequence</code>, <code>type</code>, <code>work_session_id</code>, <code>actor_id</code>, <code>timestamp</code>, <code>payload</code>, <code>previous_hash</code>, <code>event_hash</code>, <code>canonicalization</code></p></div>
+              <div class="field-card"><h3>Policy</h3><p><code>id</code>, <code>owner_worker_id</code>, <code>created_by_actor_id</code>, <code>autonomy_level</code>, <code>allowed_actions</code>, <code>denied_actions</code>, <code>review_required_actions</code>, <code>risk_classes</code>, <code>escalation_rules</code>, <code>created_at</code></p></div>
+              <div class="field-card"><h3>PolicyDecision</h3><p><code>id</code>, <code>work_session_id</code>, <code>actor_id</code>, <code>policy_id</code>, <code>requested_action</code>, <code>normalized_action_hash</code>, <code>risk_class</code>, <code>result</code>, <code>reason</code>, <code>created_at</code></p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Control-plane objects</h2>
+            <div class="field-grid">
+              <div class="field-card"><h3>Request</h3><p><code>id</code>, <code>protocol_version</code>, <code>work_session_id</code>, <code>requester_actor_id</code>, <code>requester_worker_id</code>, <code>target_human_worker_id</code>, <code>policy_decision_id</code>, <code>type</code>, <code>blocking_scope</code>, <code>reason_code</code>, <code>reason_summary</code>, <code>requested_action</code>, <code>requested_outcome</code>, <code>risk_class</code>, <code>human_decision_needed</code>, <code>options</code>, <code>default_if_no_response</code>, <code>status</code>, <code>created_at</code>, <code>expires_at</code></p></div>
+              <div class="field-card"><h3>Review</h3><p><code>id</code>, <code>work_session_id</code>, <code>reviewer_actor_id</code>, <code>reviewer_worker_id</code>, <code>target_ref</code>, <code>decision</code>, <code>created_at</code></p></div>
+              <div class="field-card"><h3>ApprovalScope</h3><p><code>request_id</code>, <code>review_id</code>, <code>policy_decision_id</code>, <code>request_revision</code>, <code>request_event_hash</code>, <code>normalized_action_hash</code>, <code>approved_action</code>, <code>allowed_scope</code>, <code>denied_scope</code>, <code>expires_at</code>, <code>max_uses</code>, <code>applies_to_work_session_id</code>, <code>applies_to_actor_id</code></p></div>
+              <div class="field-card"><h3>Takeover</h3><p><code>id</code>, <code>work_session_id</code>, <code>requested_by_actor_id</code>, <code>controlling_actor_id</code>, <code>affected_scope</code>, <code>reason</code>, <code>lock_epoch</code>, <code>state</code>, <code>created_at</code></p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Evidence and learning objects</h2>
+            <div class="field-grid">
+              <div class="field-card"><h3>Contribution</h3><p><code>id</code>, <code>work_session_id</code>, <code>contributor_refs</code>, <code>contributor_type</code>, <code>contribution_type</code>, <code>event_refs</code>, <code>created_at</code></p></div>
+              <div class="field-card"><h3>EvidenceManifest</h3><p><code>id</code>, <code>work_session_id</code>, <code>generated_by_actor_id</code>, <code>objective</code>, <code>event_chain_root</code>, <code>evidence_item_refs</code>, <code>policy_decision_refs</code>, <code>request_refs</code>, <code>review_refs</code>, <code>takeover_refs</code>, <code>contribution_refs</code>, <code>export_profile</code>, <code>generated_at</code></p></div>
+              <div class="field-card"><h3>LearningRecord</h3><p><code>id</code>, <code>work_session_id</code>, <code>created_by_actor_id</code>, <code>subject_type</code>, <code>subject_ref</code>, <code>lesson_type</code>, <code>source_event_refs</code>, <code>review_state</code>, <code>scope</code>, <code>created_at</code></p></div>
+              <div class="field-card"><h3>MemoryProposal</h3><p><code>id</code>, <code>work_session_id</code>, <code>proposed_by_actor_id</code>, <code>proposed_for</code>, <code>memory_scope</code>, <code>memory_type</code>, <code>content</code>, <code>provenance</code>, <code>confidence</code>, <code>review_required</code>, <code>status</code>, <code>created_at</code></p></div>
+              <div class="field-card"><h3>SkillProposal</h3><p><code>id</code>, <code>work_session_id</code>, <code>proposed_by_actor_id</code>, <code>proposed_for</code>, <code>skill_scope</code>, <code>skill_name</code>, <code>trigger_conditions</code>, <code>procedure</code>, <code>review_checks</code>, <code>failure_cases</code>, <code>provenance</code>, <code>status</code>, <code>created_at</code></p></div>
+              <div class="field-card"><h3>OutcomeReport</h3><p><code>id</code>, <code>work_session_id</code>, <code>source_ref</code>, <code>reporter_ref</code>, <code>accepted_by_actor_id</code>, <code>outcome</code>, <code>learning_record_refs</code>, <code>received_at</code></p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Forbidden host-private fields</h2>
+            <p>The protocol rejects portable records that carry credentials, raw auth tokens, provider secrets, private keys, host-only database ids, runtime process ids, deployment details, billing data, private scores, UI state, raw runtime state, or unredacted secret values.</p>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">Source: core object field lock</a><a href="https://raw.githubusercontent.com/Flow-Research/jarvis/main/docs/openapi/jarvis-openapi.yaml">OpenAPI YAML</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
