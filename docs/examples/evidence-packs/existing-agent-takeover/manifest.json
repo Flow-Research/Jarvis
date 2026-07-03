@@ -1,0 +1,247 @@
+{
+  "pack_id": "existing-agent-takeover-evidence-v01",
+  "protocol_version": "v0.1",
+  "title": "Existing-agent takeover-resolution evidence pack",
+  "description": "Protocol-record evidence that an existing native agent collaboration loop maps a Takeover resolution path to Jarvis v0.1 records without Jarvis owning host execution.",
+  "source_fixture": "docs/conformance/fixtures/valid/takeover-path.json",
+  "source_contract_refs": [
+    "docs/conformance/existing-agent-proof-plan.md",
+    "docs/examples/existing-agent-compatibility.md",
+    "docs/examples/protocol-records.md",
+    "docs/conformance/checklist.md",
+    "docs/conformance/failure-modes.md",
+    "docs/protocol/15-openapi-communication-binding.md",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Worker",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Actor",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/HumanWorker",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/AgentWorker",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/WorkSession",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/JarvisEvent",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Policy",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/PolicyDecision",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Request",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Takeover",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Contribution",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/EvidenceManifest",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/LearningRecord",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/MemoryProposal",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/SkillProposal",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/OutcomeReport"
+  ],
+  "host_shape_ref": "local_execution_host_boundary",
+  "records": [
+    {
+      "path": "records/worker-human.json",
+      "object_type": "Worker",
+      "source_ref": "records.workers.human"
+    },
+    {
+      "path": "records/worker-agent.json",
+      "object_type": "Worker",
+      "source_ref": "records.workers.agent"
+    },
+    {
+      "path": "records/actor-human.json",
+      "object_type": "Actor",
+      "source_ref": "records.actors.human"
+    },
+    {
+      "path": "records/actor-agent.json",
+      "object_type": "Actor",
+      "source_ref": "records.actors.agent"
+    },
+    {
+      "path": "records/human-worker.json",
+      "object_type": "HumanWorker",
+      "source_ref": "records.human_workers.primary"
+    },
+    {
+      "path": "records/agent-worker.json",
+      "object_type": "AgentWorker",
+      "source_ref": "records.agent_workers.primary"
+    },
+    {
+      "path": "records/policy.json",
+      "object_type": "Policy",
+      "source_ref": "records.policies.bounded"
+    },
+    {
+      "path": "records/work-session-takeover-active.json",
+      "object_type": "WorkSession",
+      "source_ref": "records.work_sessions.takeover_active"
+    },
+    {
+      "path": "records/work-session-reconciliation-required.json",
+      "object_type": "WorkSession",
+      "source_ref": "records.work_sessions.reconciliation_required"
+    },
+    {
+      "path": "records/work-session-completed.json",
+      "object_type": "WorkSession",
+      "source_ref": "records.work_sessions.completed"
+    },
+    {
+      "path": "records/policy-decision-final-submission.json",
+      "object_type": "PolicyDecision",
+      "source_ref": "records.policy_decisions.final_submission_review_required"
+    },
+    {
+      "path": "records/request-pending.json",
+      "object_type": "Request",
+      "source_ref": "records.requests.pending"
+    },
+    {
+      "path": "records/request-takeover.json",
+      "object_type": "Request",
+      "source_ref": "records.requests.takeover"
+    },
+    {
+      "path": "records/takeover-human-active.json",
+      "object_type": "Takeover",
+      "source_ref": "records.takeovers.human_active"
+    },
+    {
+      "path": "records/takeover-reconciliation-required.json",
+      "object_type": "Takeover",
+      "source_ref": "records.takeovers.reconciliation_required"
+    },
+    {
+      "path": "records/takeover-resumed.json",
+      "object_type": "Takeover",
+      "source_ref": "records.takeovers.resumed"
+    },
+    {
+      "path": "records/contribution-shared-submission.json",
+      "object_type": "Contribution",
+      "source_ref": "records.contributions.shared_submission"
+    },
+    {
+      "path": "records/learning-record-pair.json",
+      "object_type": "LearningRecord",
+      "source_ref": "records.learning_records.pair"
+    },
+    {
+      "path": "records/memory-proposal-takeover.json",
+      "object_type": "MemoryProposal",
+      "source_ref": "records.memory_proposals.takeover_reconciliation_pattern"
+    },
+    {
+      "path": "records/skill-proposal-takeover.json",
+      "object_type": "SkillProposal",
+      "source_ref": "records.skill_proposals.takeover_reconciliation"
+    },
+    {
+      "path": "records/outcome-report-post-session.json",
+      "object_type": "OutcomeReport",
+      "source_ref": "records.outcome_reports.post_session",
+      "context_refs": {
+        "workSession": "records.work_sessions.completed"
+      }
+    }
+  ],
+  "evidence_manifests": [
+    {
+      "path": "evidence/evidence-manifest.json",
+      "source_ref": "records.evidence_manifests.portable_export",
+      "work_session_ref": "records.work_sessions.completed"
+    }
+  ],
+  "event_chains": [
+    {
+      "path": "events/event-chain.json",
+      "source_refs": [
+        "records.jarvis_events.worksession_created",
+        "records.jarvis_events.policy_review_required",
+        "records.jarvis_events.request_created",
+        "records.jarvis_events.takeover_started",
+        "records.jarvis_events.takeover_reconciliation_required",
+        "records.jarvis_events.takeover_resumed",
+        "records.jarvis_events.evidence_captured",
+        "records.jarvis_events.contribution_recorded",
+        "records.jarvis_events.learning_recorded",
+        "records.jarvis_events.memory_proposal_created",
+        "records.jarvis_events.skill_proposal_created",
+        "records.jarvis_events.worksession_completed"
+      ]
+    }
+  ],
+  "operation_headers": [
+    {
+      "path": "headers/00-register-worker.json",
+      "source_operation_index": 0
+    },
+    {
+      "path": "headers/01-register-worker.json",
+      "source_operation_index": 1
+    },
+    {
+      "path": "headers/02-register-actor.json",
+      "source_operation_index": 2
+    },
+    {
+      "path": "headers/03-register-actor.json",
+      "source_operation_index": 3
+    },
+    {
+      "path": "headers/04-create-work-session.json",
+      "source_operation_index": 4
+    },
+    {
+      "path": "headers/05-record-policy-decision.json",
+      "source_operation_index": 5
+    },
+    {
+      "path": "headers/06-create-request.json",
+      "source_operation_index": 6
+    },
+    {
+      "path": "headers/07-record-takeover.json",
+      "source_operation_index": 7
+    },
+    {
+      "path": "headers/08-record-takeover.json",
+      "source_operation_index": 8
+    },
+    {
+      "path": "headers/09-record-takeover.json",
+      "source_operation_index": 9
+    },
+    {
+      "path": "headers/10-append-jarvis-event.json",
+      "source_operation_index": 10
+    },
+    {
+      "path": "headers/11-record-contribution.json",
+      "source_operation_index": 11
+    },
+    {
+      "path": "headers/12-create-learning-record.json",
+      "source_operation_index": 12
+    },
+    {
+      "path": "headers/13-create-memory-proposal.json",
+      "source_operation_index": 13
+    },
+    {
+      "path": "headers/14-create-skill-proposal.json",
+      "source_operation_index": 14
+    },
+    {
+      "path": "headers/15-append-jarvis-event.json",
+      "source_operation_index": 15
+    },
+    {
+      "path": "headers/16-export-evidence-manifest.json",
+      "source_operation_index": 16
+    },
+    {
+      "path": "headers/17-submit-outcome-report.json",
+      "source_operation_index": 17
+    }
+  ],
+  "pack_limits": {
+    "certifies_implementation": false,
+    "claims_production_adoption": false,
+    "defines_host_execution": false
+  }
+}

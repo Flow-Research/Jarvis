@@ -1,0 +1,55 @@
+{
+  "object_type": "SkillProposal",
+  "record": {
+    "id": "skill-proposal-takeover",
+    "work_session_id": "ws-takeover-001",
+    "proposed_by_actor_id": "actor-human-takeover",
+    "proposed_for": "pair",
+    "skill_scope": "scope:future-final-submission",
+    "skill_name": "takeover_reconciliation_before_resume",
+    "trigger_conditions": [
+      "Policy requires HumanWorker control",
+      "AgentWorker reaches final submission scope"
+    ],
+    "procedure": [
+      "Record PolicyDecision before action acceptance",
+      "Create scoped Request for Takeover",
+      "Start Takeover with lock_epoch",
+      "Reject stale AgentWorker continuation during human_active Takeover",
+      "Resume only after reconciliation_refs exist",
+      "Capture evidence refs during work"
+    ],
+    "review_checks": [
+      "Request has resolved_by_takeover_id",
+      "Takeover affected_scope binds blocking scope, scope ref, and action hash",
+      "Resumed Takeover has reconciliation_refs and resumed_by_actor_id",
+      "EvidenceManifest includes takeover_refs and excludes host-private fields"
+    ],
+    "failure_cases": [
+      "Request reaches takeover status without Takeover",
+      "AgentWorker continues from stale lock_epoch",
+      "Takeover resumes without reconciliation refs"
+    ],
+    "provenance": [
+      "event-request-created",
+      "event-takeover-started",
+      "event-takeover-reconciliation-required",
+      "event-takeover-resumed",
+      "event-evidence-captured",
+      "learning-takeover-pair"
+    ],
+    "status": "pending_review",
+    "created_at": "2026-06-17T10:20:00Z",
+    "required_tools": [],
+    "source_event_refs": [
+      "event-request-created",
+      "event-takeover-started",
+      "event-takeover-reconciliation-required",
+      "event-takeover-resumed",
+      "event-evidence-captured"
+    ],
+    "learning_record_refs": [
+      "learning-takeover-pair"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "object_type": "Worker",
+  "record": {
+    "id": "worker-agent-takeover",
+    "type": "agent",
+    "role": "bounded executor",
+    "authority_scope": {
+      "grants": [
+        "action:propose",
+        "action:execute_after_policy",
+        "evidence:capture"
+      ]
+    },
+    "accountability_scope": {
+      "accountable_for": [
+        "policy_checked_execution",
+        "evidence_capture"
+      ]
+    },
+    "display_name": "AgentWorker Takeover",
+    "capabilities": [
+      {
+        "ref": "capability:draft-reconciliation",
+        "capability_type": "drafting",
+        "required": true
+      }
+    ]
+  }
+}

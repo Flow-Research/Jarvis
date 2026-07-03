@@ -1,0 +1,19 @@
+{
+  "operation_id": "createSkillProposal",
+  "method": "POST",
+  "path": "/work-sessions/ws-takeover-001/skill-proposals",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-takeover",
+    "Jarvis-Idempotency-Key": "idem-takeover-skill-proposal",
+    "Jarvis-Request-Timestamp": "2026-06-17T10:20:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 10,
+    "Jarvis-Previous-Event-Hash": "hash:event-memory-proposal-created"
+  },
+  "actor_id": "actor-human-takeover",
+  "expected_status": 201,
+  "work_session_id": "ws-takeover-001",
+  "body_ref": "records.skill_proposals.takeover_reconciliation",
+  "expected_event_ref": "event-skill-proposal-created"
+}

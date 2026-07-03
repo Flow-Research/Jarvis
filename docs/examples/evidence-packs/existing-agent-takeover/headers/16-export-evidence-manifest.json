@@ -1,0 +1,13 @@
+{
+  "operation_id": "exportEvidenceManifest",
+  "method": "GET",
+  "path": "/work-sessions/ws-takeover-001/export",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-takeover"
+  },
+  "actor_id": "actor-human-takeover",
+  "expected_status": 200,
+  "work_session_id": "ws-takeover-001"
+}

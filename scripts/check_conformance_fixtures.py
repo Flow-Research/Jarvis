@@ -1266,6 +1266,88 @@ def validate_golden_path_semantics(path: Path, fixture: dict[str, Any]) -> None:
         raise FixtureError(f"{rel(path)}: golden OutcomeReport MUST reference learning")
 
 
+def validate_takeover_path_semantics(path: Path, fixture: dict[str, Any]) -> None:
+    if path.name != "takeover-path.json":
+        return
+
+    request = get_ref(fixture, "records.requests.takeover")
+    human_active = get_ref(fixture, "records.takeovers.human_active")
+    reconciliation_required = get_ref(
+        fixture, "records.takeovers.reconciliation_required"
+    )
+    resumed = get_ref(fixture, "records.takeovers.resumed")
+    started_event = get_ref(fixture, "records.jarvis_events.takeover_started")
+    reconciliation_event = get_ref(
+        fixture, "records.jarvis_events.takeover_reconciliation_required"
+    )
+    resumed_event = get_ref(fixture, "records.jarvis_events.takeover_resumed")
+
+    if (
+        not isinstance(request, dict)
+        or request.get("status") != "takeover"
+        or not isinstance(request.get("resolved_by_takeover_id"), str)
+    ):
+        raise FixtureError(
+            f"{rel(path)}: takeover path Request MUST resolve by Takeover"
+        )
+
+    takeovers = [human_active, reconciliation_required, resumed]
+    if not all(isinstance(takeover, dict) for takeover in takeovers):
+        raise FixtureError(
+            f"{rel(path)}: takeover path MUST include all Takeover lifecycle states"
+        )
+
+    takeover_id = request.get("resolved_by_takeover_id")
+    expected_states = ["human_active", "reconciliation_required", "resumed"]
+    for takeover, expected_state in zip(takeovers, expected_states, strict=True):
+        affected_scope = takeover.get("affected_scope", {})
+        if (
+            takeover.get("id") != takeover_id
+            or takeover.get("request_id") != request.get("id")
+            or takeover.get("work_session_id") != request.get("work_session_id")
+            or takeover.get("state") != expected_state
+            or takeover.get("lock_epoch") != human_active.get("lock_epoch")
+            or affected_scope.get("blocking_scope") != request.get("blocking_scope")
+            or affected_scope.get("scope_ref")
+            != request.get("requested_action", {}).get("scope_ref")
+            or affected_scope.get("normalized_action_hash")
+            != "hash:action-final-submission"
+        ):
+            raise FixtureError(
+                f"{rel(path)}: takeover path {expected_state} state MUST bind Request and scope"
+            )
+
+    if (
+        not isinstance(resumed.get("reconciliation_refs"), list)
+        or not resumed.get("reconciliation_refs")
+        or not resumed.get("resumed_by_actor_id")
+    ):
+        raise FixtureError(
+            f"{rel(path)}: takeover path resumed state MUST include reconciliation refs"
+        )
+
+    events = [started_event, reconciliation_event, resumed_event]
+    if not all(isinstance(event, dict) for event in events):
+        raise FixtureError(
+            f"{rel(path)}: takeover path MUST include Takeover lifecycle events"
+        )
+    if not (
+        started_event.get("sequence")
+        < reconciliation_event.get("sequence")
+        < resumed_event.get("sequence")
+    ):
+        raise FixtureError(
+            f"{rel(path)}: takeover path events MUST order reconciliation before resume"
+        )
+    if (
+        reconciliation_event.get("previous_hash") != started_event.get("event_hash")
+        or resumed_event.get("previous_hash") != reconciliation_event.get("event_hash")
+    ):
+        raise FixtureError(
+            f"{rel(path)}: takeover path event hashes MUST chain through reconciliation"
+        )
+
+
 def validate_invalid_fixture_semantics(path: Path, fixture: dict[str, Any]) -> None:
     expected_error_id = fixture.get("expected_error_id")
     if not expected_error_id:
@@ -1757,15 +1839,24 @@ def validate_fixture(
         validate_assertion(path, fixture, assertion)
 
     validate_golden_path_semantics(path, fixture)
+    validate_takeover_path_semantics(path, fixture)
     validate_invalid_fixture_semantics(path, fixture)
     return fixture
 
 
 def validate_required_fixture_set() -> None:
     valid_files = {path.name for path in VALID_DIR.glob("*.json")}
-    if valid_files != {"golden-path.json"}:
+    expected_valid_files = {"golden-path.json", "takeover-path.json"}
+    if valid_files != expected_valid_files:
+        missing = sorted(expected_valid_files - valid_files)
+        extra = sorted(valid_files - expected_valid_files)
+        message = []
+        if missing:
+            message.append("missing valid fixtures: " + ", ".join(missing))
+        if extra:
+            message.append("unexpected valid fixtures: " + ", ".join(extra))
         raise FixtureError(
-            "docs/conformance/fixtures/valid: expected only golden-path.json"
+            "docs/conformance/fixtures/valid: " + "; ".join(message)
         )
 
     invalid_files = {path.name for path in INVALID_DIR.glob("*.json")}

@@ -1,0 +1,22 @@
+{
+  "object_type": "Takeover",
+  "record": {
+    "id": "takeover-final-submission",
+    "work_session_id": "ws-takeover-001",
+    "requested_by_actor_id": "actor-agent-takeover",
+    "controlling_actor_id": "actor-human-takeover",
+    "request_id": "req-takeover-final",
+    "affected_scope": {
+      "blocking_scope": "final_submission",
+      "scope_ref": "scope:final-output",
+      "normalized_action_hash": "hash:action-final-submission",
+      "artifact_refs": [
+        "artifact:final-draft"
+      ]
+    },
+    "reason": "HumanWorker completed direct control and requires reconciliation before AgentWorker continuation.",
+    "lock_epoch": 2,
+    "state": "reconciliation_required",
+    "created_at": "2026-06-17T10:11:00Z"
+  }
+}

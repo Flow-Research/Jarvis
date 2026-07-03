@@ -1,0 +1,54 @@
+{
+  "object_type": "Request",
+  "record": {
+    "id": "req-takeover-final",
+    "protocol_version": "v0.1",
+    "work_session_id": "ws-takeover-001",
+    "requester_actor_id": "actor-agent-takeover",
+    "requester_worker_id": "worker-agent-takeover",
+    "target_human_worker_id": "worker-human-takeover",
+    "policy_decision_id": "pd-takeover-final-review-required",
+    "type": "takeover",
+    "blocking_scope": "final_submission",
+    "reason_code": "policy_review_required",
+    "reason_summary": "Final submission requires HumanWorker control before continuation.",
+    "requested_action": {
+      "action": "final_submission",
+      "target_ref": "artifact:final-draft",
+      "scope_ref": "scope:final-output"
+    },
+    "requested_outcome": "HumanWorker takes control of final submission and returns reconciliation refs before AgentWorker resumes.",
+    "risk_class": "high",
+    "human_decision_needed": "Take over the blocked final submission scope or deny continuation.",
+    "options": [
+      {
+        "id": "option-takeover",
+        "label": "Start takeover",
+        "effect": "HumanWorker controls final submission before AgentWorker resumes.",
+        "risk_class": "medium",
+        "scope_ref": "scope:final-output"
+      },
+      {
+        "id": "option-deny",
+        "label": "Deny final submission",
+        "effect": "AgentWorker stops the blocked branch and records the limitation.",
+        "risk_class": "low",
+        "scope_ref": "scope:final-output"
+      }
+    ],
+    "default_if_no_response": {
+      "action": "stop_final_submission",
+      "reason": "The blocked final submission branch remains stopped.",
+      "limitation_ref": "limitation:takeover-not-resolved"
+    },
+    "status": "pending",
+    "created_at": "2026-06-17T10:05:00Z",
+    "expires_at": "2026-06-17T10:35:00Z",
+    "missing_permission_or_context": "HumanWorker control for final submission",
+    "policy_refs": [
+      "policy-takeover-bounded"
+    ],
+    "data_sensitivity": "public",
+    "recommended_option": "option-takeover"
+  }
+}

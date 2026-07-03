@@ -1,0 +1,25 @@
+{
+  "object_type": "Actor",
+  "record": {
+    "id": "actor-agent-takeover",
+    "worker_id": "worker-agent-takeover",
+    "type": "agent",
+    "event_authority": {
+      "can_append_events": true,
+      "allowed_event_types": [
+        "policy_decision.recorded",
+        "request.created",
+        "evidence.captured",
+        "contribution.recorded"
+      ]
+    },
+    "contribution_scope": {
+      "contribution_roles": [
+        "agent",
+        "shared"
+      ]
+    },
+    "created_at": "2026-06-17T10:00:00Z",
+    "valid_from": "2026-06-17T10:00:00Z"
+  }
+}

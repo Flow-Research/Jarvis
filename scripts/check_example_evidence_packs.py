@@ -15,8 +15,10 @@ ROOT = Path(__file__).resolve().parents[1]
 PACK_ROOT = ROOT / "docs" / "examples" / "evidence-packs"
 PYTHON_PACKAGE_SRC = ROOT / "packages" / "python" / "src"
 PROTOCOL_VERSION = "v0.1"
-CANONICAL_FIXTURE_REF = "docs/conformance/fixtures/valid/golden-path.json"
-CANONICAL_FIXTURE_ID = "valid-golden-path-v01"
+VALID_SOURCE_FIXTURES = {
+    "docs/conformance/fixtures/valid/golden-path.json": "valid-golden-path-v01",
+    "docs/conformance/fixtures/valid/takeover-path.json": "valid-takeover-path-v01",
+}
 MANIFEST_KEYS = {
     "pack_id",
     "protocol_version",
@@ -262,14 +264,16 @@ def check_manifest(manifest_path: Path) -> int:
     assert_closed_object(manifest_path, manifest, MANIFEST_KEYS, "manifest")
     if manifest.get("protocol_version") != PROTOCOL_VERSION:
         raise EvidencePackError(f"{rel(manifest_path)}: protocol_version MUST be {PROTOCOL_VERSION}")
-    if manifest.get("source_fixture") != CANONICAL_FIXTURE_REF:
+    source_fixture_ref = manifest.get("source_fixture")
+    expected_fixture_id = VALID_SOURCE_FIXTURES.get(source_fixture_ref)
+    if expected_fixture_id is None:
         raise EvidencePackError(
-            f"{rel(manifest_path)}: source_fixture MUST be {CANONICAL_FIXTURE_REF}"
+            f"{rel(manifest_path)}: source_fixture MUST reference a valid v0.1 proof fixture"
         )
-    source_fixture_path = resolve_repo_ref(manifest_path, manifest.get("source_fixture"))
+    source_fixture_path = resolve_repo_ref(manifest_path, source_fixture_ref)
     fixture = load_json(source_fixture_path)
     if (
-        fixture.get("fixture_id") != CANONICAL_FIXTURE_ID
+        fixture.get("fixture_id") != expected_fixture_id
         or fixture.get("protocol_version") != PROTOCOL_VERSION
         or fixture.get("kind") != "valid"
     ):

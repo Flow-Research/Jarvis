@@ -1,0 +1,19 @@
+{
+  "operation_id": "createMemoryProposal",
+  "method": "POST",
+  "path": "/work-sessions/ws-takeover-001/memory-proposals",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-takeover",
+    "Jarvis-Idempotency-Key": "idem-takeover-memory-proposal",
+    "Jarvis-Request-Timestamp": "2026-06-17T10:19:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 9,
+    "Jarvis-Previous-Event-Hash": "hash:event-learning-recorded"
+  },
+  "actor_id": "actor-human-takeover",
+  "expected_status": 201,
+  "work_session_id": "ws-takeover-001",
+  "body_ref": "records.memory_proposals.takeover_reconciliation_pattern",
+  "expected_event_ref": "event-memory-proposal-created"
+}

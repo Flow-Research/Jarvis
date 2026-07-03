@@ -19,6 +19,20 @@ test("valid golden-path fixture is accepted", () => {
   assert.equal(result.valid, true, JSON.stringify(result.errors, null, 2));
 });
 
+test("valid takeover-path fixture is accepted", () => {
+  const fixture = readJson(join(fixtureRoot, "valid/takeover-path.json"));
+  const result = validateFixture(fixture);
+  assert.equal(result.valid, true, JSON.stringify(result.errors, null, 2));
+});
+
+test("takeover-path fixture requires reconciliation before resume", () => {
+  const fixture = readJson(join(fixtureRoot, "valid/takeover-path.json"));
+  fixture.records.takeovers.reconciliation_required.state = "resumed";
+  const result = validateFixture(fixture);
+  assert.equal(result.valid, false);
+  assert.equal(result.errors[0]?.error_id, "invalid_transition");
+});
+
 test("golden-path OutcomeReport requires a terminal WorkSession source", () => {
   const fixture = readJson(join(fixtureRoot, "valid/golden-path.json"));
   fixture.records.work_sessions.outcome_active = {

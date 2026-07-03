@@ -1,0 +1,18 @@
+{
+  "object_type": "WorkSession",
+  "record": {
+    "id": "ws-takeover-001",
+    "protocol_version": "v0.1",
+    "created_by_actor_id": "actor-human-takeover",
+    "objective": "Complete a final submission with human takeover and reconciliation proof.",
+    "human_worker_id": "worker-human-takeover",
+    "agent_worker_id": "worker-agent-takeover",
+    "policy_id": "policy-takeover-bounded",
+    "status": "reconciling",
+    "revision": 5,
+    "last_event_hash": "hash:event-takeover-reconciliation-required",
+    "event_log_ref": "event-log:ws-takeover-001",
+    "created_at": "2026-06-17T10:01:00Z",
+    "updated_at": "2026-06-17T10:11:00Z"
+  }
+}

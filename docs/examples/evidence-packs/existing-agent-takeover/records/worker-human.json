@@ -1,0 +1,31 @@
+{
+  "object_type": "Worker",
+  "record": {
+    "id": "worker-human-takeover",
+    "type": "human",
+    "role": "responsible controller",
+    "authority_scope": {
+      "grants": [
+        "policy:own",
+        "review:approve",
+        "takeover:start"
+      ]
+    },
+    "accountability_scope": {
+      "accountable_for": [
+        "objective",
+        "policy",
+        "takeover_reconciliation",
+        "final_review"
+      ]
+    },
+    "display_name": "HumanWorker Takeover",
+    "capabilities": [
+      {
+        "ref": "capability:takeover-control",
+        "capability_type": "human_judgment",
+        "required": true
+      }
+    ]
+  }
+}

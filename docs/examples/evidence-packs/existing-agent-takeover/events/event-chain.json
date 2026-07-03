@@ -1,0 +1,244 @@
+{
+  "events": [
+    {
+      "id": "event-worksession-created",
+      "sequence": 1,
+      "type": "work_session.created",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-human-takeover",
+      "timestamp": "2026-06-17T10:01:00Z",
+      "payload": {
+        "object_type": "work_session",
+        "object_id": "ws-takeover-001",
+        "action": "created"
+      },
+      "previous_hash": "hash:protocol-genesis",
+      "event_hash": "hash:event-worksession-created",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-policy-review-required",
+      "sequence": 2,
+      "type": "policy_decision.recorded",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-agent-takeover",
+      "timestamp": "2026-06-17T10:04:00Z",
+      "payload": {
+        "object_type": "policy_decision",
+        "object_id": "pd-takeover-final-review-required",
+        "action": "review_required"
+      },
+      "previous_hash": "hash:event-worksession-created",
+      "event_hash": "hash:event-policy-review-required",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-request-created",
+      "sequence": 3,
+      "type": "request.created",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-agent-takeover",
+      "timestamp": "2026-06-17T10:05:00Z",
+      "payload": {
+        "object_type": "request",
+        "object_id": "req-takeover-final",
+        "action": "created"
+      },
+      "previous_hash": "hash:event-policy-review-required",
+      "event_hash": "hash:event-request-created",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-takeover-started",
+      "sequence": 4,
+      "type": "takeover.started",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-human-takeover",
+      "timestamp": "2026-06-17T10:09:00Z",
+      "payload": {
+        "object_type": "takeover",
+        "object_id": "takeover-final-submission",
+        "action": "takeover.started"
+      },
+      "previous_hash": "hash:event-request-created",
+      "event_hash": "hash:event-takeover-started",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-takeover-reconciliation-required",
+      "sequence": 5,
+      "type": "takeover.reconciliation_required",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-human-takeover",
+      "timestamp": "2026-06-17T10:11:00Z",
+      "payload": {
+        "object_type": "takeover",
+        "object_id": "takeover-final-submission",
+        "action": "takeover.reconciliation_required"
+      },
+      "previous_hash": "hash:event-takeover-started",
+      "event_hash": "hash:event-takeover-reconciliation-required",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-takeover-resumed",
+      "sequence": 6,
+      "type": "takeover.resumed",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-human-takeover",
+      "timestamp": "2026-06-17T10:12:00Z",
+      "payload": {
+        "object_type": "takeover",
+        "object_id": "takeover-final-submission",
+        "action": "takeover.resumed"
+      },
+      "previous_hash": "hash:event-takeover-reconciliation-required",
+      "event_hash": "hash:event-takeover-resumed",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-evidence-captured",
+      "sequence": 7,
+      "type": "evidence.captured",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-agent-takeover",
+      "timestamp": "2026-06-17T10:14:00Z",
+      "payload": {
+        "object_type": "evidence_item",
+        "object_id": "evidence-takeover-final",
+        "action": "captured"
+      },
+      "previous_hash": "hash:event-takeover-resumed",
+      "event_hash": "hash:event-evidence-captured",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-contribution-recorded",
+      "sequence": 8,
+      "type": "contribution.recorded",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-human-takeover",
+      "timestamp": "2026-06-17T10:16:00Z",
+      "payload": {
+        "object_type": "contribution",
+        "object_id": "contribution-takeover-submission",
+        "action": "recorded"
+      },
+      "previous_hash": "hash:event-evidence-captured",
+      "event_hash": "hash:event-contribution-recorded",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-learning-recorded",
+      "sequence": 9,
+      "type": "learning.recorded",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-human-takeover",
+      "timestamp": "2026-06-17T10:18:00Z",
+      "payload": {
+        "object_type": "learning_record",
+        "object_id": "learning-takeover-pair",
+        "action": "recorded"
+      },
+      "previous_hash": "hash:event-contribution-recorded",
+      "event_hash": "hash:event-learning-recorded",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-memory-proposal-created",
+      "sequence": 10,
+      "type": "memory_proposal.created",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-human-takeover",
+      "timestamp": "2026-06-17T10:19:00Z",
+      "payload": {
+        "object_type": "memory_proposal",
+        "object_id": "memory-proposal-takeover",
+        "action": "created"
+      },
+      "previous_hash": "hash:event-learning-recorded",
+      "event_hash": "hash:event-memory-proposal-created",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-skill-proposal-created",
+      "sequence": 11,
+      "type": "skill_proposal.created",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-human-takeover",
+      "timestamp": "2026-06-17T10:20:00Z",
+      "payload": {
+        "object_type": "skill_proposal",
+        "object_id": "skill-proposal-takeover",
+        "action": "created"
+      },
+      "previous_hash": "hash:event-memory-proposal-created",
+      "event_hash": "hash:event-skill-proposal-created",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    },
+    {
+      "id": "event-worksession-completed",
+      "sequence": 12,
+      "type": "work_session.completed",
+      "work_session_id": "ws-takeover-001",
+      "actor_id": "actor-human-takeover",
+      "timestamp": "2026-06-17T10:24:00Z",
+      "payload": {
+        "object_type": "work_session",
+        "object_id": "ws-takeover-001",
+        "action": "completed"
+      },
+      "previous_hash": "hash:event-skill-proposal-created",
+      "event_hash": "hash:event-worksession-completed",
+      "canonicalization": {
+        "serialization": "json-c14n",
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1"
+      }
+    }
+  ]
+}

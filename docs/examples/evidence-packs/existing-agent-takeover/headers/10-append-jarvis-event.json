@@ -1,0 +1,19 @@
+{
+  "operation_id": "appendJarvisEvent",
+  "method": "POST",
+  "path": "/work-sessions/ws-takeover-001/events",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-agent-takeover",
+    "Jarvis-Idempotency-Key": "idem-takeover-evidence-captured",
+    "Jarvis-Request-Timestamp": "2026-06-17T10:14:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 6,
+    "Jarvis-Previous-Event-Hash": "hash:event-takeover-resumed"
+  },
+  "actor_id": "actor-agent-takeover",
+  "expected_status": 201,
+  "work_session_id": "ws-takeover-001",
+  "body_ref": "records.jarvis_events.evidence_captured",
+  "expected_event_ref": "event-evidence-captured"
+}

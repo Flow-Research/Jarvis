@@ -128,6 +128,17 @@ change the Jarvis record.
 
 The proof pair MUST cover Review resolution and Takeover resolution.
 
+Jarvis publishes protocol-record evidence packs for both paths:
+
+```txt
+docs/examples/evidence-packs/existing-agent-review
+docs/examples/evidence-packs/existing-agent-takeover
+```
+
+These packs prove record compatibility only. They do not certify an
+implementation, define adapter code, define wrapper code, or move host-owned
+execution into Jarvis.
+
 ### Review Resolution Equivalence
 
 Review resolution proof MUST map this sequence for both host shapes:

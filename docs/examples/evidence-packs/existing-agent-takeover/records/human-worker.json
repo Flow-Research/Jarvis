@@ -1,0 +1,35 @@
+{
+  "object_type": "HumanWorker",
+  "record": {
+    "worker_id": "worker-human-takeover",
+    "actor_id": "actor-human-takeover",
+    "role": "policy owner and takeover controller",
+    "policy_authority": {
+      "grants": [
+        "policy:own",
+        "policy:narrow"
+      ]
+    },
+    "review_authority": {
+      "grants": [
+        "review:approve",
+        "review:narrow",
+        "review:deny",
+        "takeover:start"
+      ]
+    },
+    "profile_ref": "profile:human-takeover",
+    "domain_context_refs": [
+      "context:task-brief"
+    ],
+    "preferences": {
+      "takeover.default_detail": "reconcile_before_resume"
+    },
+    "boundaries": [
+      "final submission requires human takeover when ambiguity is high"
+    ],
+    "known_patterns": [
+      "take direct control before final submission when policy requires it"
+    ]
+  }
+}

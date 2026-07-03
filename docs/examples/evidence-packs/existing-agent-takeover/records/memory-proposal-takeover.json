@@ -1,0 +1,33 @@
+{
+  "object_type": "MemoryProposal",
+  "record": {
+    "id": "memory-proposal-takeover",
+    "work_session_id": "ws-takeover-001",
+    "proposed_by_actor_id": "actor-human-takeover",
+    "proposed_for": "pair",
+    "memory_scope": "scope:future-final-submission",
+    "memory_type": "collaboration_pattern",
+    "content": {
+      "pattern": "Final submission under high ambiguity requires Takeover, reconciliation refs, and a resumed state before AgentWorker continuation."
+    },
+    "provenance": [
+      "event-takeover-started",
+      "event-takeover-reconciliation-required",
+      "event-takeover-resumed",
+      "learning-takeover-pair"
+    ],
+    "confidence": 0.9,
+    "review_required": true,
+    "status": "pending_review",
+    "created_at": "2026-06-17T10:19:00Z",
+    "source_event_refs": [
+      "event-takeover-started",
+      "event-takeover-reconciliation-required",
+      "event-takeover-resumed",
+      "event-learning-recorded"
+    ],
+    "learning_record_refs": [
+      "learning-takeover-pair"
+    ]
+  }
+}
