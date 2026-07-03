@@ -1,0 +1,19 @@
+{
+  "operation_id": "recordPolicyDecision",
+  "method": "POST",
+  "path": "/work-sessions/ws-takeover-001/policy-decisions",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-agent-takeover",
+    "Jarvis-Idempotency-Key": "idem-takeover-policy-review-required",
+    "Jarvis-Request-Timestamp": "2026-06-17T10:04:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 1,
+    "Jarvis-Previous-Event-Hash": "hash:event-worksession-created"
+  },
+  "actor_id": "actor-agent-takeover",
+  "expected_status": 201,
+  "work_session_id": "ws-takeover-001",
+  "body_ref": "records.policy_decisions.final_submission_review_required",
+  "expected_event_ref": "event-policy-review-required"
+}

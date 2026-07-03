@@ -94,6 +94,7 @@ const ACCEPTED_OPERATION_CLASSES = new Set([
 
 const REQUIRED_FIXTURE_PATHS = Object.freeze([
   "valid/golden-path.json",
+  "valid/takeover-path.json",
   "invalid/forbidden-host-private-export-field.json",
   "invalid/invalid-approval-scope.json",
   "invalid/invalid-evidence-export-state.json",

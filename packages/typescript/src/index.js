@@ -1115,6 +1115,73 @@ export function validateProtocolRecord(objectType, record, options = {}) {
   }
 }
 
+function takeoverPathLifecycleError(fixture) {
+  if (fixture?.fixture_id !== "valid-takeover-path-v01") {
+    return null;
+  }
+  const request = getRef(fixture, "records.requests.takeover");
+  const humanActive = getRef(fixture, "records.takeovers.human_active");
+  const reconciliationRequired = getRef(fixture, "records.takeovers.reconciliation_required");
+  const resumed = getRef(fixture, "records.takeovers.resumed");
+  const startedEvent = getRef(fixture, "records.jarvis_events.takeover_started");
+  const reconciliationEvent = getRef(fixture, "records.jarvis_events.takeover_reconciliation_required");
+  const resumedEvent = getRef(fixture, "records.jarvis_events.takeover_resumed");
+  const takeovers = [humanActive, reconciliationRequired, resumed];
+  if (
+    !isPlainObject(request)
+    || request.status !== "takeover"
+    || !isNonEmptyString(request.resolved_by_takeover_id)
+    || !takeovers.every(isPlainObject)
+  ) {
+    return protocolError("invalid_transition", {
+      field: "records.takeovers",
+      reason: "Takeover proof MUST include Request resolution and all Takeover lifecycle states.",
+    });
+  }
+  const expectedStates = ["human_active", "reconciliation_required", "resumed"];
+  for (const [index, takeover] of takeovers.entries()) {
+    const affectedScope = takeover.affected_scope ?? {};
+    if (
+      takeover.id !== request.resolved_by_takeover_id
+      || takeover.request_id !== request.id
+      || takeover.work_session_id !== request.work_session_id
+      || takeover.state !== expectedStates[index]
+      || takeover.lock_epoch !== humanActive.lock_epoch
+      || affectedScope.blocking_scope !== request.blocking_scope
+      || affectedScope.scope_ref !== request.requested_action?.scope_ref
+      || affectedScope.normalized_action_hash !== "hash:action-final-submission"
+    ) {
+      return protocolError("invalid_transition", {
+        field: `records.takeovers.${expectedStates[index]}`,
+        reason: "Takeover lifecycle states MUST bind the same Request, lock epoch, and affected scope.",
+      });
+    }
+  }
+  if (!Array.isArray(resumed.reconciliation_refs) || resumed.reconciliation_refs.length === 0 || !resumed.resumed_by_actor_id) {
+    return protocolError("missing_reconciliation_refs", {
+      field: "records.takeovers.resumed.reconciliation_refs",
+      reason: "Resumed Takeover records require reconciliation refs and resumed_by_actor_id.",
+    });
+  }
+  if (
+    !isPlainObject(startedEvent)
+    || !isPlainObject(reconciliationEvent)
+    || !isPlainObject(resumedEvent)
+    || !isInteger(startedEvent.sequence)
+    || !isInteger(reconciliationEvent.sequence)
+    || !isInteger(resumedEvent.sequence)
+    || !(startedEvent.sequence < reconciliationEvent.sequence && reconciliationEvent.sequence < resumedEvent.sequence)
+    || reconciliationEvent.previous_hash !== startedEvent.event_hash
+    || resumedEvent.previous_hash !== reconciliationEvent.event_hash
+  ) {
+    return protocolError("invalid_transition", {
+      field: "records.jarvis_events.takeover_reconciliation_required",
+      reason: "Takeover event chain MUST pass through reconciliation_required before resumed.",
+    });
+  }
+  return null;
+}
+
 export function validateFixture(fixture) {
   if (!isPlainObject(fixture)) {
     return fail("invalid_export", {
@@ -1134,6 +1201,10 @@ export function validateFixture(fixture) {
   }
   if (error) {
     return validationResult([error]);
+  }
+  const takeoverLifecycleError = takeoverPathLifecycleError(fixture);
+  if (takeoverLifecycleError) {
+    return validationResult([takeoverLifecycleError]);
   }
   for (const op of fixture.operations ?? []) {
     const bindingShapeError = operationBindingError(op);

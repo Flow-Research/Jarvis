@@ -1,0 +1,42 @@
+{
+  "object_type": "OutcomeReport",
+  "record": {
+    "id": "outcome-report-takeover",
+    "work_session_id": "ws-takeover-001",
+    "source_ref": "source:completed-worksession:ws-takeover-001",
+    "reporter_ref": "reporter:fixture-evaluator",
+    "accepted_by_actor_id": "actor-human-takeover",
+    "outcome": "accepted",
+    "learning_record_refs": [
+      "learning-takeover-pair"
+    ],
+    "received_at": "2026-06-17T10:30:00Z",
+    "external_system_ref": "external:evaluation-system",
+    "reporter_actor_id": "actor-human-takeover",
+    "reason": "Post-session feedback confirms the Takeover reconciliation loop protected final submission quality.",
+    "reviewer_feedback_refs": [
+      "feedback:takeover-loop-accepted"
+    ]
+  },
+  "context": {
+    "workSession": {
+      "id": "ws-takeover-001",
+      "protocol_version": "v0.1",
+      "created_by_actor_id": "actor-human-takeover",
+      "objective": "Complete a final submission with human takeover and reconciliation proof.",
+      "human_worker_id": "worker-human-takeover",
+      "agent_worker_id": "worker-agent-takeover",
+      "policy_id": "policy-takeover-bounded",
+      "status": "completed",
+      "revision": 12,
+      "last_event_hash": "hash:event-worksession-completed",
+      "event_log_ref": "event-log:ws-takeover-001",
+      "created_at": "2026-06-17T10:01:00Z",
+      "updated_at": "2026-06-17T10:24:00Z",
+      "evidence_manifest_ref": "evidence-manifest-takeover",
+      "learning_record_refs": [
+        "learning-takeover-pair"
+      ]
+    }
+  }
+}

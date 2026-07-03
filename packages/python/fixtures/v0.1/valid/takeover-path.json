@@ -1,0 +1,1382 @@
+{
+  "fixture_id": "valid-takeover-path-v01",
+  "protocol_version": "v0.1",
+  "kind": "valid",
+  "title": "Takeover-path governed human-agent collaboration",
+  "description": "A HumanWorker and AgentWorker complete one WorkSession where final submission requires Takeover, reconciliation refs, evidence export, and governed learning.",
+  "source_contract_refs": [
+    "docs/conformance/existing-agent-proof-plan.md",
+    "docs/conformance/compatibility-mapping.md",
+    "docs/conformance/checklist.md",
+    "docs/conformance/failure-modes.md",
+    "docs/protocol/15-openapi-communication-binding.md",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Worker",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Actor",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/HumanWorker",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/AgentWorker",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Policy",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/WorkSession",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/JarvisEvent",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/PolicyDecision",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Request",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Takeover",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Contribution",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/EvidenceManifest",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/LearningRecord",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/MemoryProposal",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/SkillProposal",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/OutcomeReport"
+  ],
+  "host_shape_ref": "local_execution_host_boundary",
+  "records": {
+    "workers": {
+      "fixture_registrar": {
+        "id": "worker-fixture-registrar-takeover",
+        "type": "service",
+        "role": "protocol registration authority",
+        "authority_scope": {
+          "grants": [
+            "worker:register",
+            "actor:register"
+          ]
+        },
+        "accountability_scope": {
+          "accountable_for": [
+            "worker_registration",
+            "actor_registration"
+          ]
+        },
+        "display_name": "Takeover Fixture Registrar"
+      },
+      "human": {
+        "id": "worker-human-takeover",
+        "type": "human",
+        "role": "responsible controller",
+        "authority_scope": {
+          "grants": [
+            "policy:own",
+            "review:approve",
+            "takeover:start"
+          ]
+        },
+        "accountability_scope": {
+          "accountable_for": [
+            "objective",
+            "policy",
+            "takeover_reconciliation",
+            "final_review"
+          ]
+        },
+        "display_name": "HumanWorker Takeover",
+        "capabilities": [
+          {
+            "ref": "capability:takeover-control",
+            "capability_type": "human_judgment",
+            "required": true
+          }
+        ]
+      },
+      "agent": {
+        "id": "worker-agent-takeover",
+        "type": "agent",
+        "role": "bounded executor",
+        "authority_scope": {
+          "grants": [
+            "action:propose",
+            "action:execute_after_policy",
+            "evidence:capture"
+          ]
+        },
+        "accountability_scope": {
+          "accountable_for": [
+            "policy_checked_execution",
+            "evidence_capture"
+          ]
+        },
+        "display_name": "AgentWorker Takeover",
+        "capabilities": [
+          {
+            "ref": "capability:draft-reconciliation",
+            "capability_type": "drafting",
+            "required": true
+          }
+        ]
+      }
+    },
+    "actors": {
+      "fixture_registrar": {
+        "id": "actor-fixture-registrar-takeover",
+        "worker_id": "worker-fixture-registrar-takeover",
+        "type": "service",
+        "event_authority": {
+          "can_append_events": false,
+          "allowed_event_types": []
+        },
+        "contribution_scope": {
+          "contribution_roles": [
+            "service"
+          ]
+        },
+        "created_at": "2026-06-17T09:59:00Z",
+        "valid_from": "2026-06-17T09:59:00Z"
+      },
+      "human": {
+        "id": "actor-human-takeover",
+        "worker_id": "worker-human-takeover",
+        "type": "human",
+        "event_authority": {
+          "can_append_events": true,
+          "allowed_event_types": [
+            "work_session.created",
+            "takeover.started",
+            "takeover.reconciliation_required",
+            "takeover.resumed",
+            "contribution.recorded",
+            "learning.recorded",
+            "memory_proposal.created",
+            "skill_proposal.created",
+            "work_session.completed"
+          ]
+        },
+        "contribution_scope": {
+          "contribution_roles": [
+            "human",
+            "shared"
+          ]
+        },
+        "created_at": "2026-06-17T10:00:00Z",
+        "valid_from": "2026-06-17T10:00:00Z"
+      },
+      "agent": {
+        "id": "actor-agent-takeover",
+        "worker_id": "worker-agent-takeover",
+        "type": "agent",
+        "event_authority": {
+          "can_append_events": true,
+          "allowed_event_types": [
+            "policy_decision.recorded",
+            "request.created",
+            "evidence.captured",
+            "contribution.recorded"
+          ]
+        },
+        "contribution_scope": {
+          "contribution_roles": [
+            "agent",
+            "shared"
+          ]
+        },
+        "created_at": "2026-06-17T10:00:00Z",
+        "valid_from": "2026-06-17T10:00:00Z"
+      }
+    },
+    "human_workers": {
+      "primary": {
+        "worker_id": "worker-human-takeover",
+        "actor_id": "actor-human-takeover",
+        "role": "policy owner and takeover controller",
+        "policy_authority": {
+          "grants": [
+            "policy:own",
+            "policy:narrow"
+          ]
+        },
+        "review_authority": {
+          "grants": [
+            "review:approve",
+            "review:narrow",
+            "review:deny",
+            "takeover:start"
+          ]
+        },
+        "profile_ref": "profile:human-takeover",
+        "domain_context_refs": [
+          "context:task-brief"
+        ],
+        "preferences": {
+          "takeover.default_detail": "reconcile_before_resume"
+        },
+        "boundaries": [
+          "final submission requires human takeover when ambiguity is high"
+        ],
+        "known_patterns": [
+          "take direct control before final submission when policy requires it"
+        ]
+      }
+    },
+    "agent_workers": {
+      "primary": {
+        "worker_id": "worker-agent-takeover",
+        "actor_id": "actor-agent-takeover",
+        "agent_ref": "agent:takeover-agent",
+        "role": "bounded drafting agent",
+        "capability_refs": [
+          {
+            "ref": "capability:draft-reconciliation",
+            "capability_type": "drafting",
+            "required": true
+          }
+        ],
+        "autonomy_level": "bounded_execute",
+        "operating_constraints": [
+          "record PolicyDecision before action affects WorkSession state",
+          "create Request when Policy requires human control",
+          "wait for Takeover reconciliation refs before continuation"
+        ],
+        "tool_access_profile": {
+          "profile_ref": "tool-profile:local-context-only"
+        },
+        "memory_access_profile": {
+          "profile_ref": "memory-profile:proposal-only"
+        }
+      }
+    },
+    "policies": {
+      "bounded": {
+        "id": "policy-takeover-bounded",
+        "owner_worker_id": "worker-human-takeover",
+        "created_by_actor_id": "actor-human-takeover",
+        "autonomy_level": "bounded_execute",
+        "allowed_actions": [
+          {
+            "action": "read_local_context",
+            "scope_ref": "scope:local"
+          },
+          {
+            "action": "draft_artifact",
+            "scope_ref": "scope:draft"
+          }
+        ],
+        "denied_actions": [
+          {
+            "action": "send_external",
+            "scope_ref": "scope:external"
+          }
+        ],
+        "review_required_actions": [
+          {
+            "action": "final_submission",
+            "scope_ref": "scope:final-output"
+          }
+        ],
+        "risk_classes": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "escalation_rules": [
+          {
+            "trigger": "final_submission_requires_takeover",
+            "risk_class": "high",
+            "required_action": "start_takeover",
+            "reviewer_ref": "worker-human-takeover",
+            "reason": "Policy requires HumanWorker control before final submission."
+          }
+        ],
+        "created_at": "2026-06-17T10:00:30Z",
+        "request_limits": {
+          "max_pending_requests": 2,
+          "duplicate_window_seconds": 600
+        }
+      }
+    },
+    "work_sessions": {
+      "genesis_request": {
+        "id": "ws-takeover-001",
+        "protocol_version": "v0.1",
+        "created_by_actor_id": "actor-human-takeover",
+        "objective": "Complete a final submission with human takeover and reconciliation proof.",
+        "human_worker_id": "worker-human-takeover",
+        "agent_worker_id": "worker-agent-takeover",
+        "policy_id": "policy-takeover-bounded",
+        "status": "active",
+        "revision": 0,
+        "last_event_hash": "hash:protocol-genesis",
+        "event_log_ref": "event-log:ws-takeover-001",
+        "created_at": "2026-06-17T10:01:00Z",
+        "updated_at": "2026-06-17T10:01:00Z"
+      },
+      "takeover_active": {
+        "id": "ws-takeover-001",
+        "protocol_version": "v0.1",
+        "created_by_actor_id": "actor-human-takeover",
+        "objective": "Complete a final submission with human takeover and reconciliation proof.",
+        "human_worker_id": "worker-human-takeover",
+        "agent_worker_id": "worker-agent-takeover",
+        "policy_id": "policy-takeover-bounded",
+        "status": "takeover",
+        "revision": 4,
+        "last_event_hash": "hash:event-takeover-started",
+        "event_log_ref": "event-log:ws-takeover-001",
+        "created_at": "2026-06-17T10:01:00Z",
+        "updated_at": "2026-06-17T10:09:00Z"
+      },
+      "completed": {
+        "id": "ws-takeover-001",
+        "protocol_version": "v0.1",
+        "created_by_actor_id": "actor-human-takeover",
+        "objective": "Complete a final submission with human takeover and reconciliation proof.",
+        "human_worker_id": "worker-human-takeover",
+        "agent_worker_id": "worker-agent-takeover",
+        "policy_id": "policy-takeover-bounded",
+        "status": "completed",
+        "revision": 12,
+        "last_event_hash": "hash:event-worksession-completed",
+        "event_log_ref": "event-log:ws-takeover-001",
+        "created_at": "2026-06-17T10:01:00Z",
+        "updated_at": "2026-06-17T10:24:00Z",
+        "evidence_manifest_ref": "evidence-manifest-takeover",
+        "learning_record_refs": [
+          "learning-takeover-pair"
+        ]
+      },
+      "reconciliation_required": {
+        "id": "ws-takeover-001",
+        "protocol_version": "v0.1",
+        "created_by_actor_id": "actor-human-takeover",
+        "objective": "Complete a final submission with human takeover and reconciliation proof.",
+        "human_worker_id": "worker-human-takeover",
+        "agent_worker_id": "worker-agent-takeover",
+        "policy_id": "policy-takeover-bounded",
+        "status": "reconciling",
+        "revision": 5,
+        "last_event_hash": "hash:event-takeover-reconciliation-required",
+        "event_log_ref": "event-log:ws-takeover-001",
+        "created_at": "2026-06-17T10:01:00Z",
+        "updated_at": "2026-06-17T10:11:00Z"
+      }
+    },
+    "policy_decisions": {
+      "final_submission_review_required": {
+        "id": "pd-takeover-final-review-required",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-agent-takeover",
+        "policy_id": "policy-takeover-bounded",
+        "requested_action": {
+          "action": "final_submission",
+          "target_ref": "artifact:final-draft",
+          "scope_ref": "scope:final-output"
+        },
+        "normalized_action_hash": "hash:action-final-submission",
+        "risk_class": "high",
+        "result": "review_required",
+        "reason": "Policy requires HumanWorker takeover before final submission.",
+        "created_at": "2026-06-17T10:04:00Z",
+        "data_sensitivity": "public",
+        "request_id": "req-takeover-final"
+      }
+    },
+    "requests": {
+      "pending": {
+        "id": "req-takeover-final",
+        "protocol_version": "v0.1",
+        "work_session_id": "ws-takeover-001",
+        "requester_actor_id": "actor-agent-takeover",
+        "requester_worker_id": "worker-agent-takeover",
+        "target_human_worker_id": "worker-human-takeover",
+        "policy_decision_id": "pd-takeover-final-review-required",
+        "type": "takeover",
+        "blocking_scope": "final_submission",
+        "reason_code": "policy_review_required",
+        "reason_summary": "Final submission requires HumanWorker control before continuation.",
+        "requested_action": {
+          "action": "final_submission",
+          "target_ref": "artifact:final-draft",
+          "scope_ref": "scope:final-output"
+        },
+        "requested_outcome": "HumanWorker takes control of final submission and returns reconciliation refs before AgentWorker resumes.",
+        "risk_class": "high",
+        "human_decision_needed": "Take over the blocked final submission scope or deny continuation.",
+        "options": [
+          {
+            "id": "option-takeover",
+            "label": "Start takeover",
+            "effect": "HumanWorker controls final submission before AgentWorker resumes.",
+            "risk_class": "medium",
+            "scope_ref": "scope:final-output"
+          },
+          {
+            "id": "option-deny",
+            "label": "Deny final submission",
+            "effect": "AgentWorker stops the blocked branch and records the limitation.",
+            "risk_class": "low",
+            "scope_ref": "scope:final-output"
+          }
+        ],
+        "default_if_no_response": {
+          "action": "stop_final_submission",
+          "reason": "The blocked final submission branch remains stopped.",
+          "limitation_ref": "limitation:takeover-not-resolved"
+        },
+        "status": "pending",
+        "created_at": "2026-06-17T10:05:00Z",
+        "expires_at": "2026-06-17T10:35:00Z",
+        "missing_permission_or_context": "HumanWorker control for final submission",
+        "policy_refs": [
+          "policy-takeover-bounded"
+        ],
+        "data_sensitivity": "public",
+        "recommended_option": "option-takeover"
+      },
+      "takeover": {
+        "id": "req-takeover-final",
+        "protocol_version": "v0.1",
+        "work_session_id": "ws-takeover-001",
+        "requester_actor_id": "actor-agent-takeover",
+        "requester_worker_id": "worker-agent-takeover",
+        "target_human_worker_id": "worker-human-takeover",
+        "policy_decision_id": "pd-takeover-final-review-required",
+        "type": "takeover",
+        "blocking_scope": "final_submission",
+        "reason_code": "policy_review_required",
+        "reason_summary": "Final submission requires HumanWorker control before continuation.",
+        "requested_action": {
+          "action": "final_submission",
+          "target_ref": "artifact:final-draft",
+          "scope_ref": "scope:final-output"
+        },
+        "requested_outcome": "HumanWorker takes control of final submission and returns reconciliation refs before AgentWorker resumes.",
+        "risk_class": "high",
+        "human_decision_needed": "Take over the blocked final submission scope or deny continuation.",
+        "options": [
+          {
+            "id": "option-takeover",
+            "label": "Start takeover",
+            "effect": "HumanWorker controls final submission before AgentWorker resumes.",
+            "risk_class": "medium",
+            "scope_ref": "scope:final-output"
+          },
+          {
+            "id": "option-deny",
+            "label": "Deny final submission",
+            "effect": "AgentWorker stops the blocked branch and records the limitation.",
+            "risk_class": "low",
+            "scope_ref": "scope:final-output"
+          }
+        ],
+        "default_if_no_response": {
+          "action": "stop_final_submission",
+          "reason": "The blocked final submission branch remains stopped.",
+          "limitation_ref": "limitation:takeover-not-resolved"
+        },
+        "status": "takeover",
+        "created_at": "2026-06-17T10:05:00Z",
+        "expires_at": "2026-06-17T10:35:00Z",
+        "missing_permission_or_context": "HumanWorker control for final submission",
+        "policy_refs": [
+          "policy-takeover-bounded"
+        ],
+        "data_sensitivity": "public",
+        "recommended_option": "option-takeover",
+        "resolved_at": "2026-06-17T10:09:00Z",
+        "resolved_by_takeover_id": "takeover-final-submission"
+      }
+    },
+    "takeovers": {
+      "human_active": {
+        "id": "takeover-final-submission",
+        "work_session_id": "ws-takeover-001",
+        "requested_by_actor_id": "actor-agent-takeover",
+        "controlling_actor_id": "actor-human-takeover",
+        "request_id": "req-takeover-final",
+        "affected_scope": {
+          "blocking_scope": "final_submission",
+          "scope_ref": "scope:final-output",
+          "normalized_action_hash": "hash:action-final-submission",
+          "artifact_refs": [
+            "artifact:final-draft"
+          ]
+        },
+        "reason": "HumanWorker controls final submission before AgentWorker continuation.",
+        "lock_epoch": 2,
+        "state": "human_active",
+        "created_at": "2026-06-17T10:09:00Z"
+      },
+      "resumed": {
+        "id": "takeover-final-submission",
+        "work_session_id": "ws-takeover-001",
+        "requested_by_actor_id": "actor-agent-takeover",
+        "controlling_actor_id": "actor-human-takeover",
+        "request_id": "req-takeover-final",
+        "affected_scope": {
+          "blocking_scope": "final_submission",
+          "scope_ref": "scope:final-output",
+          "normalized_action_hash": "hash:action-final-submission",
+          "artifact_refs": [
+            "artifact:final-draft"
+          ]
+        },
+        "reason": "HumanWorker completed direct control and returned reconciliation refs.",
+        "lock_epoch": 2,
+        "state": "resumed",
+        "created_at": "2026-06-17T10:12:00Z",
+        "resumed_by_actor_id": "actor-human-takeover",
+        "reconciliation_notes": "HumanWorker edited final claim and approved AgentWorker continuation inside reconciled scope.",
+        "reconciliation_refs": [
+          "artifact:final-draft-human-edited",
+          "event:event-takeover-resumed"
+        ],
+        "resolved_at": "2026-06-17T10:12:00Z"
+      },
+      "reconciliation_required": {
+        "id": "takeover-final-submission",
+        "work_session_id": "ws-takeover-001",
+        "requested_by_actor_id": "actor-agent-takeover",
+        "controlling_actor_id": "actor-human-takeover",
+        "request_id": "req-takeover-final",
+        "affected_scope": {
+          "blocking_scope": "final_submission",
+          "scope_ref": "scope:final-output",
+          "normalized_action_hash": "hash:action-final-submission",
+          "artifact_refs": [
+            "artifact:final-draft"
+          ]
+        },
+        "reason": "HumanWorker completed direct control and requires reconciliation before AgentWorker continuation.",
+        "lock_epoch": 2,
+        "state": "reconciliation_required",
+        "created_at": "2026-06-17T10:11:00Z"
+      }
+    },
+    "contributions": {
+      "shared_submission": {
+        "id": "contribution-takeover-submission",
+        "work_session_id": "ws-takeover-001",
+        "contributor_refs": [
+          {
+            "worker_id": "worker-human-takeover",
+            "actor_id": "actor-human-takeover",
+            "contribution_role": "human"
+          },
+          {
+            "worker_id": "worker-agent-takeover",
+            "actor_id": "actor-agent-takeover",
+            "contribution_role": "agent"
+          }
+        ],
+        "contributor_type": "shared",
+        "contribution_type": "submission",
+        "event_refs": [
+          "event-takeover-resumed",
+          "event-evidence-captured",
+          "event-contribution-recorded"
+        ],
+        "created_at": "2026-06-17T10:17:00Z",
+        "artifact_refs": [
+          "artifact:final-draft-human-edited"
+        ],
+        "review_refs": [],
+        "evidence_refs": [
+          "evidence-takeover-final"
+        ],
+        "confidence": 0.91,
+        "limitations": [
+          "limitation:human-takeover-required"
+        ]
+      }
+    },
+    "evidence_manifests": {
+      "portable_export": {
+        "id": "evidence-manifest-takeover",
+        "work_session_id": "ws-takeover-001",
+        "generated_by_actor_id": "actor-human-takeover",
+        "objective": "Complete a final submission with human takeover and reconciliation proof.",
+        "event_chain_root": "hash:event-worksession-completed",
+        "evidence_item_refs": [
+          {
+            "id": "evidence-takeover-final",
+            "work_session_id": "ws-takeover-001",
+            "source_event_refs": [
+              "event-evidence-captured"
+            ],
+            "captured_by_actor_id": "actor-agent-takeover",
+            "evidence_type": "reconciled_submission_summary",
+            "artifact_ref": "artifact:final-draft-human-edited",
+            "content_hash": "hash:final-draft-human-edited",
+            "trust_label": "human_reconciled",
+            "redaction_state": "redacted",
+            "captured_at": "2026-06-17T10:14:00Z",
+            "limitation_refs": [
+              "limitation:human-takeover-required"
+            ]
+          }
+        ],
+        "policy_decision_refs": [
+          "pd-takeover-final-review-required"
+        ],
+        "request_refs": [
+          "req-takeover-final"
+        ],
+        "review_refs": [],
+        "takeover_refs": [
+          "takeover-final-submission"
+        ],
+        "contribution_refs": [
+          "contribution-takeover-submission"
+        ],
+        "export_profile": {
+          "profile": "portable_evidence_manifest",
+          "version": "v0.1",
+          "redaction_profile_ref": "redaction:portable-safe"
+        },
+        "generated_at": "2026-06-17T10:26:00Z",
+        "artifact_refs": [
+          "artifact:final-draft-human-edited"
+        ],
+        "limitation_refs": [
+          "limitation:human-takeover-required"
+        ],
+        "redaction_refs": [
+          "redaction:portable-safe"
+        ]
+      }
+    },
+    "learning_records": {
+      "pair": {
+        "id": "learning-takeover-pair",
+        "work_session_id": "ws-takeover-001",
+        "created_by_actor_id": "actor-human-takeover",
+        "subject_type": "pair",
+        "subject_ref": "pair:worker-human-takeover+worker-agent-takeover",
+        "lesson_type": "takeover_reconciliation_before_resume",
+        "source_event_refs": [
+          "event-request-created",
+          "event-takeover-started",
+          "event-takeover-reconciliation-required",
+          "event-takeover-resumed",
+          "event-evidence-captured"
+        ],
+        "review_state": "accepted",
+        "scope": "scope:future-final-submission",
+        "created_at": "2026-06-17T10:18:00Z",
+        "proposed_change": {
+          "pattern": "When final submission requires human control, AgentWorker resumes only after Takeover reconciliation refs exist."
+        },
+        "memory_proposal_refs": [
+          "memory-proposal-takeover"
+        ],
+        "skill_proposal_refs": [
+          "skill-proposal-takeover"
+        ]
+      }
+    },
+    "memory_proposals": {
+      "takeover_reconciliation_pattern": {
+        "id": "memory-proposal-takeover",
+        "work_session_id": "ws-takeover-001",
+        "proposed_by_actor_id": "actor-human-takeover",
+        "proposed_for": "pair",
+        "memory_scope": "scope:future-final-submission",
+        "memory_type": "collaboration_pattern",
+        "content": {
+          "pattern": "Final submission under high ambiguity requires Takeover, reconciliation refs, and a resumed state before AgentWorker continuation."
+        },
+        "provenance": [
+          "event-takeover-started",
+          "event-takeover-reconciliation-required",
+          "event-takeover-resumed",
+          "learning-takeover-pair"
+        ],
+        "confidence": 0.9,
+        "review_required": true,
+        "status": "pending_review",
+        "created_at": "2026-06-17T10:19:00Z",
+        "source_event_refs": [
+          "event-takeover-started",
+          "event-takeover-reconciliation-required",
+          "event-takeover-resumed",
+          "event-learning-recorded"
+        ],
+        "learning_record_refs": [
+          "learning-takeover-pair"
+        ]
+      }
+    },
+    "skill_proposals": {
+      "takeover_reconciliation": {
+        "id": "skill-proposal-takeover",
+        "work_session_id": "ws-takeover-001",
+        "proposed_by_actor_id": "actor-human-takeover",
+        "proposed_for": "pair",
+        "skill_scope": "scope:future-final-submission",
+        "skill_name": "takeover_reconciliation_before_resume",
+        "trigger_conditions": [
+          "Policy requires HumanWorker control",
+          "AgentWorker reaches final submission scope"
+        ],
+        "procedure": [
+          "Record PolicyDecision before action acceptance",
+          "Create scoped Request for Takeover",
+          "Start Takeover with lock_epoch",
+          "Reject stale AgentWorker continuation during human_active Takeover",
+          "Resume only after reconciliation_refs exist",
+          "Capture evidence refs during work"
+        ],
+        "review_checks": [
+          "Request has resolved_by_takeover_id",
+          "Takeover affected_scope binds blocking scope, scope ref, and action hash",
+          "Resumed Takeover has reconciliation_refs and resumed_by_actor_id",
+          "EvidenceManifest includes takeover_refs and excludes host-private fields"
+        ],
+        "failure_cases": [
+          "Request reaches takeover status without Takeover",
+          "AgentWorker continues from stale lock_epoch",
+          "Takeover resumes without reconciliation refs"
+        ],
+        "provenance": [
+          "event-request-created",
+          "event-takeover-started",
+          "event-takeover-reconciliation-required",
+          "event-takeover-resumed",
+          "event-evidence-captured",
+          "learning-takeover-pair"
+        ],
+        "status": "pending_review",
+        "created_at": "2026-06-17T10:20:00Z",
+        "required_tools": [],
+        "source_event_refs": [
+          "event-request-created",
+          "event-takeover-started",
+          "event-takeover-reconciliation-required",
+          "event-takeover-resumed",
+          "event-evidence-captured"
+        ],
+        "learning_record_refs": [
+          "learning-takeover-pair"
+        ]
+      }
+    },
+    "outcome_reports": {
+      "post_session": {
+        "id": "outcome-report-takeover",
+        "work_session_id": "ws-takeover-001",
+        "source_ref": "source:completed-worksession:ws-takeover-001",
+        "reporter_ref": "reporter:fixture-evaluator",
+        "accepted_by_actor_id": "actor-human-takeover",
+        "outcome": "accepted",
+        "learning_record_refs": [
+          "learning-takeover-pair"
+        ],
+        "received_at": "2026-06-17T10:30:00Z",
+        "external_system_ref": "external:evaluation-system",
+        "reporter_actor_id": "actor-human-takeover",
+        "reason": "Post-session feedback confirms the Takeover reconciliation loop protected final submission quality.",
+        "reviewer_feedback_refs": [
+          "feedback:takeover-loop-accepted"
+        ]
+      }
+    },
+    "jarvis_events": {
+      "worksession_created": {
+        "id": "event-worksession-created",
+        "sequence": 1,
+        "type": "work_session.created",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-human-takeover",
+        "timestamp": "2026-06-17T10:01:00Z",
+        "payload": {
+          "object_type": "work_session",
+          "object_id": "ws-takeover-001",
+          "action": "created"
+        },
+        "previous_hash": "hash:protocol-genesis",
+        "event_hash": "hash:event-worksession-created",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "policy_review_required": {
+        "id": "event-policy-review-required",
+        "sequence": 2,
+        "type": "policy_decision.recorded",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-agent-takeover",
+        "timestamp": "2026-06-17T10:04:00Z",
+        "payload": {
+          "object_type": "policy_decision",
+          "object_id": "pd-takeover-final-review-required",
+          "action": "review_required"
+        },
+        "previous_hash": "hash:event-worksession-created",
+        "event_hash": "hash:event-policy-review-required",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "request_created": {
+        "id": "event-request-created",
+        "sequence": 3,
+        "type": "request.created",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-agent-takeover",
+        "timestamp": "2026-06-17T10:05:00Z",
+        "payload": {
+          "object_type": "request",
+          "object_id": "req-takeover-final",
+          "action": "created"
+        },
+        "previous_hash": "hash:event-policy-review-required",
+        "event_hash": "hash:event-request-created",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "takeover_started": {
+        "id": "event-takeover-started",
+        "sequence": 4,
+        "type": "takeover.started",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-human-takeover",
+        "timestamp": "2026-06-17T10:09:00Z",
+        "payload": {
+          "object_type": "takeover",
+          "object_id": "takeover-final-submission",
+          "action": "takeover.started"
+        },
+        "previous_hash": "hash:event-request-created",
+        "event_hash": "hash:event-takeover-started",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "takeover_resumed": {
+        "id": "event-takeover-resumed",
+        "sequence": 6,
+        "type": "takeover.resumed",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-human-takeover",
+        "timestamp": "2026-06-17T10:12:00Z",
+        "payload": {
+          "object_type": "takeover",
+          "object_id": "takeover-final-submission",
+          "action": "takeover.resumed"
+        },
+        "previous_hash": "hash:event-takeover-reconciliation-required",
+        "event_hash": "hash:event-takeover-resumed",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "evidence_captured": {
+        "id": "event-evidence-captured",
+        "sequence": 7,
+        "type": "evidence.captured",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-agent-takeover",
+        "timestamp": "2026-06-17T10:14:00Z",
+        "payload": {
+          "object_type": "evidence_item",
+          "object_id": "evidence-takeover-final",
+          "action": "captured"
+        },
+        "previous_hash": "hash:event-takeover-resumed",
+        "event_hash": "hash:event-evidence-captured",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "contribution_recorded": {
+        "id": "event-contribution-recorded",
+        "sequence": 8,
+        "type": "contribution.recorded",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-human-takeover",
+        "timestamp": "2026-06-17T10:17:00Z",
+        "payload": {
+          "object_type": "contribution",
+          "object_id": "contribution-takeover-submission",
+          "action": "recorded"
+        },
+        "previous_hash": "hash:event-evidence-captured",
+        "event_hash": "hash:event-contribution-recorded",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "learning_recorded": {
+        "id": "event-learning-recorded",
+        "sequence": 9,
+        "type": "learning.recorded",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-human-takeover",
+        "timestamp": "2026-06-17T10:18:00Z",
+        "payload": {
+          "object_type": "learning_record",
+          "object_id": "learning-takeover-pair",
+          "action": "recorded"
+        },
+        "previous_hash": "hash:event-contribution-recorded",
+        "event_hash": "hash:event-learning-recorded",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "memory_proposal_created": {
+        "id": "event-memory-proposal-created",
+        "sequence": 10,
+        "type": "memory_proposal.created",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-human-takeover",
+        "timestamp": "2026-06-17T10:19:00Z",
+        "payload": {
+          "object_type": "memory_proposal",
+          "object_id": "memory-proposal-takeover",
+          "action": "created"
+        },
+        "previous_hash": "hash:event-learning-recorded",
+        "event_hash": "hash:event-memory-proposal-created",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "skill_proposal_created": {
+        "id": "event-skill-proposal-created",
+        "sequence": 11,
+        "type": "skill_proposal.created",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-human-takeover",
+        "timestamp": "2026-06-17T10:20:00Z",
+        "payload": {
+          "object_type": "skill_proposal",
+          "object_id": "skill-proposal-takeover",
+          "action": "created"
+        },
+        "previous_hash": "hash:event-memory-proposal-created",
+        "event_hash": "hash:event-skill-proposal-created",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "worksession_completed": {
+        "id": "event-worksession-completed",
+        "sequence": 12,
+        "type": "work_session.completed",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-human-takeover",
+        "timestamp": "2026-06-17T10:24:00Z",
+        "payload": {
+          "object_type": "work_session",
+          "object_id": "ws-takeover-001",
+          "action": "completed"
+        },
+        "previous_hash": "hash:event-skill-proposal-created",
+        "event_hash": "hash:event-worksession-completed",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      },
+      "takeover_reconciliation_required": {
+        "id": "event-takeover-reconciliation-required",
+        "sequence": 5,
+        "type": "takeover.reconciliation_required",
+        "work_session_id": "ws-takeover-001",
+        "actor_id": "actor-human-takeover",
+        "timestamp": "2026-06-17T10:11:00Z",
+        "payload": {
+          "object_type": "takeover",
+          "object_id": "takeover-final-submission",
+          "action": "takeover.reconciliation_required"
+        },
+        "previous_hash": "hash:event-takeover-started",
+        "event_hash": "hash:event-takeover-reconciliation-required",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        }
+      }
+    }
+  },
+  "operations": [
+    {
+      "operation_id": "registerWorker",
+      "method": "PUT",
+      "path": "/workers/worker-human-takeover",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-fixture-registrar-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-register-human-worker",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:00:00Z"
+      },
+      "actor_id": "actor-fixture-registrar-takeover",
+      "expected_status": 200,
+      "body_ref": "records.workers.human"
+    },
+    {
+      "operation_id": "registerWorker",
+      "method": "PUT",
+      "path": "/workers/worker-agent-takeover",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-fixture-registrar-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-register-agent-worker",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:00:05Z"
+      },
+      "actor_id": "actor-fixture-registrar-takeover",
+      "expected_status": 200,
+      "body_ref": "records.workers.agent"
+    },
+    {
+      "operation_id": "registerActor",
+      "method": "PUT",
+      "path": "/actors/actor-human-takeover",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-fixture-registrar-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-register-human-actor",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:00:10Z"
+      },
+      "actor_id": "actor-fixture-registrar-takeover",
+      "expected_status": 200,
+      "body_ref": "records.actors.human"
+    },
+    {
+      "operation_id": "registerActor",
+      "method": "PUT",
+      "path": "/actors/actor-agent-takeover",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-fixture-registrar-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-register-agent-actor",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:00:15Z"
+      },
+      "actor_id": "actor-fixture-registrar-takeover",
+      "expected_status": 200,
+      "body_ref": "records.actors.agent"
+    },
+    {
+      "operation_id": "createWorkSession",
+      "method": "POST",
+      "path": "/work-sessions",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-create-worksession",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:01:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 0,
+        "Jarvis-Previous-Event-Hash": "hash:protocol-genesis"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.work_sessions.genesis_request",
+      "expected_event_ref": "event-worksession-created"
+    },
+    {
+      "operation_id": "recordPolicyDecision",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/policy-decisions",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-agent-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-policy-review-required",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:04:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 1,
+        "Jarvis-Previous-Event-Hash": "hash:event-worksession-created"
+      },
+      "actor_id": "actor-agent-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.policy_decisions.final_submission_review_required",
+      "expected_event_ref": "event-policy-review-required"
+    },
+    {
+      "operation_id": "createRequest",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/requests",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-agent-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-request-created",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:05:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 2,
+        "Jarvis-Previous-Event-Hash": "hash:event-policy-review-required"
+      },
+      "actor_id": "actor-agent-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.requests.pending",
+      "expected_event_ref": "event-request-created"
+    },
+    {
+      "operation_id": "recordTakeover",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/takeovers",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-started",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:09:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 3,
+        "Jarvis-Previous-Event-Hash": "hash:event-request-created"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.takeovers.human_active",
+      "expected_event_ref": "event-takeover-started"
+    },
+    {
+      "operation_id": "recordTakeover",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/takeovers",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-reconciliation-required",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:11:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 4,
+        "Jarvis-Previous-Event-Hash": "hash:event-takeover-started"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.takeovers.reconciliation_required",
+      "expected_event_ref": "event-takeover-reconciliation-required"
+    },
+    {
+      "operation_id": "recordTakeover",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/takeovers",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-resumed",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:12:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 5,
+        "Jarvis-Previous-Event-Hash": "hash:event-takeover-reconciliation-required"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.takeovers.resumed",
+      "expected_event_ref": "event-takeover-resumed"
+    },
+    {
+      "operation_id": "appendJarvisEvent",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/events",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-agent-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-evidence-captured",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:14:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 6,
+        "Jarvis-Previous-Event-Hash": "hash:event-takeover-resumed"
+      },
+      "actor_id": "actor-agent-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.jarvis_events.evidence_captured",
+      "expected_event_ref": "event-evidence-captured"
+    },
+    {
+      "operation_id": "recordContribution",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/contributions",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-contribution-recorded",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:17:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 7,
+        "Jarvis-Previous-Event-Hash": "hash:event-evidence-captured"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.contributions.shared_submission",
+      "expected_event_ref": "event-contribution-recorded"
+    },
+    {
+      "operation_id": "createLearningRecord",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/learning-records",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-learning-recorded",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:18:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 8,
+        "Jarvis-Previous-Event-Hash": "hash:event-contribution-recorded"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.learning_records.pair",
+      "expected_event_ref": "event-learning-recorded"
+    },
+    {
+      "operation_id": "createMemoryProposal",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/memory-proposals",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-memory-proposal",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:19:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 9,
+        "Jarvis-Previous-Event-Hash": "hash:event-learning-recorded"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.memory_proposals.takeover_reconciliation_pattern",
+      "expected_event_ref": "event-memory-proposal-created"
+    },
+    {
+      "operation_id": "createSkillProposal",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/skill-proposals",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-skill-proposal",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:20:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 10,
+        "Jarvis-Previous-Event-Hash": "hash:event-memory-proposal-created"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.skill_proposals.takeover_reconciliation",
+      "expected_event_ref": "event-skill-proposal-created"
+    },
+    {
+      "operation_id": "appendJarvisEvent",
+      "method": "POST",
+      "path": "/work-sessions/ws-takeover-001/events",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-worksession-completed",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:24:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 11,
+        "Jarvis-Previous-Event-Hash": "hash:event-skill-proposal-created"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 201,
+      "work_session_id": "ws-takeover-001",
+      "body_ref": "records.jarvis_events.worksession_completed",
+      "expected_event_ref": "event-worksession-completed"
+    },
+    {
+      "operation_id": "exportEvidenceManifest",
+      "method": "GET",
+      "path": "/work-sessions/ws-takeover-001/export",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 200,
+      "work_session_id": "ws-takeover-001"
+    },
+    {
+      "operation_id": "submitOutcomeReport",
+      "method": "POST",
+      "path": "/outcome-reports",
+      "headers": {
+        "Authorization": "HostAuth fixture",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-takeover",
+        "Jarvis-Idempotency-Key": "idem-takeover-outcome-report",
+        "Jarvis-Request-Timestamp": "2026-06-17T10:30:00Z"
+      },
+      "actor_id": "actor-human-takeover",
+      "expected_status": 202,
+      "body_ref": "records.outcome_reports.post_session"
+    }
+  ],
+  "assertions": [
+    {
+      "assertion_id": "assert-takeover-policy-decision",
+      "class": "policy_decision_gate",
+      "target_ref": "records.policy_decisions.final_submission_review_required",
+      "required_state": "PolicyDecision records review-required final submission before Request.",
+      "expected_result": "pass"
+    },
+    {
+      "assertion_id": "assert-takeover-request-resolution",
+      "class": "request_resolution_gate",
+      "target_ref": "records.requests.takeover",
+      "required_state": "Request reaches takeover state only with resolved_by_takeover_id.",
+      "expected_result": "pass"
+    },
+    {
+      "assertion_id": "assert-takeover-lock",
+      "class": "takeover_epoch_gate",
+      "target_ref": "records.takeovers.human_active",
+      "required_state": "Takeover records lock_epoch while HumanWorker controls the blocked scope.",
+      "expected_result": "pass"
+    },
+    {
+      "assertion_id": "assert-takeover-reconciliation-required",
+      "class": "takeover_epoch_gate",
+      "target_ref": "records.takeovers.reconciliation_required",
+      "required_state": "Takeover enters reconciliation_required before resumed state.",
+      "expected_result": "pass"
+    },
+    {
+      "assertion_id": "assert-takeover-reconciliation",
+      "class": "takeover_epoch_gate",
+      "target_ref": "records.takeovers.resumed",
+      "required_state": "Takeover resumes only with reconciliation_refs and resumed_by_actor_id.",
+      "expected_result": "pass"
+    },
+    {
+      "assertion_id": "assert-takeover-evidence",
+      "class": "evidence_export_gate",
+      "target_ref": "records.evidence_manifests.portable_export",
+      "required_state": "EvidenceManifest includes Takeover refs and exports only from terminal WorkSession state.",
+      "expected_result": "pass"
+    },
+    {
+      "assertion_id": "assert-takeover-learning",
+      "class": "learning_governance_gate",
+      "target_ref": "records.learning_records.pair",
+      "required_state": "LearningRecord captures pair learning from Takeover and keeps future-work changes governed.",
+      "expected_result": "pass"
+    }
+  ],
+  "expected_result": "pass"
+}

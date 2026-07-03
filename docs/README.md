@@ -60,6 +60,7 @@ defining host-owned execution.
 - [examples/existing-agent-compatibility.md](./examples/existing-agent-compatibility.md)
 - [examples/compatible-host-mapping.md](./examples/compatible-host-mapping.md)
 - [examples/evidence-packs/existing-agent-review/README.md](./examples/evidence-packs/existing-agent-review/README.md)
+- [examples/evidence-packs/existing-agent-takeover/README.md](./examples/evidence-packs/existing-agent-takeover/README.md)
 
 ## OpenAPI
 

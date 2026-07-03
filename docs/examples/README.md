@@ -19,6 +19,9 @@ adapters, wrappers, SDK implementation, or host workflow.
 - [evidence-packs/existing-agent-review/README.md](./evidence-packs/existing-agent-review/README.md)
   machine-checkable protocol-record evidence pack for the existing-agent
   review-resolution loop.
+- [evidence-packs/existing-agent-takeover/README.md](./evidence-packs/existing-agent-takeover/README.md)
+  machine-checkable protocol-record evidence pack for the existing-agent
+  takeover-resolution loop.
 
 ## Validation
 

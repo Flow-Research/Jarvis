@@ -1,0 +1,31 @@
+{
+  "object_type": "Actor",
+  "context": {},
+  "record": {
+    "id": "actor-human-takeover",
+    "worker_id": "worker-human-takeover",
+    "type": "human",
+    "event_authority": {
+      "can_append_events": true,
+      "allowed_event_types": [
+        "work_session.created",
+        "takeover.started",
+        "takeover.reconciliation_required",
+        "takeover.resumed",
+        "contribution.recorded",
+        "learning.recorded",
+        "memory_proposal.created",
+        "skill_proposal.created",
+        "work_session.completed"
+      ]
+    },
+    "contribution_scope": {
+      "contribution_roles": [
+        "human",
+        "shared"
+      ]
+    },
+    "created_at": "2026-06-17T10:00:00Z",
+    "valid_from": "2026-06-17T10:00:00Z"
+  }
+}

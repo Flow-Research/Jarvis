@@ -1,0 +1,28 @@
+{
+  "object_type": "AgentWorker",
+  "record": {
+    "worker_id": "worker-agent-takeover",
+    "actor_id": "actor-agent-takeover",
+    "agent_ref": "agent:takeover-agent",
+    "role": "bounded drafting agent",
+    "capability_refs": [
+      {
+        "ref": "capability:draft-reconciliation",
+        "capability_type": "drafting",
+        "required": true
+      }
+    ],
+    "autonomy_level": "bounded_execute",
+    "operating_constraints": [
+      "record PolicyDecision before action affects WorkSession state",
+      "create Request when Policy requires human control",
+      "wait for Takeover reconciliation refs before continuation"
+    ],
+    "tool_access_profile": {
+      "profile_ref": "tool-profile:local-context-only"
+    },
+    "memory_access_profile": {
+      "profile_ref": "memory-profile:proposal-only"
+    }
+  }
+}

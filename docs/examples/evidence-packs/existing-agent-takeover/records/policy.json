@@ -1,0 +1,50 @@
+{
+  "object_type": "Policy",
+  "record": {
+    "id": "policy-takeover-bounded",
+    "owner_worker_id": "worker-human-takeover",
+    "created_by_actor_id": "actor-human-takeover",
+    "autonomy_level": "bounded_execute",
+    "allowed_actions": [
+      {
+        "action": "read_local_context",
+        "scope_ref": "scope:local"
+      },
+      {
+        "action": "draft_artifact",
+        "scope_ref": "scope:draft"
+      }
+    ],
+    "denied_actions": [
+      {
+        "action": "send_external",
+        "scope_ref": "scope:external"
+      }
+    ],
+    "review_required_actions": [
+      {
+        "action": "final_submission",
+        "scope_ref": "scope:final-output"
+      }
+    ],
+    "risk_classes": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "escalation_rules": [
+      {
+        "trigger": "final_submission_requires_takeover",
+        "risk_class": "high",
+        "required_action": "start_takeover",
+        "reviewer_ref": "worker-human-takeover",
+        "reason": "Policy requires HumanWorker control before final submission."
+      }
+    ],
+    "created_at": "2026-06-17T10:00:30Z",
+    "request_limits": {
+      "max_pending_requests": 2,
+      "duplicate_window_seconds": 600
+    }
+  }
+}

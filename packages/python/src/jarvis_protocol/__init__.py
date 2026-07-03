@@ -1364,6 +1364,103 @@ def validate_protocol_record(
     return validator(record) if validator else validate_schema_record(object_type, record)
 
 
+def _takeover_path_lifecycle_error(fixture: Mapping[str, Any]) -> dict[str, Any] | None:
+    if fixture.get("fixture_id") != "valid-takeover-path-v01":
+        return None
+    request = _get_ref(fixture, "records.requests.takeover")
+    human_active = _get_ref(fixture, "records.takeovers.human_active")
+    reconciliation_required = _get_ref(
+        fixture,
+        "records.takeovers.reconciliation_required",
+    )
+    resumed = _get_ref(fixture, "records.takeovers.resumed")
+    started_event = _get_ref(fixture, "records.jarvis_events.takeover_started")
+    reconciliation_event = _get_ref(
+        fixture,
+        "records.jarvis_events.takeover_reconciliation_required",
+    )
+    resumed_event = _get_ref(fixture, "records.jarvis_events.takeover_resumed")
+    takeovers = [human_active, reconciliation_required, resumed]
+    if (
+        not isinstance(request, dict)
+        or request.get("status") != "takeover"
+        or not _is_nonempty_string(request.get("resolved_by_takeover_id"))
+        or not all(isinstance(takeover, dict) for takeover in takeovers)
+    ):
+        return protocol_error(
+            "invalid_transition",
+            {
+                "field": "records.takeovers",
+                "reason": "Takeover proof MUST include Request resolution and all Takeover lifecycle states.",
+            },
+        )
+    expected_states = ["human_active", "reconciliation_required", "resumed"]
+    for takeover, expected_state in zip(takeovers, expected_states, strict=True):
+        affected_scope = takeover.get("affected_scope", {})
+        requested_action = request.get("requested_action", {})
+        if not isinstance(affected_scope, dict) or not isinstance(requested_action, dict):
+            return protocol_error(
+                "invalid_transition",
+                {
+                    "field": f"records.takeovers.{expected_state}.affected_scope",
+                    "reason": "Takeover lifecycle states MUST bind object affected_scope and requested_action fields.",
+                },
+            )
+        if (
+            takeover.get("id") != request.get("resolved_by_takeover_id")
+            or takeover.get("request_id") != request.get("id")
+            or takeover.get("work_session_id") != request.get("work_session_id")
+            or takeover.get("state") != expected_state
+            or takeover.get("lock_epoch") != human_active.get("lock_epoch")
+            or affected_scope.get("blocking_scope") != request.get("blocking_scope")
+            or affected_scope.get("scope_ref") != requested_action.get("scope_ref")
+            or affected_scope.get("normalized_action_hash")
+            != "hash:action-final-submission"
+        ):
+            return protocol_error(
+                "invalid_transition",
+                {
+                    "field": f"records.takeovers.{expected_state}",
+                    "reason": "Takeover lifecycle states MUST bind the same Request, lock epoch, and affected scope.",
+                },
+            )
+    if (
+        not isinstance(resumed.get("reconciliation_refs"), list)
+        or not resumed.get("reconciliation_refs")
+        or not resumed.get("resumed_by_actor_id")
+    ):
+        return protocol_error(
+            "missing_reconciliation_refs",
+            {
+                "field": "records.takeovers.resumed.reconciliation_refs",
+                "reason": "Resumed Takeover records require reconciliation refs and resumed_by_actor_id.",
+            },
+        )
+    if (
+        not isinstance(started_event, dict)
+        or not isinstance(reconciliation_event, dict)
+        or not isinstance(resumed_event, dict)
+        or not _is_int(started_event.get("sequence"))
+        or not _is_int(reconciliation_event.get("sequence"))
+        or not _is_int(resumed_event.get("sequence"))
+        or not (
+            started_event.get("sequence")
+            < reconciliation_event.get("sequence")
+            < resumed_event.get("sequence")
+        )
+        or reconciliation_event.get("previous_hash") != started_event.get("event_hash")
+        or resumed_event.get("previous_hash") != reconciliation_event.get("event_hash")
+    ):
+        return protocol_error(
+            "invalid_transition",
+            {
+                "field": "records.jarvis_events.takeover_reconciliation_required",
+                "reason": "Takeover event chain MUST pass through reconciliation_required before resumed.",
+            },
+        )
+    return None
+
+
 def validate_fixture(fixture: Any) -> ValidationResult:
     if not isinstance(fixture, dict):
         return _fail("invalid_export", {"field": "fixture", "reason": "Fixture MUST be an object."})
@@ -1387,6 +1484,9 @@ def validate_fixture(fixture: Any) -> ValidationResult:
         )
     if error:
         return validation_result([error])
+    takeover_lifecycle_error = _takeover_path_lifecycle_error(fixture)
+    if takeover_lifecycle_error:
+        return validation_result([takeover_lifecycle_error])
     operations = fixture.get("operations", [])
     for operation_item in operations if isinstance(operations, list) else []:
         if not isinstance(operation_item, dict):

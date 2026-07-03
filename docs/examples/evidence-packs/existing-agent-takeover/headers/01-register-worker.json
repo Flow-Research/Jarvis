@@ -1,0 +1,15 @@
+{
+  "operation_id": "registerWorker",
+  "method": "PUT",
+  "path": "/workers/worker-agent-takeover",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-fixture-registrar-takeover",
+    "Jarvis-Idempotency-Key": "idem-takeover-register-agent-worker",
+    "Jarvis-Request-Timestamp": "2026-06-17T10:00:05Z"
+  },
+  "actor_id": "actor-fixture-registrar-takeover",
+  "expected_status": 200,
+  "body_ref": "records.workers.agent"
+}

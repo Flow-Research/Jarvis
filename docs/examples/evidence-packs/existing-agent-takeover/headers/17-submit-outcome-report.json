@@ -1,0 +1,15 @@
+{
+  "operation_id": "submitOutcomeReport",
+  "method": "POST",
+  "path": "/outcome-reports",
+  "headers": {
+    "Authorization": "HostAuth fixture",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-takeover",
+    "Jarvis-Idempotency-Key": "idem-takeover-outcome-report",
+    "Jarvis-Request-Timestamp": "2026-06-17T10:30:00Z"
+  },
+  "actor_id": "actor-human-takeover",
+  "expected_status": 202,
+  "body_ref": "records.outcome_reports.post_session"
+}

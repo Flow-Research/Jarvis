@@ -1,0 +1,21 @@
+{
+  "object_type": "PolicyDecision",
+  "record": {
+    "id": "pd-takeover-final-review-required",
+    "work_session_id": "ws-takeover-001",
+    "actor_id": "actor-agent-takeover",
+    "policy_id": "policy-takeover-bounded",
+    "requested_action": {
+      "action": "final_submission",
+      "target_ref": "artifact:final-draft",
+      "scope_ref": "scope:final-output"
+    },
+    "normalized_action_hash": "hash:action-final-submission",
+    "risk_class": "high",
+    "result": "review_required",
+    "reason": "Policy requires HumanWorker takeover before final submission.",
+    "created_at": "2026-06-17T10:04:00Z",
+    "data_sensitivity": "public",
+    "request_id": "req-takeover-final"
+  }
+}

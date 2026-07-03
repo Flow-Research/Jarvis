@@ -455,7 +455,7 @@ Done when:
 - GitHub Pages workflow validates docs-site JavaScript
 - local validation passes
 
-## Protocol Record Compatibility Evidence Pack
+## Protocol Record Compatibility Evidence Packs
 
 Status: implemented.
 
@@ -464,6 +464,8 @@ Owner: Developer Experience
 Output:
 
 - machine-checkable existing-agent evidence pack
+- Review-resolution proof pack
+- Takeover-resolution proof pack
 - protocol record envelopes
 - EvidenceManifest export envelope
 - JarvisEvent hash-chain envelope
@@ -472,8 +474,9 @@ Output:
 
 Done when:
 
-- evidence pack derives from the canonical v0.1 golden-path fixture
-- evidence pack links to the existing-agent proof plan, protocol record
+- Review evidence pack derives from the canonical v0.1 golden-path fixture
+- Takeover evidence pack derives from the valid v0.1 Takeover fixture
+- evidence packs link to the existing-agent proof plan, protocol record
   examples, conformance checklist, OpenAPI binding, and OpenAPI schemas
 - record files validate through protocol helper validators
 - EvidenceManifest export validates only from a terminal WorkSession source
@@ -481,7 +484,7 @@ Done when:
 - event hash chain validates through JarvisEvent previous-hash and event-hash
   rules
 - operation headers validate through the v0.1 header gate
-- evidence pack does not define adapter code, wrapper code, runtime behavior,
+- evidence packs do not define adapter code, wrapper code, runtime behavior,
   host UI, model calls, tool execution, storage, auth, billing, scoring,
   payment, deployment, monitoring, host integration, or host workflow
   behavior

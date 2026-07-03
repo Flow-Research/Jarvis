@@ -11,6 +11,7 @@ scoring, payment, or deployment behavior.
 ```txt
 valid/
   golden-path.json
+  takeover-path.json
 
 invalid/
   forbidden-host-private-export-field.json
@@ -27,6 +28,7 @@ invalid/
   missing-request-timestamp.json
   missing-review-resolution.json
   missing-takeover-resolution.json
+  outcome-report-requires-terminal-source.json
   outcome-report-without-learning-record.json
   sealed-evidence-mutation.json
   sealed-work-session-mutation.json

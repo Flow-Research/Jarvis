@@ -1,0 +1,75 @@
+{
+  "evidence_manifest": {
+    "id": "evidence-manifest-takeover",
+    "work_session_id": "ws-takeover-001",
+    "generated_by_actor_id": "actor-human-takeover",
+    "objective": "Complete a final submission with human takeover and reconciliation proof.",
+    "event_chain_root": "hash:event-worksession-completed",
+    "evidence_item_refs": [
+      {
+        "id": "evidence-takeover-final",
+        "work_session_id": "ws-takeover-001",
+        "source_event_refs": [
+          "event-evidence-captured"
+        ],
+        "captured_by_actor_id": "actor-agent-takeover",
+        "evidence_type": "reconciled_submission_summary",
+        "artifact_ref": "artifact:final-draft-human-edited",
+        "content_hash": "hash:final-draft-human-edited",
+        "trust_label": "human_reconciled",
+        "redaction_state": "redacted",
+        "captured_at": "2026-06-17T10:14:00Z",
+        "limitation_refs": [
+          "limitation:human-takeover-required"
+        ]
+      }
+    ],
+    "policy_decision_refs": [
+      "pd-takeover-final-review-required"
+    ],
+    "request_refs": [
+      "req-takeover-final"
+    ],
+    "review_refs": [],
+    "takeover_refs": [
+      "takeover-final-submission"
+    ],
+    "contribution_refs": [
+      "contribution-takeover-submission"
+    ],
+    "export_profile": {
+      "profile": "portable_evidence_manifest",
+      "version": "v0.1",
+      "redaction_profile_ref": "redaction:portable-safe"
+    },
+    "generated_at": "2026-06-17T10:26:00Z",
+    "artifact_refs": [
+      "artifact:final-draft-human-edited"
+    ],
+    "limitation_refs": [
+      "limitation:human-takeover-required"
+    ],
+    "redaction_refs": [
+      "redaction:portable-safe"
+    ]
+  },
+  "work_session": {
+    "id": "ws-takeover-001",
+    "protocol_version": "v0.1",
+    "created_by_actor_id": "actor-human-takeover",
+    "objective": "Complete a final submission with human takeover and reconciliation proof.",
+    "human_worker_id": "worker-human-takeover",
+    "agent_worker_id": "worker-agent-takeover",
+    "policy_id": "policy-takeover-bounded",
+    "status": "completed",
+    "revision": 12,
+    "last_event_hash": "hash:event-worksession-completed",
+    "event_log_ref": "event-log:ws-takeover-001",
+    "created_at": "2026-06-17T10:01:00Z",
+    "updated_at": "2026-06-17T10:24:00Z",
+    "evidence_manifest_ref": "evidence-manifest-takeover",
+    "learning_record_refs": [
+      "learning-takeover-pair"
+    ]
+  }
+}
