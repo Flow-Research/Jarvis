@@ -5,10 +5,6 @@
 docs/protocol/03-autonomy-policy.md      @Flow-Research/security
 docs/protocol/                            @Flow-Research/security
 
-# Jarvis miner scripts (JARVIS_WORKSTREAM_REQUIRE_AUTH) - require security review
-scripts/jarvis-miner/                     @Flow-Research/security
-scripts/                                  @Flow-Research/security
-
 # Package configuration - require security review
 packages/                                 @Flow-Research/security
 
