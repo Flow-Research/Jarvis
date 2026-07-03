@@ -136,8 +136,10 @@ a {
 .topnav a:focus-visible,
 .command:focus-visible,
 .doc-card a:focus-visible,
+.docs-map a:focus-visible,
 .link-table a:focus-visible,
 .example-grid a:focus-visible,
+.guide-grid a:focus-visible,
 .package-grid a:focus-visible,
 .brand:focus-visible {
   outline: 2px solid var(--mint);
@@ -309,10 +311,14 @@ a {
 .mission-panel,
 .simulator,
 .doc-card,
+.docs-map a,
 .spine-list article,
 .example-grid article,
 .package-grid article,
+.reference-grid article,
+.implementation-steps article,
 .boundary-strip article,
+.guide-grid a,
 .rail,
 .operating-stage,
 .sequence {
@@ -329,6 +335,53 @@ a {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin: 10px 0 14px;
+}
+
+.docs-map {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+
+.docs-map a {
+  min-height: 190px;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  border-radius: 8px;
+  padding: 18px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.docs-map a:hover {
+  border-color: rgb(120 247 180 / 62%);
+}
+
+.docs-map span,
+.implementation-steps span {
+  color: var(--mint);
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.docs-map strong {
+  color: var(--ink);
+  font-size: 1.08rem;
+  line-height: 1.28;
+}
+
+.docs-map p,
+.reference-grid li,
+.reference-grid p,
+.implementation-steps p,
+.guide-grid small {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
 }
 
 .doc-card {
@@ -373,7 +426,8 @@ a {
 .doc-card a,
 .link-table a,
 .example-grid a,
-.package-grid a {
+.package-grid a,
+.guide-grid a {
   color: var(--mint);
   font-weight: 900;
   text-decoration: none;
@@ -382,7 +436,8 @@ a {
 .doc-card a:hover,
 .link-table a:hover,
 .example-grid a:hover,
-.package-grid a:hover {
+.package-grid a:hover,
+.guide-grid a:hover {
   color: var(--cyan);
 }
 
@@ -390,6 +445,10 @@ a {
 .spec-grid,
 .examples-section,
 .sdk-section,
+.openapi-section,
+.guides-section,
+.implementation-section,
+.release-section,
 .conformance-band {
   display: grid;
   gap: 18px;
@@ -406,7 +465,10 @@ a {
 .protocol-section,
 .spec-grid,
 .examples-section,
-.sdk-section {
+.sdk-section,
+.openapi-section,
+.guides-section,
+.implementation-section {
   grid-template-columns: minmax(360px, 0.56fr) minmax(0, 1fr);
   padding: 22px;
 }
@@ -427,9 +489,18 @@ a {
   max-width: 760px;
 }
 
+.inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
 .spine-list,
 .example-grid,
-.package-grid {
+.package-grid,
+.reference-grid,
+.implementation-steps {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
@@ -437,7 +508,9 @@ a {
 
 .spine-list article,
 .example-grid article,
-.package-grid article {
+.package-grid article,
+.reference-grid article,
+.implementation-steps article {
   min-height: 145px;
   display: grid;
   align-content: start;
@@ -448,9 +521,82 @@ a {
 
 .spine-list strong,
 .example-grid h3,
-.package-grid h3 {
+.package-grid h3,
+.reference-grid h3,
+.implementation-steps h3 {
   color: var(--ink);
   font-size: 1.02rem;
+}
+
+.reference-grid article {
+  min-height: 250px;
+}
+
+.reference-grid ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reference-grid li {
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 4%);
+  overflow-wrap: anywhere;
+}
+
+.reference-grid p {
+  margin-top: 8px;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.guide-grid a {
+  min-height: 124px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.guide-grid a:hover,
+.guide-grid a:focus-visible {
+  border-color: rgb(120 247 180 / 62%);
+  background:
+    linear-gradient(180deg, rgb(120 247 180 / 10%), rgb(255 255 255 / 3%)),
+    rgb(8 12 9 / 90%);
+}
+
+.guide-grid span {
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.release-section {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  padding: 22px;
+}
+
+.release-section h2 {
+  margin: 10px 0 0;
+  font-size: clamp(1.8rem, 3vw, 3.1rem);
+  line-height: 1.05;
+}
+
+.release-section p {
+  max-width: 860px;
+  margin: 16px 0 0;
+  color: var(--muted);
+  line-height: 1.62;
 }
 .link-table {
   display: grid;
@@ -1123,6 +1269,10 @@ a {
   .spec-grid,
   .examples-section,
   .sdk-section,
+  .openapi-section,
+  .guides-section,
+  .implementation-section,
+  .release-section,
   .conformance-band {
     grid-template-columns: 1fr;
   }
@@ -1134,8 +1284,12 @@ a {
   .right-stack,
   .story-strip,
   .doc-grid,
+  .docs-map,
   .example-grid,
   .package-grid,
+  .reference-grid,
+  .guide-grid,
+  .implementation-steps,
   .boundary-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1166,7 +1320,16 @@ a {
   }
 
   .topnav {
+    width: 100%;
+    flex-wrap: nowrap;
     justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+
+  .topnav a {
+    flex: 0 0 auto;
   }
 
   .status-chip {
@@ -1234,9 +1397,13 @@ a {
   .right-stack,
   .story-strip,
   .doc-grid,
+  .docs-map,
   .spine-list,
   .example-grid,
   .package-grid,
+  .reference-grid,
+  .guide-grid,
+  .implementation-steps,
   .boundary-strip,
   .phase-brief,
   .sequence ol {
@@ -1249,14 +1416,22 @@ a {
   .spec-grid,
   .examples-section,
   .sdk-section,
+  .openapi-section,
+  .guides-section,
+  .implementation-section,
+  .release-section,
   .conformance-band,
   .operating-stage,
   .sequence,
   .rail,
   .doc-card,
+  .docs-map a,
   .spine-list article,
   .example-grid article,
   .package-grid article,
+  .reference-grid article,
+  .guide-grid a,
+  .implementation-steps article,
   .boundary-strip article,
   .story-strip article {
     width: 100%;
@@ -1280,6 +1455,10 @@ a {
   .spec-grid,
   .examples-section,
   .sdk-section,
+  .openapi-section,
+  .guides-section,
+  .implementation-section,
+  .release-section,
   .conformance-band {
     padding: 10px;
   }
