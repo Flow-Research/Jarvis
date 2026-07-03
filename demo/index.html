@@ -24,11 +24,15 @@
         </a>
         <nav class="topnav" aria-label="Primary documentation links">
           <a href="#start">Start</a>
-          <a href="#protocol">Protocol</a>
           <a href="#spec">Spec</a>
-          <a href="#examples">Examples</a>
+          <a href="#openapi">OpenAPI</a>
           <a href="#conformance">Conformance</a>
+          <a href="#guides">Guides</a>
+          <a href="#examples">Examples</a>
           <a href="#sdk">SDK</a>
+          <a href="#implementation">Implementation</a>
+          <a href="#release">Release</a>
+          <a href="#boundary">Boundary</a>
           <a href="#walkthrough">Walkthrough</a>
         </nav>
         <span class="status-chip">v0.1.0</span>
@@ -62,6 +66,7 @@
             >
               Conformance Checklist
             </a>
+            <a class="command" href="#implementation">Implementation Path</a>
             <a class="command" href="#walkthrough-controls">Run Walkthrough</a>
             <a class="command ghost" href="https://github.com/Flow-Research/jarvis">
               GitHub
@@ -137,6 +142,29 @@
         </article>
       </section>
 
+      <section class="docs-map" aria-label="Documentation map">
+        <a href="#start">
+          <span>Start</span>
+          <strong>Understand Jarvis in 10 minutes.</strong>
+          <p>Read the thesis, boundary, core loop, and WorkSession record.</p>
+        </a>
+        <a href="#openapi">
+          <span>Build</span>
+          <strong>Use the OpenAPI binding and SDK helpers.</strong>
+          <p>Validate headers, records, event hashes, fixtures, and evidence exports.</p>
+        </a>
+        <a href="#conformance">
+          <span>Prove</span>
+          <strong>Run conformance before claiming compatibility.</strong>
+          <p>Compatible implementations prove behavior through records and fixtures.</p>
+        </a>
+        <a href="#boundary">
+          <span>Extend</span>
+          <strong>Keep host implementation outside Jarvis.</strong>
+          <p>Extensions add protocol fields. Extensions MUST NOT define runtime or workflow.</p>
+        </a>
+      </section>
+
       <section class="protocol-section" id="protocol" aria-labelledby="protocol-title">
         <div class="section-copy">
           <p class="kicker">Protocol model</p>
@@ -209,6 +237,76 @@
         </div>
       </section>
 
+      <section class="openapi-section" id="openapi" aria-labelledby="openapi-title">
+        <div class="section-copy">
+          <p class="kicker">OpenAPI 3.1 binding</p>
+          <h2 id="openapi-title">The machine-readable contract starts here.</h2>
+          <p>
+            OpenAPI defines Jarvis v0.1.0 operations, schemas, parameters,
+            headers, errors, and examples. Compatible implementations use the
+            binding to exchange portable protocol records without adopting a
+            Jarvis-owned runtime.
+          </p>
+          <div class="inline-actions">
+            <a
+              class="command primary"
+              href="https://raw.githubusercontent.com/Flow-Research/jarvis/main/docs/openapi/jarvis-openapi.yaml"
+            >
+              Raw OpenAPI YAML
+            </a>
+            <a
+              class="command"
+              href="https://github.com/Flow-Research/jarvis/blob/main/docs/openapi/README.md"
+            >
+              OpenAPI README
+            </a>
+          </div>
+        </div>
+        <div class="reference-grid" aria-label="OpenAPI reference summary">
+          <article>
+            <h3>WorkSession-scoped mutation headers</h3>
+            <ul>
+              <li>Jarvis-Protocol-Version</li>
+              <li>Jarvis-Actor-Id</li>
+              <li>Jarvis-Idempotency-Key</li>
+              <li>Jarvis-Request-Timestamp</li>
+              <li>Jarvis-Expected-WorkSession-Revision</li>
+              <li>Jarvis-Previous-Event-Hash</li>
+            </ul>
+            <p>
+              Non-WorkSession mutation headers are Jarvis-Protocol-Version,
+              Jarvis-Actor-Id, Jarvis-Idempotency-Key, and
+              Jarvis-Request-Timestamp. Worker registration, Actor registration,
+              and OutcomeReport MUST NOT require fake revision or previous-hash
+              values.
+            </p>
+          </article>
+          <article>
+            <h3>Core protocol flow</h3>
+            <ul>
+              <li>create WorkSession</li>
+              <li>record PolicyDecision</li>
+              <li>create Request</li>
+              <li>record Review or Takeover</li>
+              <li>export EvidenceManifest</li>
+              <li>submit OutcomeReport</li>
+            </ul>
+            <p>The full operation matrix lives in the OpenAPI YAML.</p>
+          </article>
+          <article>
+            <h3>Error envelope</h3>
+            <ul>
+              <li>error_id</li>
+              <li>protocol_version</li>
+              <li>object_type</li>
+              <li>field</li>
+              <li>reason</li>
+              <li>remediation</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
       <section class="examples-section" id="examples" aria-labelledby="examples-title">
         <div class="section-copy">
           <p class="kicker">Examples</p>
@@ -240,6 +338,36 @@
             <p>Machine-checkable protocol records for existing-agent Review and Takeover loops, validated without host runtime code.</p>
             <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/README.md">Open evidence packs</a>
           </article>
+        </div>
+      </section>
+
+      <section class="guides-section" id="guides" aria-labelledby="guides-title">
+        <div class="section-copy">
+          <p class="kicker">Implementer guides</p>
+          <h2 id="guides-title">Implement the protocol spine before adding product behavior.</h2>
+          <p>
+            Guides explain what compatible implementations store, emit,
+            validate, reject, export, and preserve. They do not define host UI,
+            runtime behavior, model routing, tool execution, or storage.
+          </p>
+        </div>
+        <div class="guide-grid" aria-label="Implementer guide links">
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/existing-agent-compatibility.md">
+            <span>Existing-agent compatibility</span>
+            <small>Map native agent work into Jarvis records without rewriting the agent.</small>
+          </a>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/12-request-protocol.md">
+            <span>Request, Review, Takeover</span>
+            <small>Use scoped blockers, human judgment, ApprovalScope, and takeover lock epochs.</small>
+          </a>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/13-contribution-evidence-learning.md">
+            <span>Evidence and Learning</span>
+            <small>Record contribution, export evidence, and carry governed learning forward.</small>
+          </a>
+          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">
+            <span>Protocol errors</span>
+            <small>Return stable error ids and portable error envelopes.</small>
+          </a>
         </div>
       </section>
 
@@ -289,6 +417,75 @@ python3 scripts/check_example_evidence_packs.py</code></pre>
             <a href="https://github.com/Flow-Research/jarvis/blob/main/packages/cli/README.md">Read CLI package</a>
           </article>
         </div>
+      </section>
+
+      <section class="implementation-section" id="implementation" aria-labelledby="implementation-title">
+        <div class="section-copy">
+          <p class="kicker">Real implementation path</p>
+          <h2 id="implementation-title">Use an existing agent. Add Jarvis records around the work.</h2>
+          <p>
+            A host records native agent work as Jarvis protocol records. The
+            agent keeps native execution. The host records
+            Worker, Actor, WorkSession, PolicyDecision, Request, Review,
+            Takeover, Contribution, EvidenceManifest, LearningRecord, proposals,
+            and OutcomeReport records.
+          </p>
+          <div class="inline-actions">
+            <a
+              class="command primary"
+              href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/implementation-proof/native-coding-agent/README.md"
+            >
+              Read Implementation Proof
+            </a>
+            <a
+              class="command"
+              href="https://github.com/Flow-Research/jarvis/blob/main/scripts/check_implementation_proof.py"
+            >
+              Proof Validator
+            </a>
+          </div>
+        </div>
+        <div class="implementation-steps" aria-label="Implementation path steps">
+          <article>
+            <span>01</span>
+            <h3>Select a host surface</h3>
+            <p>Use a real coding-agent session, workspace app, or agent platform as host-owned execution.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Add protocol recording</h3>
+            <p>Emit Jarvis records at WorkSession start, policy checks, requests, reviews, takeovers, contribution, evidence, and learning.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Validate every record</h3>
+            <p>Run SDK helpers, conformance fixtures, event hash-chain checks, and EvidenceManifest export checks.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Publish compatibility proof</h3>
+            <p>Export an evidence pack and implementation proof without claiming certification or official-host status.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="release-section" id="release" aria-labelledby="release-title">
+        <div>
+          <p class="kicker">Release status</p>
+          <h2 id="release-title">Jarvis v0.1.0 is Protocol Alpha.</h2>
+          <p>
+            Protocol Alpha defines the v0.1.0 contract and helper tooling. It
+            does not certify implementations, designate an official host, claim
+            production adoption, establish foundation governance, or create
+            long-term support.
+          </p>
+        </div>
+        <a
+          class="command primary"
+          href="https://github.com/Flow-Research/jarvis/blob/main/docs/releases/v0.1.0.md"
+        >
+          Read Release Notes
+        </a>
       </section>
 
       <section class="simulator" id="walkthrough" aria-label="Jarvis protocol walkthrough">
@@ -410,7 +607,7 @@ python3 scripts/check_example_evidence_packs.py</code></pre>
         </aside>
       </section>
 
-      <section class="boundary-strip" aria-label="Jarvis boundary summary">
+      <section class="boundary-strip" id="boundary" aria-label="Jarvis boundary summary">
         <article>
           <span>Jarvis owns</span>
           <p>protocol records, lifecycle rules, OpenAPI binding, errors, conformance, evidence, and governed learning.</p>
