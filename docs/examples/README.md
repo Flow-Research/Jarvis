@@ -22,6 +22,9 @@ adapters, wrappers, SDK implementation, or host workflow.
 - [evidence-packs/existing-agent-takeover/README.md](./evidence-packs/existing-agent-takeover/README.md)
   machine-checkable protocol-record evidence pack for the existing-agent
   takeover-resolution loop.
+- [implementation-proof/native-coding-agent/README.md](./implementation-proof/native-coding-agent/README.md)
+  SDK-helper generated implementation proof for one native coding-agent
+  collaboration loop.
 
 ## Validation
 
@@ -31,5 +34,11 @@ Validate evidence packs from the repository root:
 python3 scripts/check_example_evidence_packs.py
 ```
 
-Evidence packs prove record compatibility only. They do not certify an
-implementation and do not claim production adoption.
+Validate the implementation proof from the repository root:
+
+```bash
+python3 scripts/check_implementation_proof.py
+```
+
+Evidence packs and implementation proofs validate protocol records only. They
+do not certify an implementation and do not claim production adoption.
