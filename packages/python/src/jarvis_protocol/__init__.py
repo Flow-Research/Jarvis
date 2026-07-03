@@ -9,6 +9,7 @@ from hashlib import sha256
 import json
 import re
 from typing import Any
+from urllib.parse import quote, unquote
 
 from .generated.openapi_types import *  # noqa: F403
 from .generated.openapi_types import __all__ as OPENAPI_TYPE_NAMES
@@ -195,6 +196,12 @@ ACTOR_BODY_FIELD_BY_OPERATION = {
 
 PROTOCOL_ERROR_IDS = set(SCHEMA_ENUMS.get("ProtocolErrorId", ()))
 
+DEFAULT_CANONICALIZATION = {
+    "serialization": "json-c14n",
+    "hash_method": "sha256",
+    "profile_ref": "canonicalization:v0.1",
+}
+
 
 @dataclass(frozen=True)
 class ValidationResult:
@@ -245,6 +252,427 @@ def _fail(error_id: str, options: Mapping[str, Any] | None = None) -> Validation
 
 def _pass() -> ValidationResult:
     return validation_result([])
+
+
+def _assert_valid(result: ValidationResult) -> None:
+    if not result.valid:
+        error = result.errors[0] if result.errors else protocol_error("invalid_export")
+        raise JarvisProtocolValidationError(error)
+
+
+def _helper_error(field: str, reason: str) -> JarvisProtocolValidationError:
+    return JarvisProtocolValidationError(
+        protocol_error(
+            "invalid_export",
+            {
+                "object_type": "ProtocolHelper",
+                "field": field,
+                "reason": reason,
+            },
+        )
+    )
+
+
+def _successful_status(binding: Mapping[str, Any]) -> int:
+    statuses = sorted(binding["statuses"])
+    for status in statuses:
+        if status < 400:
+            return status
+    return statuses[0]
+
+
+def _operation_work_session_scoped(binding: Mapping[str, Any]) -> bool:
+    return str(binding["path"]).startswith("/work-sessions")
+
+
+def _build_headers_for_operation(binding: Mapping[str, Any], options: Mapping[str, Any]) -> dict[str, Any]:
+    headers = options.get("headers")
+    if isinstance(headers, dict):
+        return dict(headers)
+    shared = {
+        "actor_id": options.get("actor_id"),
+        "authorization": options.get("authorization"),
+        "protocol_version": options.get("protocol_version", PROTOCOL_VERSION),
+        "validation_options": options.get("validation_options"),
+    }
+    if binding["method"] == "GET":
+        return create_read_headers(**shared)
+    if not _operation_work_session_scoped(binding):
+        return create_non_work_session_mutation_headers(
+            **shared,
+            idempotency_key=options.get("idempotency_key"),
+            request_timestamp=options.get("request_timestamp"),
+        )
+    return create_work_session_mutation_headers(
+        **shared,
+        idempotency_key=options.get("idempotency_key"),
+        request_timestamp=options.get("request_timestamp"),
+        expected_work_session_revision=options.get("expected_work_session_revision"),
+        previous_event_hash=options.get("previous_event_hash"),
+    )
+
+
+def _path_params_for_operation(options: Mapping[str, Any]) -> dict[str, Any]:
+    path_params = dict(options.get("path_params") or {})
+    path_params["worker_id"] = options.get("worker_id", path_params.get("worker_id"))
+    path_params["actor_id"] = options.get("target_actor_id", path_params.get("actor_id"))
+    path_params["work_session_id"] = options.get("work_session_id", path_params.get("work_session_id"))
+    return path_params
+
+
+def _last_event(events: Sequence[Mapping[str, Any]] | None) -> Mapping[str, Any] | None:
+    if not events:
+        return None
+    candidates = [
+        event
+        for event in events
+        if isinstance(event, dict) and _is_int(event.get("sequence"))
+    ]
+    if not candidates:
+        return None
+    return sorted(candidates, key=lambda event: event["sequence"], reverse=True)[0]
+
+
+def _last_event_for_work_session(
+    events: Sequence[Mapping[str, Any]] | None,
+    work_session_id: Any,
+) -> Mapping[str, Any] | None:
+    if not events:
+        return None
+    if not _is_nonempty_string(work_session_id):
+        raise _helper_error("work_session_id", "work_session_id is required when JarvisEvents are supplied.")
+    for event in events:
+        if isinstance(event, dict) and event.get("work_session_id") != work_session_id:
+            raise _helper_error("events.work_session_id", "JarvisEvents MUST belong to the target WorkSession.")
+    return _last_event(events)
+
+
+def _event_hash_for(event_without_hash: Mapping[str, Any], caller_hash: str | None) -> str:
+    computed_hash = hash_protocol_value(event_without_hash)
+    if caller_hash is not None and caller_hash != computed_hash:
+        raise JarvisProtocolValidationError(
+            protocol_error(
+                "invalid_event_hash",
+                {
+                    "object_type": "JarvisEvent",
+                    "field": "event_hash",
+                    "reason": "JarvisEvent.event_hash MUST match the canonical hash of the event body.",
+                },
+            )
+        )
+    return computed_hash
+
+
+def _invalid_evidence_root_error(field: str, reason: str) -> JarvisProtocolValidationError:
+    return JarvisProtocolValidationError(
+        protocol_error(
+            "invalid_evidence_export_state",
+            {
+                "object_type": "EvidenceManifest",
+                "field": field,
+                "reason": reason,
+            },
+        )
+    )
+
+
+def _assert_manifest_root(
+    work_session: Mapping[str, Any],
+    events: Sequence[Mapping[str, Any]] | None,
+    event_chain_root: str | None,
+) -> str:
+    work_session_hash = work_session.get("last_event_hash") if isinstance(work_session, dict) else None
+    if not _is_nonempty_string(work_session_hash):
+        raise _invalid_evidence_root_error(
+            "work_session.last_event_hash",
+            "EvidenceManifest export requires a terminal WorkSession last_event_hash.",
+        )
+    if event_chain_root is not None and event_chain_root != work_session_hash:
+        raise _invalid_evidence_root_error(
+            "event_chain_root",
+            "EvidenceManifest.event_chain_root MUST match WorkSession.last_event_hash.",
+        )
+    if events:
+        _assert_valid(validate_event_hash_chain(list(events)))
+        previous = _last_event_for_work_session(events, work_session.get("id"))
+        if previous is None or previous.get("event_hash") != work_session_hash:
+            raise _invalid_evidence_root_error(
+                "event_chain_root",
+                "EvidenceManifest event chain root MUST match the terminal WorkSession last_event_hash.",
+            )
+    return str(work_session_hash)
+
+
+def create_read_headers(
+    *,
+    actor_id: str,
+    authorization: str,
+    protocol_version: str = PROTOCOL_VERSION,
+    validation_options: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    headers = {
+        "Authorization": authorization,
+        "Jarvis-Protocol-Version": protocol_version,
+        "Jarvis-Actor-Id": actor_id,
+    }
+    _assert_valid(validate_read_headers(headers, validation_options))
+    return headers
+
+
+def create_non_work_session_mutation_headers(
+    *,
+    actor_id: str,
+    authorization: str,
+    idempotency_key: str,
+    request_timestamp: str,
+    protocol_version: str = PROTOCOL_VERSION,
+    validation_options: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    headers = {
+        "Authorization": authorization,
+        "Jarvis-Protocol-Version": protocol_version,
+        "Jarvis-Actor-Id": actor_id,
+        "Jarvis-Idempotency-Key": idempotency_key,
+        "Jarvis-Request-Timestamp": request_timestamp,
+    }
+    _assert_valid(
+        validate_mutation_headers(
+            headers,
+            {
+                **dict(validation_options or {}),
+                "work_session_scoped": False,
+            },
+        )
+    )
+    return headers
+
+
+def create_work_session_mutation_headers(
+    *,
+    actor_id: str,
+    authorization: str,
+    idempotency_key: str,
+    request_timestamp: str,
+    expected_work_session_revision: int,
+    previous_event_hash: str,
+    protocol_version: str = PROTOCOL_VERSION,
+    validation_options: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    headers = {
+        "Authorization": authorization,
+        "Jarvis-Protocol-Version": protocol_version,
+        "Jarvis-Actor-Id": actor_id,
+        "Jarvis-Idempotency-Key": idempotency_key,
+        "Jarvis-Request-Timestamp": request_timestamp,
+        "Jarvis-Expected-WorkSession-Revision": expected_work_session_revision,
+        "Jarvis-Previous-Event-Hash": previous_event_hash,
+    }
+    _assert_valid(validate_mutation_headers(headers, validation_options))
+    return headers
+
+
+def create_mutation_headers(*, work_session_scoped: bool = True, **options: Any) -> dict[str, Any]:
+    if not work_session_scoped:
+        return create_non_work_session_mutation_headers(**options)
+    return create_work_session_mutation_headers(**options)
+
+
+def get_operation_binding(operation_id: str) -> dict[str, Any]:
+    binding = OPERATION_BINDINGS_BY_ID.get(operation_id)
+    if not binding:
+        raise _helper_error("operation_id", "operation_id MUST exist in the Jarvis OpenAPI binding.")
+    return {
+        "method": binding["method"],
+        "path": binding["path"],
+        "statuses": sorted(binding["statuses"]),
+    }
+
+
+def create_operation_path(operation_id: str, path_params: Mapping[str, Any] | None = None) -> str:
+    binding = get_operation_binding(operation_id)
+    params = path_params or {}
+
+    def replace(match: re.Match[str]) -> str:
+        key = match.group(1)
+        value = params.get(key)
+        if not _is_nonempty_string(value):
+            raise _helper_error(f"path.{key}", f"{key} is required for {operation_id}.")
+        return quote(str(value), safe="")
+
+    return re.sub(r"\{([^/]+)\}", replace, binding["path"])
+
+
+def create_operation_envelope(
+    *,
+    operation_id: str,
+    actor_id: str,
+    authorization: str | None = None,
+    protocol_version: str = PROTOCOL_VERSION,
+    headers: Mapping[str, Any] | None = None,
+    path: str | None = None,
+    path_params: Mapping[str, Any] | None = None,
+    worker_id: str | None = None,
+    target_actor_id: str | None = None,
+    work_session_id: str | None = None,
+    idempotency_key: str | None = None,
+    request_timestamp: str | None = None,
+    expected_work_session_revision: int | None = None,
+    previous_event_hash: str | None = None,
+    expected_status: int | None = None,
+    expected_error_id: str | None = None,
+    expected_error_field: str | None = None,
+    body_ref: str | None = None,
+    attempted_takeover_lock_epoch: int | None = None,
+    validation_options: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    binding = OPERATION_BINDINGS_BY_ID.get(operation_id)
+    if not binding:
+        raise _helper_error("operation_id", "operation_id MUST exist in the Jarvis OpenAPI binding.")
+    options = {
+        "actor_id": actor_id,
+        "authorization": authorization,
+        "protocol_version": protocol_version,
+        "headers": dict(headers) if isinstance(headers, dict) else None,
+        "path_params": path_params,
+        "worker_id": worker_id,
+        "target_actor_id": target_actor_id,
+        "work_session_id": work_session_id,
+        "idempotency_key": idempotency_key,
+        "request_timestamp": request_timestamp,
+        "expected_work_session_revision": expected_work_session_revision,
+        "previous_event_hash": previous_event_hash,
+        "validation_options": validation_options,
+    }
+    operation = {
+        "operation_id": operation_id,
+        "method": binding["method"],
+        "path": path or create_operation_path(operation_id, _path_params_for_operation(options)),
+        "headers": _build_headers_for_operation(binding, options),
+        "actor_id": actor_id,
+        "expected_status": expected_status if expected_status is not None else _successful_status(binding),
+    }
+    path_values = _operation_path_values(operation)
+    if expected_error_id:
+        operation["expected_error_id"] = expected_error_id
+    if expected_error_field:
+        operation["expected_error_field"] = expected_error_field
+    if work_session_id or path_values.get("work_session_id"):
+        operation["work_session_id"] = work_session_id or path_values.get("work_session_id")
+    if body_ref:
+        operation["body_ref"] = body_ref
+    if attempted_takeover_lock_epoch is not None:
+        operation["attempted_takeover_lock_epoch"] = attempted_takeover_lock_epoch
+    binding_error = _operation_binding_error(operation)
+    if binding_error:
+        raise JarvisProtocolValidationError(binding_error)
+    _assert_valid(validate_operation_headers(operation, validation_options))
+    return operation
+
+
+def create_jarvis_event(
+    *,
+    id: str,
+    sequence: int,
+    event_type: str,
+    work_session_id: str,
+    actor_id: str,
+    timestamp: str,
+    payload: Mapping[str, Any],
+    previous_hash: str = "hash:protocol-genesis",
+    event_hash: str | None = None,
+    canonicalization: Mapping[str, Any] | None = None,
+    trace_context: Mapping[str, Any] | None = None,
+    actor_signature: str | None = None,
+    signing_key_ref: str | None = None,
+) -> dict[str, Any]:
+    hash_input = {
+        "id": id,
+        "sequence": sequence,
+        "type": event_type,
+        "work_session_id": work_session_id,
+        "actor_id": actor_id,
+        "timestamp": timestamp,
+        "payload": dict(payload),
+        "previous_hash": previous_hash,
+        "canonicalization": dict(canonicalization or DEFAULT_CANONICALIZATION),
+    }
+    if trace_context:
+        hash_input["trace_context"] = dict(trace_context)
+    event = {
+        **hash_input,
+        "event_hash": _event_hash_for(hash_input, event_hash),
+    }
+    if actor_signature:
+        event["actor_signature"] = actor_signature
+    if signing_key_ref:
+        event["signing_key_ref"] = signing_key_ref
+    _assert_valid(validate_protocol_record("JarvisEvent", event))
+    return event
+
+
+def create_next_jarvis_event(
+    *,
+    events: Sequence[Mapping[str, Any]] | None = None,
+    sequence: int | None = None,
+    previous_hash: str | None = None,
+    **event_options: Any,
+) -> dict[str, Any]:
+    previous = _last_event_for_work_session(events, event_options.get("work_session_id"))
+    return create_jarvis_event(
+        **event_options,
+        sequence=sequence if sequence is not None else (int(previous["sequence"]) + 1 if previous else 1),
+        previous_hash=previous_hash or (str(previous["event_hash"]) if previous else "hash:protocol-genesis"),
+    )
+
+
+def create_evidence_manifest(
+    *,
+    id: str,
+    work_session: Mapping[str, Any],
+    generated_by_actor_id: str,
+    generated_at: str,
+    objective: str | None = None,
+    work_session_id: str | None = None,
+    events: Sequence[Mapping[str, Any]] | None = None,
+    event_chain_root: str | None = None,
+    evidence_item_refs: Sequence[Mapping[str, Any]] | None = None,
+    policy_decision_refs: Sequence[str] | None = None,
+    request_refs: Sequence[str] | None = None,
+    review_refs: Sequence[str] | None = None,
+    takeover_refs: Sequence[str] | None = None,
+    contribution_refs: Sequence[str] | None = None,
+    artifact_refs: Sequence[str] | None = None,
+    limitation_refs: Sequence[str] | None = None,
+    redaction_refs: Sequence[str] | None = None,
+    export_profile: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    root = _assert_manifest_root(work_session, events, event_chain_root)
+    manifest = {
+        "id": id,
+        "work_session_id": work_session_id or work_session.get("id"),
+        "generated_by_actor_id": generated_by_actor_id,
+        "objective": objective or work_session.get("objective"),
+        "event_chain_root": root,
+        "evidence_item_refs": [dict(item) for item in (evidence_item_refs or [])],
+        "policy_decision_refs": list(policy_decision_refs or []),
+        "request_refs": list(request_refs or []),
+        "review_refs": list(review_refs or []),
+        "takeover_refs": list(takeover_refs or []),
+        "contribution_refs": list(contribution_refs or []),
+        "export_profile": dict(export_profile or {
+            "profile": "portable_evidence_manifest",
+            "version": PROTOCOL_VERSION,
+        }),
+        "generated_at": generated_at,
+    }
+    if artifact_refs is not None:
+        manifest["artifact_refs"] = list(artifact_refs)
+    if limitation_refs is not None:
+        manifest["limitation_refs"] = list(limitation_refs)
+    if redaction_refs is not None:
+        manifest["redaction_refs"] = list(redaction_refs)
+    _assert_valid(validate_evidence_manifest(manifest, {"work_session": work_session}))
+    return manifest
 
 
 def _is_plain_object(value: Any) -> bool:
@@ -356,6 +784,24 @@ def _operation_path_matches_template(template: str, path: Any) -> bool:
     return re.fullmatch("/".join(parts), path) is not None
 
 
+def _operation_path_values(operation: Mapping[str, Any] | None) -> dict[str, str]:
+    if not operation or not _is_nonempty_string(operation.get("path")):
+        return {}
+    binding = OPERATION_BINDINGS_BY_ID.get(operation.get("operation_id"))
+    if not binding:
+        return {}
+    template_segments = str(binding["path"]).split("/")
+    path_segments = str(operation["path"]).split("/")
+    if len(template_segments) != len(path_segments):
+        return {}
+    values = {}
+    for template_segment, path_segment in zip(template_segments, path_segments, strict=True):
+        match = re.fullmatch(r"\{([^/]+)\}", template_segment)
+        if match:
+            values[match.group(1)] = unquote(path_segment)
+    return values
+
+
 def _operation_binding_error(operation: Mapping[str, Any] | None) -> dict[str, Any] | None:
     operation_id = operation.get("operation_id") if operation else None
     binding = OPERATION_BINDINGS_BY_ID.get(operation_id)
@@ -393,6 +839,19 @@ def _operation_binding_error(operation: Mapping[str, Any] | None) -> dict[str, A
                 "object_type": "FixtureOperation",
                 "field": "expected_status",
                 "reason": "Fixture operation expected_status MUST match the Jarvis OpenAPI binding.",
+            },
+        )
+    path_values = _operation_path_values(operation)
+    if (
+        _is_nonempty_string(path_values.get("work_session_id"))
+        and operation.get("work_session_id") != path_values["work_session_id"]
+    ):
+        return protocol_error(
+            "path_body_id_mismatch",
+            {
+                "object_type": "FixtureOperation",
+                "field": "work_session_id",
+                "reason": "operation.work_session_id MUST match the concrete WorkSession path id.",
             },
         )
     return None
@@ -490,6 +949,19 @@ def _operation_body_binding_error(
     operation: Mapping[str, Any] | None,
     body: Mapping[str, Any] | None,
 ) -> dict[str, Any] | None:
+    path_values = _operation_path_values(operation)
+    if (
+        _is_nonempty_string(path_values.get("work_session_id"))
+        and isinstance(body, dict)
+        and body.get("work_session_id") != path_values["work_session_id"]
+    ):
+        return protocol_error(
+            "path_body_id_mismatch",
+            {
+                "field": "work_session_id",
+                "reason": "body.work_session_id MUST match the concrete WorkSession path id.",
+            },
+        )
     actor_body_field = ACTOR_BODY_FIELD_BY_OPERATION.get(operation.get("operation_id") if operation else None)
     if not actor_body_field or not isinstance(body, dict):
         return None
@@ -686,6 +1158,18 @@ def _evidence_manifest_export_error(
                 "reason": "EvidenceManifest source WorkSession id MUST match EvidenceManifest.work_session_id.",
             },
         )
+    if (
+        _is_nonempty_string(work_session.get("last_event_hash"))
+        and evidence_manifest.get("event_chain_root") != work_session.get("last_event_hash")
+    ):
+        return protocol_error(
+            "invalid_evidence_export_state",
+            {
+                "object_type": "EvidenceManifest",
+                "field": "event_chain_root",
+                "reason": "EvidenceManifest.event_chain_root MUST match WorkSession.last_event_hash.",
+            },
+        )
     return None
 
 
@@ -756,7 +1240,7 @@ def validate_schema_record(object_type: str, record: Any) -> ValidationResult:
             },
         )
     for field in SCHEMA_REQUIRED_FIELDS.get(object_type, ()):
-        if field not in record:
+        if field not in record or record[field] is None:
             return _fail(
                 "invalid_export",
                 {
@@ -1137,6 +1621,15 @@ def validate_evidence_manifest(
     if export_error:
         return validation_result([export_error])
     evidence_item_refs = evidence_manifest.get("evidence_item_refs")
+    if not isinstance(evidence_item_refs, list) or len(evidence_item_refs) == 0:
+        return _fail(
+            "invalid_export",
+            {
+                "object_type": "EvidenceManifest",
+                "field": "evidence_item_refs",
+                "reason": "EvidenceManifest.evidence_item_refs MUST contain at least one evidence item.",
+            },
+        )
     if isinstance(evidence_item_refs, list):
         for index, evidence_item_ref in enumerate(evidence_item_refs):
             item_result = validate_schema_record("EvidenceItemRef", evidence_item_ref)
@@ -1763,7 +2256,17 @@ __all__ += [
     "JarvisProtocolValidationError",
     "ValidationResult",
     "canonicalize_protocol_value",
+    "create_evidence_manifest",
+    "create_jarvis_event",
+    "create_mutation_headers",
+    "create_next_jarvis_event",
+    "create_non_work_session_mutation_headers",
+    "create_operation_envelope",
+    "create_operation_path",
+    "create_read_headers",
+    "create_work_session_mutation_headers",
     "find_forbidden_host_private_field",
+    "get_operation_binding",
     "hash_protocol_value",
     "protocol_error",
     "validate_approval_scope",

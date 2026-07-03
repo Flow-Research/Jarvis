@@ -3,8 +3,17 @@ import test from "node:test";
 
 import {
   canonicalizeProtocolValue,
+  createEvidenceManifest,
+  createJarvisEvent,
+  createNextJarvisEvent,
+  createOperationEnvelope,
+  createOperationPath,
+  createReadHeaders,
+  createWorkSessionMutationHeaders,
   findForbiddenHostPrivateField,
+  getOperationBinding,
   hashProtocolValue,
+  JarvisProtocolValidationError,
   protocolError,
   validateEvidenceManifest,
   validateEventHashChain,
@@ -15,6 +24,8 @@ import {
   validateProtocolRecord,
   validateReadHeaders,
 } from "../src/index.js";
+
+const AUTHORIZATION = "HostAuth test";
 
 test("mutation headers enforce WorkSession-scoped zero-trust requirements", () => {
   const missing = validateMutationHeaders({
@@ -39,6 +50,305 @@ test("mutation headers enforce WorkSession-scoped zero-trust requirements", () =
   assert.equal(accepted.valid, true);
 });
 
+test("header helpers create valid read and WorkSession mutation headers", () => {
+  const readHeaders = createReadHeaders({
+    actorId: "actor-human-test",
+    authorization: AUTHORIZATION,
+  });
+  assert.deepEqual(readHeaders, {
+    Authorization: AUTHORIZATION,
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-human-test",
+  });
+  assert.equal(validateReadHeaders(readHeaders).valid, true);
+
+  const mutationHeaders = createWorkSessionMutationHeaders({
+    actorId: "actor-human-test",
+    authorization: AUTHORIZATION,
+    idempotencyKey: "idem-test",
+    requestTimestamp: "2026-06-16T10:00:00Z",
+    expectedWorkSessionRevision: 0,
+    previousEventHash: "hash:protocol-genesis",
+  });
+  assert.equal(validateMutationHeaders(mutationHeaders).valid, true);
+});
+
+test("operation helper binds OpenAPI method path status headers and actor", () => {
+  const binding = getOperationBinding("exportEvidenceManifest");
+  assert.deepEqual(binding, {
+    method: "GET",
+    path: "/work-sessions/{work_session_id}/export",
+    statuses: [200, 400],
+  });
+  assert.equal(
+    createOperationPath("exportEvidenceManifest", { work_session_id: "ws-test" }),
+    "/work-sessions/ws-test/export",
+  );
+  assert.equal(
+    createOperationPath("exportEvidenceManifest", { work_session_id: "ws-!'()*" }),
+    "/work-sessions/ws-%21%27%28%29%2A/export",
+  );
+
+  const operation = createOperationEnvelope({
+    operationId: "exportEvidenceManifest",
+    actorId: "actor-human-test",
+    authorization: AUTHORIZATION,
+    workSessionId: "ws-test",
+  });
+  assert.deepEqual(operation, {
+    operation_id: "exportEvidenceManifest",
+    method: "GET",
+    path: "/work-sessions/ws-test/export",
+    headers: {
+      Authorization: AUTHORIZATION,
+      "Jarvis-Protocol-Version": "v0.1",
+      "Jarvis-Actor-Id": "actor-human-test",
+    },
+    actor_id: "actor-human-test",
+    expected_status: 200,
+    work_session_id: "ws-test",
+  });
+  assert.equal(validateOperationHeaders(operation).valid, true);
+});
+
+test("operation helper preserves caller-provided headers", () => {
+  const headers = createWorkSessionMutationHeaders({
+    actorId: "actor-human-test",
+    authorization: AUTHORIZATION,
+    idempotencyKey: "idem-test",
+    requestTimestamp: "2026-06-16T10:00:00Z",
+    expectedWorkSessionRevision: 0,
+    previousEventHash: "hash:protocol-genesis",
+  });
+  const operation = createOperationEnvelope({
+    operationId: "appendJarvisEvent",
+    actorId: "actor-human-test",
+    headers,
+    workSessionId: "ws-test",
+    bodyRef: "records.jarvis_events.created",
+  });
+  assert.equal(operation.headers, headers);
+  assert.equal(validateOperationHeaders(operation).valid, true);
+});
+
+test("event and EvidenceManifest helpers build records accepted by validators", () => {
+  const created = createNextJarvisEvent({
+    id: "event-created",
+    type: "work_session.created",
+    workSessionId: "ws-test",
+    actorId: "actor-human-test",
+    timestamp: "2026-06-16T10:00:00Z",
+    payload: {
+      object_type: "work_session",
+      object_id: "ws-test",
+      action: "created",
+    },
+  });
+  const completed = createNextJarvisEvent({
+    events: [created],
+    id: "event-completed",
+    type: "work_session.completed",
+    workSessionId: "ws-test",
+    actorId: "actor-human-test",
+    timestamp: "2026-06-16T10:10:00Z",
+    payload: {
+      object_type: "work_session",
+      object_id: "ws-test",
+      action: "completed",
+    },
+  });
+  assert.equal(created.sequence, 1);
+  assert.equal(completed.sequence, 2);
+  assert.equal(completed.previous_hash, created.event_hash);
+  assert.equal(validateEventHashChain([created, completed]).valid, true);
+
+  const workSession = {
+    id: "ws-test",
+    objective: "Prove helper-created protocol records.",
+    status: "completed",
+    last_event_hash: completed.event_hash,
+  };
+  const manifest = createEvidenceManifest({
+    id: "evidence-test",
+    workSession,
+    events: [created, completed],
+    generatedByActorId: "actor-human-test",
+    generatedAt: "2026-06-16T10:11:00Z",
+    evidenceItemRefs: [
+      {
+        id: "evidence-item-test",
+        work_session_id: "ws-test",
+        source_event_refs: ["event-completed"],
+        captured_by_actor_id: "actor-human-test",
+        evidence_type: "artifact",
+        artifact_ref: "artifact:test",
+        content_hash: "hash:content",
+        trust_label: "verified",
+        redaction_state: "none",
+        captured_at: "2026-06-16T10:10:00Z",
+        limitation_refs: [],
+      },
+    ],
+  });
+  assert.equal(manifest.event_chain_root, completed.event_hash);
+  assert.equal(validateEvidenceManifest(manifest, { workSession }).valid, true);
+});
+
+test("event helper computes hash before optional signature metadata", () => {
+  const base = {
+    id: "event-signed",
+    sequence: 1,
+    type: "work_session.created",
+    workSessionId: "ws-test",
+    actorId: "actor-human-test",
+    timestamp: "2026-06-16T10:00:00Z",
+    payload: {
+      object_type: "work_session",
+      object_id: "ws-test",
+      action: "created",
+    },
+  };
+  const unsigned = createJarvisEvent(base);
+  const signed = createJarvisEvent({
+    ...base,
+    actorSignature: "signature:test",
+    signingKeyRef: "signing-key:test",
+  });
+  assert.equal(signed.event_hash, unsigned.event_hash);
+  assert.equal(signed.actor_signature, "signature:test");
+});
+
+test("event helper rejects mismatched caller-supplied event hash", () => {
+  assert.throws(
+    () => createJarvisEvent({
+      id: "event-bad-hash",
+      sequence: 1,
+      type: "work_session.created",
+      workSessionId: "ws-test",
+      actorId: "actor-human-test",
+      timestamp: "2026-06-16T10:00:00Z",
+      payload: {
+        object_type: "work_session",
+        object_id: "ws-test",
+        action: "created",
+      },
+      eventHash: "hash:not-the-canonical-event",
+    }),
+    (error) => error instanceof JarvisProtocolValidationError
+      && error.error.error_id === "invalid_event_hash",
+  );
+});
+
+test("next event helper rejects cross-WorkSession event linkage", () => {
+  const other = createNextJarvisEvent({
+    id: "event-other",
+    type: "work_session.created",
+    workSessionId: "ws-other",
+    actorId: "actor-human-test",
+    timestamp: "2026-06-16T10:00:00Z",
+    payload: {
+      object_type: "work_session",
+      object_id: "ws-other",
+      action: "created",
+    },
+  });
+  assert.throws(
+    () => createNextJarvisEvent({
+      events: [other],
+      id: "event-wrong-link",
+      type: "work_session.completed",
+      workSessionId: "ws-test",
+      actorId: "actor-human-test",
+      timestamp: "2026-06-16T10:10:00Z",
+      payload: {
+        object_type: "work_session",
+        object_id: "ws-test",
+        action: "completed",
+      },
+    }),
+    (error) => error instanceof JarvisProtocolValidationError
+      && error.error.error_id === "invalid_export",
+  );
+});
+
+test("operation helper rejects concrete path WorkSession mismatch", () => {
+  assert.throws(
+    () => createOperationEnvelope({
+      operationId: "appendJarvisEvent",
+      actorId: "actor-human-test",
+      authorization: AUTHORIZATION,
+      path: "/work-sessions/ws-other/events",
+      workSessionId: "ws-test",
+      idempotencyKey: "idem-test",
+      requestTimestamp: "2026-06-16T10:00:00Z",
+      expectedWorkSessionRevision: 0,
+      previousEventHash: "hash:protocol-genesis",
+      bodyRef: "records.jarvis_events.created",
+    }),
+    (error) => error instanceof JarvisProtocolValidationError
+      && error.error.error_id === "path_body_id_mismatch",
+  );
+});
+
+test("EvidenceManifest helper rejects empty refs and root drift", () => {
+  const event = createNextJarvisEvent({
+    id: "event-root",
+    type: "work_session.completed",
+    workSessionId: "ws-test",
+    actorId: "actor-human-test",
+    timestamp: "2026-06-16T10:10:00Z",
+    payload: {
+      object_type: "work_session",
+      object_id: "ws-test",
+      action: "completed",
+    },
+  });
+  const workSession = {
+    id: "ws-test",
+    objective: "Reject malformed manifest helpers.",
+    status: "completed",
+    last_event_hash: event.event_hash,
+  };
+  assert.throws(
+    () => createEvidenceManifest({
+      id: "evidence-empty",
+      workSession,
+      events: [event],
+      generatedByActorId: "actor-human-test",
+      generatedAt: "2026-06-16T10:11:00Z",
+    }),
+    (error) => error instanceof JarvisProtocolValidationError
+      && error.error.error_id === "invalid_export",
+  );
+  assert.throws(
+    () => createEvidenceManifest({
+      id: "evidence-root-drift",
+      workSession,
+      events: [event],
+      eventChainRoot: "hash:wrong-root",
+      generatedByActorId: "actor-human-test",
+      generatedAt: "2026-06-16T10:11:00Z",
+      evidenceItemRefs: [
+        {
+          id: "evidence-item-test",
+          work_session_id: "ws-test",
+          source_event_refs: ["event-root"],
+          captured_by_actor_id: "actor-human-test",
+          evidence_type: "artifact",
+          artifact_ref: "artifact:test",
+          content_hash: "hash:content",
+          trust_label: "verified",
+          redaction_state: "none",
+          captured_at: "2026-06-16T10:10:00Z",
+          limitation_refs: [],
+        },
+      ],
+    }),
+    (error) => error instanceof JarvisProtocolValidationError
+      && error.error.error_id === "invalid_evidence_export_state",
+  );
+});
+
 test("required identity and replay headers reject empty values", () => {
   const result = validateMutationHeaders({
     Authorization: " ",
@@ -51,6 +361,28 @@ test("required identity and replay headers reject empty values", () => {
   });
   assert.equal(result.valid, false);
   assert.equal(result.errors[0].field, "headers.Authorization");
+});
+
+test("required mutation headers reject undefined values", () => {
+  const baseHeaders = {
+    Authorization: "HostAuth test",
+    "Jarvis-Protocol-Version": "v0.1",
+    "Jarvis-Actor-Id": "actor-test",
+    "Jarvis-Idempotency-Key": "idem-test",
+    "Jarvis-Request-Timestamp": "2026-06-16T10:00:00Z",
+    "Jarvis-Expected-WorkSession-Revision": 0,
+    "Jarvis-Previous-Event-Hash": "hash:protocol-genesis",
+  };
+  for (const [header, errorId] of [
+    ["Jarvis-Request-Timestamp", "missing_request_timestamp"],
+    ["Jarvis-Expected-WorkSession-Revision", "missing_expected_work_session_revision"],
+    ["Jarvis-Previous-Event-Hash", "missing_previous_event_hash"],
+  ]) {
+    const headers = { ...baseHeaders, [header]: undefined };
+    const result = validateMutationHeaders(headers);
+    assert.equal(result.valid, false, header);
+    assert.equal(result.errors[0].error_id, errorId);
+  }
 });
 
 test("ApprovalScope requires review timestamp when review context is present", () => {
@@ -236,6 +568,16 @@ test("EvidenceManifest export requires terminal WorkSession source", () => {
   assert.equal(wrongSource.valid, false);
   assert.equal(wrongSource.errors[0].error_id, "invalid_evidence_export_state");
   assert.equal(wrongSource.errors[0].field, "work_session_id");
+
+  const rootDrift = validateEvidenceManifest(
+    { ...manifest, event_chain_root: "hash:wrong-root" },
+    {
+      workSession: { id: "ws-test", status: "completed", last_event_hash: "hash:root" },
+    },
+  );
+  assert.equal(rootDrift.valid, false);
+  assert.equal(rootDrift.errors[0].error_id, "invalid_evidence_export_state");
+  assert.equal(rootDrift.errors[0].field, "event_chain_root");
 });
 
 test("protocol error helper emits the OpenAPI error envelope", () => {

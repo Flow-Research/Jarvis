@@ -5,8 +5,17 @@ import unittest
 
 from jarvis_protocol import (
     canonicalize_protocol_value,
+    create_evidence_manifest,
+    create_jarvis_event,
+    create_next_jarvis_event,
+    create_operation_envelope,
+    create_operation_path,
+    create_read_headers,
+    create_work_session_mutation_headers,
     find_forbidden_host_private_field,
+    get_operation_binding,
     hash_protocol_value,
+    JarvisProtocolValidationError,
     protocol_error,
     validate_approval_scope,
     validate_evidence_manifest,
@@ -17,6 +26,8 @@ from jarvis_protocol import (
     validate_protocol_record,
     validate_read_headers,
 )
+
+AUTHORIZATION = "HostAuth test"
 
 
 class HelperValidationTests(unittest.TestCase):
@@ -46,6 +57,271 @@ class HelperValidationTests(unittest.TestCase):
             {"now": datetime(2026, 6, 16, 10, 0, 0, tzinfo=timezone.utc)},
         )
         self.assertTrue(accepted.valid, accepted.errors)
+
+    def test_header_helpers_create_valid_read_and_work_session_mutation_headers(self) -> None:
+        read_headers = create_read_headers(
+            actor_id="actor-human-test",
+            authorization=AUTHORIZATION,
+        )
+        self.assertEqual(
+            read_headers,
+            {
+                "Authorization": AUTHORIZATION,
+                "Jarvis-Protocol-Version": "v0.1",
+                "Jarvis-Actor-Id": "actor-human-test",
+            },
+        )
+        self.assertTrue(validate_read_headers(read_headers).valid)
+
+        mutation_headers = create_work_session_mutation_headers(
+            actor_id="actor-human-test",
+            authorization=AUTHORIZATION,
+            idempotency_key="idem-test",
+            request_timestamp="2026-06-16T10:00:00Z",
+            expected_work_session_revision=0,
+            previous_event_hash="hash:protocol-genesis",
+        )
+        self.assertTrue(validate_mutation_headers(mutation_headers).valid)
+
+    def test_operation_helper_binds_openapi_method_path_status_headers_and_actor(self) -> None:
+        self.assertEqual(
+            get_operation_binding("exportEvidenceManifest"),
+            {
+                "method": "GET",
+                "path": "/work-sessions/{work_session_id}/export",
+                "statuses": [200, 400],
+            },
+        )
+        self.assertEqual(
+            create_operation_path("exportEvidenceManifest", {"work_session_id": "ws-test"}),
+            "/work-sessions/ws-test/export",
+        )
+        operation = create_operation_envelope(
+            operation_id="exportEvidenceManifest",
+            actor_id="actor-human-test",
+            authorization=AUTHORIZATION,
+            work_session_id="ws-test",
+        )
+        self.assertEqual(
+            operation,
+            {
+                "operation_id": "exportEvidenceManifest",
+                "method": "GET",
+                "path": "/work-sessions/ws-test/export",
+                "headers": {
+                    "Authorization": AUTHORIZATION,
+                    "Jarvis-Protocol-Version": "v0.1",
+                    "Jarvis-Actor-Id": "actor-human-test",
+                },
+                "actor_id": "actor-human-test",
+                "expected_status": 200,
+                "work_session_id": "ws-test",
+            },
+        )
+        self.assertTrue(validate_operation_headers(operation).valid)
+
+    def test_event_and_evidence_manifest_helpers_build_valid_protocol_records(self) -> None:
+        created = create_next_jarvis_event(
+            id="event-created",
+            event_type="work_session.created",
+            work_session_id="ws-test",
+            actor_id="actor-human-test",
+            timestamp="2026-06-16T10:00:00Z",
+            payload={
+                "object_type": "work_session",
+                "object_id": "ws-test",
+                "action": "created",
+            },
+        )
+        completed = create_next_jarvis_event(
+            events=[created],
+            id="event-completed",
+            event_type="work_session.completed",
+            work_session_id="ws-test",
+            actor_id="actor-human-test",
+            timestamp="2026-06-16T10:10:00Z",
+            payload={
+                "object_type": "work_session",
+                "object_id": "ws-test",
+                "action": "completed",
+            },
+        )
+        self.assertEqual(created["sequence"], 1)
+        self.assertEqual(completed["sequence"], 2)
+        self.assertEqual(completed["previous_hash"], created["event_hash"])
+        self.assertTrue(validate_event_hash_chain([created, completed]).valid)
+
+        work_session = {
+            "id": "ws-test",
+            "objective": "Prove helper-created protocol records.",
+            "status": "completed",
+            "last_event_hash": completed["event_hash"],
+        }
+        manifest = create_evidence_manifest(
+            id="evidence-test",
+            work_session=work_session,
+            events=[created, completed],
+            generated_by_actor_id="actor-human-test",
+            generated_at="2026-06-16T10:11:00Z",
+            evidence_item_refs=[
+                {
+                    "id": "evidence-item-test",
+                    "work_session_id": "ws-test",
+                    "source_event_refs": ["event-completed"],
+                    "captured_by_actor_id": "actor-human-test",
+                    "evidence_type": "artifact",
+                    "artifact_ref": "artifact:test",
+                    "content_hash": "hash:content",
+                    "trust_label": "verified",
+                    "redaction_state": "none",
+                    "captured_at": "2026-06-16T10:10:00Z",
+                    "limitation_refs": [],
+                }
+            ],
+        )
+        self.assertEqual(manifest["event_chain_root"], completed["event_hash"])
+        self.assertTrue(validate_evidence_manifest(manifest, {"work_session": work_session}).valid)
+
+    def test_event_helper_computes_hash_before_optional_signature_metadata(self) -> None:
+        base = {
+            "id": "event-signed",
+            "sequence": 1,
+            "event_type": "work_session.created",
+            "work_session_id": "ws-test",
+            "actor_id": "actor-human-test",
+            "timestamp": "2026-06-16T10:00:00Z",
+            "payload": {
+                "object_type": "work_session",
+                "object_id": "ws-test",
+                "action": "created",
+            },
+        }
+        unsigned = create_jarvis_event(**base)
+        signed = create_jarvis_event(
+            **base,
+            actor_signature="signature:test",
+            signing_key_ref="signing-key:test",
+        )
+        self.assertEqual(signed["event_hash"], unsigned["event_hash"])
+        self.assertEqual(signed["actor_signature"], "signature:test")
+
+    def test_event_helper_rejects_mismatched_caller_supplied_event_hash(self) -> None:
+        with self.assertRaises(JarvisProtocolValidationError) as context:
+            create_jarvis_event(
+                id="event-bad-hash",
+                sequence=1,
+                event_type="work_session.created",
+                work_session_id="ws-test",
+                actor_id="actor-human-test",
+                timestamp="2026-06-16T10:00:00Z",
+                payload={
+                    "object_type": "work_session",
+                    "object_id": "ws-test",
+                    "action": "created",
+                },
+                event_hash="hash:not-the-canonical-event",
+            )
+        self.assertEqual(context.exception.error["error_id"], "invalid_event_hash")
+
+    def test_next_event_helper_rejects_cross_work_session_event_linkage(self) -> None:
+        other = create_next_jarvis_event(
+            id="event-other",
+            event_type="work_session.created",
+            work_session_id="ws-other",
+            actor_id="actor-human-test",
+            timestamp="2026-06-16T10:00:00Z",
+            payload={
+                "object_type": "work_session",
+                "object_id": "ws-other",
+                "action": "created",
+            },
+        )
+        with self.assertRaises(JarvisProtocolValidationError) as context:
+            create_next_jarvis_event(
+                events=[other],
+                id="event-wrong-link",
+                event_type="work_session.completed",
+                work_session_id="ws-test",
+                actor_id="actor-human-test",
+                timestamp="2026-06-16T10:10:00Z",
+                payload={
+                    "object_type": "work_session",
+                    "object_id": "ws-test",
+                    "action": "completed",
+                },
+            )
+        self.assertEqual(context.exception.error["error_id"], "invalid_export")
+
+    def test_operation_helper_rejects_concrete_path_work_session_mismatch(self) -> None:
+        with self.assertRaises(JarvisProtocolValidationError) as context:
+            create_operation_envelope(
+                operation_id="appendJarvisEvent",
+                actor_id="actor-human-test",
+                authorization=AUTHORIZATION,
+                path="/work-sessions/ws-other/events",
+                work_session_id="ws-test",
+                idempotency_key="idem-test",
+                request_timestamp="2026-06-16T10:00:00Z",
+                expected_work_session_revision=0,
+                previous_event_hash="hash:protocol-genesis",
+                body_ref="records.jarvis_events.created",
+            )
+        self.assertEqual(context.exception.error["error_id"], "path_body_id_mismatch")
+
+    def test_evidence_manifest_helper_rejects_empty_refs_and_root_drift(self) -> None:
+        event = create_next_jarvis_event(
+            id="event-root",
+            event_type="work_session.completed",
+            work_session_id="ws-test",
+            actor_id="actor-human-test",
+            timestamp="2026-06-16T10:10:00Z",
+            payload={
+                "object_type": "work_session",
+                "object_id": "ws-test",
+                "action": "completed",
+            },
+        )
+        work_session = {
+            "id": "ws-test",
+            "objective": "Reject malformed manifest helpers.",
+            "status": "completed",
+            "last_event_hash": event["event_hash"],
+        }
+        with self.assertRaises(JarvisProtocolValidationError) as empty_context:
+            create_evidence_manifest(
+                id="evidence-empty",
+                work_session=work_session,
+                events=[event],
+                generated_by_actor_id="actor-human-test",
+                generated_at="2026-06-16T10:11:00Z",
+            )
+        self.assertEqual(empty_context.exception.error["error_id"], "invalid_export")
+
+        with self.assertRaises(JarvisProtocolValidationError) as drift_context:
+            create_evidence_manifest(
+                id="evidence-root-drift",
+                work_session=work_session,
+                events=[event],
+                event_chain_root="hash:wrong-root",
+                generated_by_actor_id="actor-human-test",
+                generated_at="2026-06-16T10:11:00Z",
+                evidence_item_refs=[
+                    {
+                        "id": "evidence-item-test",
+                        "work_session_id": "ws-test",
+                        "source_event_refs": ["event-root"],
+                        "captured_by_actor_id": "actor-human-test",
+                        "evidence_type": "artifact",
+                        "artifact_ref": "artifact:test",
+                        "content_hash": "hash:content",
+                        "trust_label": "verified",
+                        "redaction_state": "none",
+                        "captured_at": "2026-06-16T10:10:00Z",
+                        "limitation_refs": [],
+                    }
+                ],
+            )
+        self.assertEqual(drift_context.exception.error["error_id"], "invalid_evidence_export_state")
 
     def test_non_work_session_mutation_headers_do_not_require_revision_hash(self) -> None:
         result = validate_mutation_headers(
@@ -323,6 +599,20 @@ class HelperValidationTests(unittest.TestCase):
         self.assertFalse(wrong_source.valid)
         self.assertEqual(wrong_source.errors[0]["error_id"], "invalid_evidence_export_state")
         self.assertEqual(wrong_source.errors[0]["field"], "work_session_id")
+
+        root_drift = validate_evidence_manifest(
+            {**manifest, "event_chain_root": "hash:wrong-root"},
+            {
+                "work_session": {
+                    "id": "ws-test",
+                    "status": "completed",
+                    "last_event_hash": "hash:root",
+                }
+            },
+        )
+        self.assertFalse(root_drift.valid)
+        self.assertEqual(root_drift.errors[0]["error_id"], "invalid_evidence_export_state")
+        self.assertEqual(root_drift.errors[0]["field"], "event_chain_root")
 
     def test_protocol_error_helper_emits_openapi_error_envelope(self) -> None:
         error = protocol_error(
