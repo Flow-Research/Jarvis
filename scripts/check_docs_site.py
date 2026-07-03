@@ -218,7 +218,6 @@ def main() -> int:
             failures.append(f"demo/conformance/existing-agent-compatibility.html: missing {required_text}")
 
     fixtures_page = required_site_text(SITE_ROOT / "conformance" / "fixtures.html", failures)
-    fixture_names = sorted(path.name for path in (ROOT / "docs" / "conformance" / "fixtures").rglob("*.json"))
     fixtures_parser = parsed.get(SITE_ROOT / "conformance" / "fixtures.html")
     fixture_refs = {
         clean_ref(value)
