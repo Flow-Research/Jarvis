@@ -1,0 +1,3228 @@
+openapi: 3.1.1
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+info:
+  title: Jarvis Human-Agent Collaboration Protocol
+  summary: Human-agent collaboration and learning-loop protocol.
+  description: |
+    Jarvis defines the protocol records and operations for governed
+    collaboration and shared learning between HumanWorkers and AgentWorkers.
+
+    Jarvis defines protocol records and operations only.
+  version: 0.1.0
+servers:
+  - url: https://jarvis.example.invalid
+    description: OpenAPI placeholder only. Jarvis does not operate this server; compatible hosts publish their own URLs.
+security:
+  - HostAuth: []
+tags:
+  - name: Workers
+    description: Worker and Actor protocol reference operations.
+  - name: WorkSessions
+    description: WorkSession lifecycle and event operations.
+  - name: ControlPlane
+    description: PolicyDecision, Request, Review, and Takeover operations.
+  - name: Attribution
+    description: Contribution operations.
+  - name: Learning
+    description: LearningRecord, MemoryProposal, and SkillProposal operations.
+  - name: Evidence
+    description: EvidenceManifest export operations.
+  - name: Feedback
+    description: OutcomeReport operations.
+  - name: Conformance
+    description: Compatibility and conformance entry operations.
+paths:
+  /workers/{worker_id}:
+    put:
+      operationId: registerWorker
+      summary: Register Worker protocol reference.
+      description: |
+        Records a Worker protocol reference. Hosts own account creation,
+        authentication, identity storage, and credentials. Compatible
+        implementations MUST verify Actor authority, HostAuth,
+        Jarvis-Protocol-Version, Jarvis-Actor-Id, Jarvis-Idempotency-Key, and
+        Jarvis-Request-Timestamp. This non-WorkSession mutation does not
+        require WorkSession revision or previous event hash.
+      x-jarvis-operation-class: non_worksession_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: worker_id
+        body_field: id
+        rejection_id: path_body_id_mismatch
+      tags:
+        - Workers
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkerIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/WorkerBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/WorkerResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /actors/{actor_id}:
+    put:
+      operationId: registerActor
+      summary: Register Actor protocol authority reference.
+      description: |
+        Records an Actor protocol authority reference for an existing Worker.
+        Hosts own identity proof, credentials, sessions, and account storage.
+        Compatible implementations MUST verify Actor authority, HostAuth,
+        Jarvis-Protocol-Version, Jarvis-Actor-Id, Jarvis-Idempotency-Key, and
+        Jarvis-Request-Timestamp. This non-WorkSession mutation does not
+        require WorkSession revision or previous event hash.
+      x-jarvis-operation-class: non_worksession_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: actor_id
+        body_field: id
+        rejection_id: path_body_id_mismatch
+      tags:
+        - Workers
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ActorIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/ActorBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/ActorResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions:
+    post:
+      operationId: createWorkSession
+      summary: Create WorkSession genesis record.
+      description: |
+        Creates the genesis WorkSession protocol record for one governed
+        HumanWorker and AgentWorker collaboration loop. Compatible
+        implementations MUST verify Actor authority, HostAuth, all six Jarvis
+        mutation headers, expected revision `0`, and
+        `Jarvis-Previous-Event-Hash` equal to `hash:protocol-genesis` before
+        accepting the WorkSession creation state. The accepted WorkSession
+        snapshot starts as `active` at revision `1` with first event type
+        `work_session.created`.
+      x-jarvis-operation-class: worksession_genesis_mutation
+      x-jarvis-actor-body-id-match:
+        header: Jarvis-Actor-Id
+        body_field: created_by_actor_id
+        rejection_id: actor_body_id_mismatch
+      x-jarvis-genesis-state:
+        expected_revision_header: 0
+        previous_event_hash_header: hash:protocol-genesis
+        accepted_status: active
+        accepted_revision: 1
+        accepted_event_type: work_session.created
+      tags:
+        - WorkSessions
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+        - $ref: "#/components/parameters/RevisionHeader"
+        - $ref: "#/components/parameters/PreviousHashHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/WorkSessionBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/WorkSessionResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}:
+    get:
+      operationId: getWorkSession
+      summary: Read WorkSession protocol record.
+      description: |
+        Returns a WorkSession protocol record. Compatible implementations MUST
+        verify HostAuth, Jarvis-Protocol-Version, Jarvis-Actor-Id, and Actor
+        read authority. Read operations MAY include
+        Jarvis-Required-Capabilities and Jarvis-Extensions. Read operations
+        MUST NOT require mutation-only idempotency, expected revision, or
+        previous event hash headers.
+      x-jarvis-operation-class: worksession_scoped_read
+      tags:
+        - WorkSessions
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/RequiredCapabilitiesHeader"
+        - $ref: "#/components/parameters/ExtensionsHeader"
+      responses:
+        "200":
+          $ref: "#/components/responses/WorkSessionResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}/events:
+    post:
+      operationId: appendJarvisEvent
+      summary: Append JarvisEvent to WorkSession.
+      description: |
+        Appends an attributable JarvisEvent to the WorkSession event chain.
+        Compatible implementations MUST verify Actor authority, HostAuth, all
+        six Jarvis mutation headers, current WorkSession revision, and previous
+        event hash before accepting protocol state.
+      x-jarvis-operation-class: worksession_scoped_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: work_session_id
+        body_field: work_session_id
+        rejection_id: path_body_id_mismatch
+      x-jarvis-actor-body-id-match:
+        header: Jarvis-Actor-Id
+        body_field: actor_id
+        rejection_id: actor_body_id_mismatch
+      tags:
+        - WorkSessions
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+        - $ref: "#/components/parameters/RevisionHeader"
+        - $ref: "#/components/parameters/PreviousHashHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/JarvisEventBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/JarvisEventResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}/policy-decisions:
+    post:
+      operationId: recordPolicyDecision
+      summary: Record PolicyDecision before accepted AgentWorker action.
+      description: |
+        Records a PolicyDecision for an AgentWorker action before that action
+        becomes accepted protocol state. Compatible implementations MUST verify
+        Actor authority, HostAuth, all six Jarvis mutation headers, current
+        WorkSession revision, and previous event hash.
+      x-jarvis-operation-class: worksession_scoped_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: work_session_id
+        body_field: work_session_id
+        rejection_id: path_body_id_mismatch
+      x-jarvis-actor-body-id-match:
+        header: Jarvis-Actor-Id
+        body_field: actor_id
+        rejection_id: actor_body_id_mismatch
+      tags:
+        - ControlPlane
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+        - $ref: "#/components/parameters/RevisionHeader"
+        - $ref: "#/components/parameters/PreviousHashHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/PolicyDecisionBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/PolicyDecisionResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}/requests:
+    post:
+      operationId: createRequest
+      summary: Create scoped Request for blocked work.
+      description: |
+        Creates a scoped Request when AgentWorker cannot continue a declared
+        work scope safely without HumanWorker permission, context, judgment,
+        review, correction, or Takeover. Compatible implementations MUST verify
+        Actor authority, HostAuth, all six Jarvis mutation headers, current
+        WorkSession revision, and previous event hash.
+      x-jarvis-operation-class: worksession_scoped_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: work_session_id
+        body_field: work_session_id
+        rejection_id: path_body_id_mismatch
+      x-jarvis-actor-body-id-match:
+        header: Jarvis-Actor-Id
+        body_field: requester_actor_id
+        rejection_id: actor_body_id_mismatch
+      tags:
+        - ControlPlane
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+        - $ref: "#/components/parameters/RevisionHeader"
+        - $ref: "#/components/parameters/PreviousHashHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/RequestBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/RequestResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}/reviews:
+    post:
+      operationId: recordReview
+      summary: Record HumanWorker Review.
+      description: |
+        Records HumanWorker judgment over a Request or protocol target.
+        Review resolves Request scopes through answer, approve, deny, narrow,
+        correct, takeover, or needs_revision decisions. Compatible
+        implementations MUST verify Actor authority, HostAuth, all six Jarvis
+        mutation headers, current WorkSession revision, and previous event
+        hash.
+      x-jarvis-operation-class: worksession_scoped_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: work_session_id
+        body_field: work_session_id
+        rejection_id: path_body_id_mismatch
+      x-jarvis-actor-body-id-match:
+        header: Jarvis-Actor-Id
+        body_field: reviewer_actor_id
+        rejection_id: actor_body_id_mismatch
+      tags:
+        - ControlPlane
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+        - $ref: "#/components/parameters/RevisionHeader"
+        - $ref: "#/components/parameters/PreviousHashHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/ReviewBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/ReviewResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}/takeovers:
+    post:
+      operationId: recordTakeover
+      summary: Record Takeover and reconciliation state.
+      description: |
+        Records HumanWorker direct-control state for a declared WorkSession
+        scope and prevents stale AgentWorker continuation. Compatible
+        implementations MUST verify Actor authority, HostAuth, all six Jarvis
+        mutation headers, current WorkSession revision, previous event hash,
+        and Takeover lock epoch rules.
+      x-jarvis-operation-class: worksession_scoped_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: work_session_id
+        body_field: work_session_id
+        rejection_id: path_body_id_mismatch
+      x-jarvis-actor-body-id-match:
+        header: Jarvis-Actor-Id
+        body_field: controlling_actor_id
+        rejection_id: actor_body_id_mismatch
+      tags:
+        - ControlPlane
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+        - $ref: "#/components/parameters/RevisionHeader"
+        - $ref: "#/components/parameters/PreviousHashHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/TakeoverBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/TakeoverResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}/contributions:
+    post:
+      operationId: recordContribution
+      summary: Record attributable Contribution.
+      description: |
+        Records who contributed work, which Actor represented the contributor,
+        and which events or artifacts support the contribution. Compatible
+        implementations MUST verify Actor authority, HostAuth, all six Jarvis
+        mutation headers, current WorkSession revision, and previous event
+        hash.
+      x-jarvis-operation-class: worksession_scoped_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: work_session_id
+        body_field: work_session_id
+        rejection_id: path_body_id_mismatch
+      tags:
+        - Attribution
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+        - $ref: "#/components/parameters/RevisionHeader"
+        - $ref: "#/components/parameters/PreviousHashHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/ContributionBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/ContributionResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}/learning-records:
+    post:
+      operationId: createLearningRecord
+      summary: Create governed LearningRecord.
+      description: |
+        Creates a governed LearningRecord for human, agent, or pair learning
+        supported by WorkSession source events. Compatible implementations MUST
+        verify Actor authority, HostAuth, all six Jarvis mutation headers,
+        current WorkSession revision, and previous event hash.
+      x-jarvis-operation-class: worksession_scoped_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: work_session_id
+        body_field: work_session_id
+        rejection_id: path_body_id_mismatch
+      x-jarvis-actor-body-id-match:
+        header: Jarvis-Actor-Id
+        body_field: created_by_actor_id
+        rejection_id: actor_body_id_mismatch
+      tags:
+        - Learning
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+        - $ref: "#/components/parameters/RevisionHeader"
+        - $ref: "#/components/parameters/PreviousHashHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/LearningRecordBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/LearningRecordResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}/memory-proposals:
+    post:
+      operationId: createMemoryProposal
+      summary: Create governed MemoryProposal.
+      description: |
+        Creates a MemoryProposal that remains governed until reviewed.
+        Compatible implementations MUST verify Actor authority, HostAuth, all
+        six Jarvis mutation headers, current WorkSession revision, previous
+        event hash, provenance, and review-required state.
+      x-jarvis-operation-class: worksession_scoped_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: work_session_id
+        body_field: work_session_id
+        rejection_id: path_body_id_mismatch
+      x-jarvis-actor-body-id-match:
+        header: Jarvis-Actor-Id
+        body_field: proposed_by_actor_id
+        rejection_id: actor_body_id_mismatch
+      tags:
+        - Learning
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+        - $ref: "#/components/parameters/RevisionHeader"
+        - $ref: "#/components/parameters/PreviousHashHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/MemoryProposalBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/MemoryProposalResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}/skill-proposals:
+    post:
+      operationId: createSkillProposal
+      summary: Create governed SkillProposal.
+      description: |
+        Creates a SkillProposal that remains governed until reviewed and cannot
+        expand tool access without policy review. Compatible implementations
+        MUST verify Actor authority, HostAuth, all six Jarvis mutation headers,
+        current WorkSession revision, previous event hash, provenance, and
+        review-required state.
+      x-jarvis-operation-class: worksession_scoped_mutation
+      x-jarvis-path-body-id-match:
+        path_parameter: work_session_id
+        body_field: work_session_id
+        rejection_id: path_body_id_mismatch
+      x-jarvis-actor-body-id-match:
+        header: Jarvis-Actor-Id
+        body_field: proposed_by_actor_id
+        rejection_id: actor_body_id_mismatch
+      tags:
+        - Learning
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+        - $ref: "#/components/parameters/RevisionHeader"
+        - $ref: "#/components/parameters/PreviousHashHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/SkillProposalBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/SkillProposalResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /work-sessions/{work_session_id}/export:
+    get:
+      operationId: exportEvidenceManifest
+      summary: Export EvidenceManifest.
+      description: |
+        Exports portable EvidenceManifest proof from a terminal WorkSession
+        state. Compatible implementations MUST verify HostAuth,
+        Jarvis-Protocol-Version, Jarvis-Actor-Id, and Actor read authority.
+        Export reads MAY include Jarvis-Required-Capabilities and
+        Jarvis-Extensions. Export reads MUST NOT require mutation-only
+        idempotency, expected revision, or previous event hash headers.
+      x-jarvis-operation-class: export_read
+      tags:
+        - Evidence
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkSessionIdPath"
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/RequiredCapabilitiesHeader"
+        - $ref: "#/components/parameters/ExtensionsHeader"
+      responses:
+        "200":
+          $ref: "#/components/responses/EvidenceManifestResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+  /outcome-reports:
+    post:
+      operationId: submitOutcomeReport
+      summary: Submit OutcomeReport post-session feedback.
+      description: |
+        Records attributable post-session feedback after WorkSession export.
+        OutcomeReport references governed LearningRecord records and does not
+        mutate sealed WorkSession, EvidenceManifest, or LearningRecord records.
+        Compatible implementations MUST verify Actor authority, HostAuth,
+        Jarvis-Protocol-Version, Jarvis-Actor-Id, Jarvis-Idempotency-Key, and
+        Jarvis-Request-Timestamp. This non-WorkSession mutation does not
+        require WorkSession revision or previous event hash.
+      x-jarvis-operation-class: non_worksession_mutation
+      x-jarvis-actor-body-id-match:
+        header: Jarvis-Actor-Id
+        body_field: accepted_by_actor_id
+        rejection_id: actor_body_id_mismatch
+      tags:
+        - Feedback
+      security:
+        - HostAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ProtocolVersionHeader"
+        - $ref: "#/components/parameters/ActorHeader"
+        - $ref: "#/components/parameters/IdempotencyHeader"
+        - $ref: "#/components/parameters/RequestTimestampHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/OutcomeReportBody"
+      responses:
+        "202":
+          $ref: "#/components/responses/OutcomeReportResponse"
+        "400":
+          $ref: "#/components/responses/ProtocolErrorResponse"
+components:
+  schemas:
+    JarvisId:
+      type: string
+      minLength: 1
+      maxLength: 160
+      pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+      description: Portable Jarvis protocol identifier. Host-private database ids stay outside protocol records.
+    OpaqueRef:
+      type: string
+      minLength: 1
+      maxLength: 512
+      description: Opaque protocol or external reference. Receivers do not need host-private infrastructure knowledge to preserve it.
+    Timestamp:
+      type: string
+      format: date-time
+      description: RFC 3339 timestamp.
+    NamespacedExtensions:
+      type: object
+      description: Namespaced extension fields. Extensions MUST NOT override core fields or contain forbidden host-private data.
+      propertyNames:
+        type: string
+        pattern: "^(?!.*(password|credential|token|secret|private_key|session_cookie|cookie|api_key|access_key|auth_header|oauth|database|billing|runtime|container|deployment|model_api_key|raw_prompt|host_account|ui_state))[a-z0-9][a-z0-9-]*(\\.[a-z0-9_-]+)+$"
+      additionalProperties:
+        $ref: "#/components/schemas/PortableValue"
+    PortableValue:
+      description: Portable JSON value. Protocol records MUST NOT use this field to carry credentials, host-private ids, raw runtime state, billing data, or UI state.
+      anyOf:
+        - type: string
+        - type: number
+        - type: integer
+        - type: boolean
+        - type: "null"
+        - type: array
+          items:
+            $ref: "#/components/schemas/PortableValue"
+        - type: object
+          propertyNames:
+            type: string
+            pattern: "^(?!.*(password|credential|token|secret|private_key|session_cookie|cookie|api_key|access_key|auth_header|oauth|database|billing|runtime|container|deployment|model_api_key|raw_prompt|host_account|ui_state))[a-z0-9][a-z0-9._:-]*$"
+          additionalProperties:
+            $ref: "#/components/schemas/PortableValue"
+    WorkerType:
+      type: string
+      enum:
+        - human
+        - agent
+        - service
+        - tool
+    ActorType:
+      type: string
+      enum:
+        - human
+        - agent
+        - service
+        - tool
+    ContributionRole:
+      type: string
+      enum:
+        - human
+        - agent
+        - shared
+        - service
+        - tool
+    AutonomyLevel:
+      type: string
+      enum:
+        - observe_only
+        - propose_only
+        - execute_with_review
+        - bounded_execute
+        - full_execute_in_scope
+    WorkSessionStatus:
+      type: string
+      enum:
+        - active
+        - waiting_on_human
+        - takeover
+        - reconciling
+        - completed
+        - failed
+        - cancelled
+        - closed
+    PolicyDecisionResult:
+      type: string
+      enum:
+        - allow
+        - deny
+        - narrow
+        - review_required
+    RiskClass:
+      type: string
+      enum:
+        - low
+        - medium
+        - high
+        - critical
+    DataSensitivity:
+      type: string
+      enum:
+        - public
+        - private
+        - confidential
+        - restricted
+    RequestType:
+      type: string
+      enum:
+        - permission
+        - context
+        - judgment
+        - review
+        - correction
+        - takeover
+        - escalation
+    RequestStatus:
+      type: string
+      enum:
+        - pending
+        - acknowledged
+        - approved
+        - denied
+        - narrowed
+        - answered
+        - needs_revision
+        - takeover
+        - expired
+        - cancelled
+        - superseded
+    BlockingScope:
+      type: string
+      enum:
+        - action
+        - branch
+        - artifact
+        - tool_call
+        - external_send
+        - final_submission
+        - work_session
+    ReviewDecision:
+      type: string
+      enum:
+        - answer
+        - approve
+        - deny
+        - narrow
+        - correct
+        - takeover
+        - needs_revision
+    TakeoverState:
+      type: string
+      enum:
+        - requested
+        - locked
+        - human_active
+        - reconciliation_required
+        - resumed
+        - closed
+    ContributorType:
+      type: string
+      enum:
+        - human
+        - agent
+        - service
+        - tool
+        - shared
+    ContributionType:
+      type: string
+      enum:
+        - intent
+        - instruction
+        - plan
+        - research
+        - execution
+        - artifact
+        - review
+        - correction
+        - decision
+        - evidence_capture
+        - memory_proposal
+        - skill_proposal
+        - submission
+    LearningSubjectType:
+      type: string
+      enum:
+        - human
+        - agent
+        - pair
+    LearningReviewState:
+      type: string
+      enum:
+        - proposed
+        - accepted
+        - rejected
+        - superseded
+    ProposalTargetType:
+      type: string
+      enum:
+        - human
+        - agent
+        - pair
+        - project
+        - task
+    MemoryProposalStatus:
+      type: string
+      enum:
+        - proposed
+        - pending_review
+        - accepted
+        - rejected
+        - superseded
+        - expired
+    SkillProposalStatus:
+      type: string
+      enum:
+        - proposed
+        - pending_review
+        - accepted
+        - rejected
+        - superseded
+        - archived
+    ProtocolErrorId:
+      type: string
+      enum:
+        - invalid_transition
+        - unknown_state
+        - missing_protocol_version
+        - unsupported_protocol_version
+        - missing_request_timestamp
+        - stale_request_timestamp
+        - missing_expected_work_session_revision
+        - missing_previous_event_hash
+        - stale_work_session_revision
+        - missing_idempotency_key
+        - missing_actor
+        - path_body_id_mismatch
+        - actor_body_id_mismatch
+        - invalid_extension_namespace
+        - extension_core_field_override
+        - missing_policy
+        - missing_policy_decision
+        - missing_objective
+        - policy_denied
+        - request_unresolved
+        - review_required
+        - invalid_request_transition
+        - missing_review_resolution
+        - missing_takeover_resolution
+        - missing_superseding_request
+        - invalid_approval_scope
+        - approval_scope_expired
+        - approval_scope_mismatch
+        - stale_takeover_epoch
+        - invalid_event_hash
+        - invalid_previous_event_hash
+        - duplicate_idempotency_key_mismatch
+        - request_livelock
+        - duplicate_request_mismatch
+        - missing_jarvis_event
+        - missing_blocked_scope_resolution_refs
+        - missing_reconciliation_refs
+        - mutation_after_closed
+        - unauthorized_actor
+        - invalid_export
+        - invalid_export_state
+        - invalid_evidence_export_state
+        - missing_contribution_actor
+        - invalid_contributor_refs
+        - shared_contribution_without_individual_refs
+        - duplicate_contributor_ref
+        - evidence_after_the_fact
+        - missing_evidence_event_refs
+        - duplicate_evidence_item_ref
+        - forbidden_export_field
+        - silent_memory_mutation
+        - silent_skill_activation
+        - model_self_confirmed_memory
+        - tool_self_confirmed_memory
+        - skill_expands_tool_access_without_policy_review
+        - sealed_work_session_mutation
+        - sealed_evidence_mutation
+        - outcome_report_without_learning_record
+        - outcome_report_requires_terminal_source
+        - unsupported_capability
+        - forbidden_host_private_field
+    AuthorityScope:
+      type: object
+      additionalProperties: false
+      required:
+        - grants
+      properties:
+        grants:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          uniqueItems: true
+    AccountabilityScope:
+      type: object
+      additionalProperties: false
+      required:
+        - accountable_for
+      properties:
+        accountable_for:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          uniqueItems: true
+    CapabilityRef:
+      type: object
+      additionalProperties: false
+      required:
+        - ref
+      properties:
+        ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        capability_type:
+          type: string
+          minLength: 1
+        required:
+          type: boolean
+          default: false
+    EventAuthority:
+      type: object
+      additionalProperties: false
+      required:
+        - can_append_events
+      properties:
+        can_append_events:
+          type: boolean
+        allowed_event_types:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          uniqueItems: true
+    ContributionScope:
+      type: object
+      additionalProperties: false
+      required:
+        - contribution_roles
+      properties:
+        contribution_roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContributionRole"
+          minItems: 1
+          uniqueItems: true
+    CanonicalizationProfile:
+      type: object
+      additionalProperties: false
+      required:
+        - serialization
+        - hash_method
+      properties:
+        serialization:
+          type: string
+          enum:
+            - json-c14n
+        hash_method:
+          type: string
+          enum:
+            - sha256
+        profile_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+    ProtocolTraceContext:
+      type: object
+      additionalProperties: false
+      properties:
+        trace_id:
+          $ref: "#/components/schemas/OpaqueRef"
+        parent_event_id:
+          $ref: "#/components/schemas/JarvisId"
+        correlation_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+    JarvisEventPayload:
+      type: object
+      additionalProperties: false
+      required:
+        - object_type
+        - action
+      properties:
+        object_type:
+          type: string
+          enum:
+            - worker
+            - actor
+            - human_worker
+            - agent_worker
+            - work_session
+            - jarvis_event
+            - policy
+            - policy_decision
+            - request
+            - review
+            - takeover
+            - contribution
+            - evidence_manifest
+            - learning_record
+            - memory_proposal
+            - skill_proposal
+            - outcome_report
+            - protocol_error
+            - conformance_result
+        object_id:
+          $ref: "#/components/schemas/JarvisId"
+        action:
+          type: string
+          minLength: 1
+        field_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        evidence_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        summary:
+          type: string
+          minLength: 1
+    PolicyConstraint:
+      type: object
+      additionalProperties: false
+      required:
+        - kind
+      properties:
+        kind:
+          type: string
+          minLength: 1
+        scope_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        value_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        max_count:
+          type: integer
+          minimum: 0
+        unit:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+    EscalationRule:
+      type: object
+      additionalProperties: false
+      required:
+        - trigger
+        - required_action
+      properties:
+        trigger:
+          type: string
+          minLength: 1
+        risk_class:
+          $ref: "#/components/schemas/RiskClass"
+        required_action:
+          type: string
+          enum:
+            - create_request
+            - require_review
+            - start_takeover
+            - deny_action
+        reviewer_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        reason:
+          type: string
+          minLength: 1
+    PolicyActionRule:
+      type: object
+      additionalProperties: false
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          minLength: 1
+        scope_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        grant_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        constraints:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyConstraint"
+    PolicyRequestLimits:
+      type: object
+      additionalProperties: false
+      properties:
+        max_pending_requests:
+          type: integer
+          minimum: 0
+        max_repeated_denials:
+          type: integer
+          minimum: 0
+        default_expiry_seconds:
+          type: integer
+          minimum: 1
+    PolicyActionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          minLength: 1
+        target_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        scope_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        input_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        parameter_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+    RequestOption:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - label
+        - effect
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        label:
+          type: string
+          minLength: 1
+        effect:
+          type: string
+          minLength: 1
+        risk_class:
+          $ref: "#/components/schemas/RiskClass"
+        scope_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+    SafeFallback:
+      type: object
+      additionalProperties: false
+      required:
+        - action
+        - reason
+      properties:
+        action:
+          type: string
+          enum:
+            - continue_unrelated_safe_work
+            - continue_with_limited_evidence
+            - cancel_blocked_scope
+            - keep_blocked_scope_stopped
+        reason:
+          type: string
+          minLength: 1
+        limitation_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+    ApprovalBoundary:
+      type: object
+      additionalProperties: false
+      required:
+        - scope_ref
+      properties:
+        scope_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        grant_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        constraint_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+    TakeoverScope:
+      type: object
+      additionalProperties: false
+      required:
+        - blocking_scope
+        - scope_ref
+      properties:
+        blocking_scope:
+          $ref: "#/components/schemas/BlockingScope"
+        scope_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        normalized_action_hash:
+          type: string
+          minLength: 1
+        artifact_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+      x-jarvis-forbidden-fields:
+        - runtime_lock_id
+        - database_primary_key
+        - credential
+        - raw_auth_token
+        - ui_session_id
+    ApprovalScope:
+      type: object
+      additionalProperties: false
+      required:
+        - request_id
+        - review_id
+        - policy_decision_id
+        - request_revision
+        - request_event_hash
+        - normalized_action_hash
+        - approved_action
+        - allowed_scope
+        - denied_scope
+        - expires_at
+        - max_uses
+        - applies_to_work_session_id
+        - applies_to_actor_id
+      properties:
+        request_id:
+          $ref: "#/components/schemas/JarvisId"
+        review_id:
+          $ref: "#/components/schemas/JarvisId"
+        policy_decision_id:
+          $ref: "#/components/schemas/JarvisId"
+        request_revision:
+          type: integer
+          minimum: 0
+        request_event_hash:
+          type: string
+          minLength: 1
+        normalized_action_hash:
+          type: string
+          minLength: 1
+        approved_action:
+          $ref: "#/components/schemas/PolicyActionRequest"
+        allowed_scope:
+          $ref: "#/components/schemas/ApprovalBoundary"
+        denied_scope:
+          $ref: "#/components/schemas/ApprovalBoundary"
+        expires_at:
+          $ref: "#/components/schemas/Timestamp"
+        max_uses:
+          type: integer
+          minimum: 1
+        applies_to_work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        applies_to_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+      x-jarvis-forbidden-fields:
+        - unbounded_approval
+        - implicit_authority_grant
+        - credential
+        - raw_auth_token
+        - database_primary_key
+    ContributorRef:
+      type: object
+      additionalProperties: false
+      required:
+        - worker_id
+        - actor_id
+        - contribution_role
+      properties:
+        worker_id:
+          $ref: "#/components/schemas/JarvisId"
+        actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        contribution_role:
+          $ref: "#/components/schemas/ContributionRole"
+      x-jarvis-forbidden-fields:
+        - payment_account
+        - compensation_rule
+        - private_score
+        - credential
+        - database_primary_key
+    ExportProfile:
+      type: object
+      additionalProperties: false
+      required:
+        - profile
+      properties:
+        profile:
+          type: string
+          minLength: 1
+        version:
+          type: string
+          minLength: 1
+        redaction_profile_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+      x-jarvis-forbidden-fields:
+        - credential
+        - raw_auth_token
+        - provider_secret
+        - session_cookie
+        - private_key
+        - database_primary_key
+        - cloud_storage_secret
+        - unredacted_secret_value
+        - raw_runtime_state
+        - host_only_database_id
+        - deployment_detail
+        - billing_data
+        - private_score
+        - ui_state
+    EvidenceItemRef:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - work_session_id
+        - source_event_refs
+        - captured_by_actor_id
+        - evidence_type
+        - artifact_ref
+        - content_hash
+        - trust_label
+        - redaction_state
+        - captured_at
+        - limitation_refs
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        source_event_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          minItems: 1
+          uniqueItems: true
+        captured_by_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        evidence_type:
+          type: string
+          minLength: 1
+        artifact_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        content_hash:
+          type: string
+          minLength: 1
+        trust_label:
+          type: string
+          minLength: 1
+        redaction_state:
+          type: string
+          minLength: 1
+        captured_at:
+          $ref: "#/components/schemas/Timestamp"
+        limitation_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+      x-jarvis-forbidden-fields:
+        - credential
+        - raw_auth_token
+        - provider_secret
+        - session_cookie
+        - private_key
+        - database_primary_key
+        - cloud_storage_secret
+        - unredacted_secret_value
+        - raw_runtime_state
+        - host_only_database_id
+        - deployment_detail
+        - billing_data
+        - private_score
+        - ui_state
+    Worker:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - type
+        - role
+        - authority_scope
+        - accountability_scope
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        type:
+          $ref: "#/components/schemas/WorkerType"
+        role:
+          type: string
+          minLength: 1
+        authority_scope:
+          $ref: "#/components/schemas/AuthorityScope"
+        accountability_scope:
+          $ref: "#/components/schemas/AccountabilityScope"
+        display_name:
+          type: string
+          minLength: 1
+        capabilities:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilityRef"
+          uniqueItems: true
+        extensions:
+          $ref: "#/components/schemas/NamespacedExtensions"
+      x-jarvis-forbidden-fields:
+        - password
+        - credential
+        - raw_auth_token
+        - billing_account
+        - provider_secret
+        - database_primary_key
+        - deployment_resource_id
+    Actor:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - worker_id
+        - type
+        - event_authority
+        - contribution_scope
+        - created_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        worker_id:
+          $ref: "#/components/schemas/JarvisId"
+        type:
+          $ref: "#/components/schemas/ActorType"
+        event_authority:
+          $ref: "#/components/schemas/EventAuthority"
+        contribution_scope:
+          $ref: "#/components/schemas/ContributionScope"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        extensions:
+          $ref: "#/components/schemas/NamespacedExtensions"
+        valid_from:
+          $ref: "#/components/schemas/Timestamp"
+        valid_until:
+          $ref: "#/components/schemas/Timestamp"
+      x-jarvis-forbidden-fields:
+        - credential
+        - raw_auth_token
+        - session_cookie
+        - private_key
+        - database_primary_key
+    HumanWorker:
+      type: object
+      additionalProperties: false
+      required:
+        - worker_id
+        - actor_id
+        - role
+        - policy_authority
+        - review_authority
+      properties:
+        worker_id:
+          $ref: "#/components/schemas/JarvisId"
+        actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        role:
+          type: string
+          minLength: 1
+        policy_authority:
+          $ref: "#/components/schemas/AuthorityScope"
+        review_authority:
+          $ref: "#/components/schemas/AuthorityScope"
+        profile_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        domain_context_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        preferences:
+          type: object
+          description: Portable human preference hints. Preferences MUST NOT contain private profile data, account state, credentials, billing data, or UI state.
+          propertyNames:
+            type: string
+            pattern: "^(?!.*(password|credential|token|secret|private_key|session_cookie|cookie|api_key|access_key|auth_header|oauth|database|billing|runtime|container|deployment|model_api_key|raw_prompt|host_account|ui_state))[a-z0-9][a-z0-9._:-]*$"
+          additionalProperties:
+            $ref: "#/components/schemas/PortableValue"
+        boundaries:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        known_patterns:
+          type: array
+          items:
+            type: string
+            minLength: 1
+      x-jarvis-forbidden-fields:
+        - password
+        - credential
+        - raw_auth_token
+        - private_profile_data
+        - billing_account
+        - host_account_record
+    AgentWorker:
+      type: object
+      additionalProperties: false
+      required:
+        - worker_id
+        - actor_id
+        - agent_ref
+        - role
+        - capability_refs
+        - autonomy_level
+        - operating_constraints
+      properties:
+        worker_id:
+          $ref: "#/components/schemas/JarvisId"
+        actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        agent_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        role:
+          type: string
+          minLength: 1
+        capability_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilityRef"
+          minItems: 1
+        autonomy_level:
+          $ref: "#/components/schemas/AutonomyLevel"
+        operating_constraints:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+        tool_access_profile:
+          $ref: "#/components/schemas/OpaqueRef"
+        memory_access_profile:
+          $ref: "#/components/schemas/OpaqueRef"
+        extensions:
+          $ref: "#/components/schemas/NamespacedExtensions"
+      x-jarvis-forbidden-fields:
+        - model_api_key
+        - provider_secret
+        - raw_prompt_store
+        - runtime_process_id
+        - container_id
+        - database_primary_key
+    WorkSession:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - protocol_version
+        - created_by_actor_id
+        - objective
+        - human_worker_id
+        - agent_worker_id
+        - policy_id
+        - status
+        - revision
+        - last_event_hash
+        - event_log_ref
+        - created_at
+        - updated_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        protocol_version:
+          type: string
+          const: v0.1
+        created_by_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        objective:
+          type: string
+          minLength: 1
+        human_worker_id:
+          $ref: "#/components/schemas/JarvisId"
+        agent_worker_id:
+          $ref: "#/components/schemas/JarvisId"
+        policy_id:
+          $ref: "#/components/schemas/JarvisId"
+        status:
+          $ref: "#/components/schemas/WorkSessionStatus"
+        revision:
+          type: integer
+          minimum: 0
+        last_event_hash:
+          type: string
+          minLength: 1
+        event_log_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+        source_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        context_manifest_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        contribution_ledger_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        evidence_manifest_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        learning_record_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+      x-jarvis-forbidden-fields:
+        - database_primary_key
+        - queue_message_id
+        - runtime_session_id
+        - cloud_resource_id
+        - ui_state
+        - credential
+        - raw_auth_token
+    JarvisEvent:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - sequence
+        - type
+        - work_session_id
+        - actor_id
+        - timestamp
+        - payload
+        - previous_hash
+        - event_hash
+        - canonicalization
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        sequence:
+          type: integer
+          minimum: 0
+        type:
+          type: string
+          minLength: 1
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        timestamp:
+          $ref: "#/components/schemas/Timestamp"
+        payload:
+          $ref: "#/components/schemas/JarvisEventPayload"
+        previous_hash:
+          type: string
+          minLength: 1
+        event_hash:
+          type: string
+          minLength: 1
+        canonicalization:
+          $ref: "#/components/schemas/CanonicalizationProfile"
+        trace_context:
+          $ref: "#/components/schemas/ProtocolTraceContext"
+        actor_signature:
+          type: string
+          minLength: 1
+        signing_key_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+      x-jarvis-forbidden-fields:
+        - raw_auth_token
+        - credential
+        - private_key
+        - database_primary_key
+        - runtime_trace_secret
+        - provider_secret
+    Policy:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - owner_worker_id
+        - created_by_actor_id
+        - autonomy_level
+        - allowed_actions
+        - denied_actions
+        - review_required_actions
+        - risk_classes
+        - escalation_rules
+        - created_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        owner_worker_id:
+          $ref: "#/components/schemas/JarvisId"
+        created_by_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        autonomy_level:
+          $ref: "#/components/schemas/AutonomyLevel"
+        allowed_actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyActionRule"
+        denied_actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyActionRule"
+        review_required_actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyActionRule"
+        risk_classes:
+          type: array
+          items:
+            $ref: "#/components/schemas/RiskClass"
+          minItems: 1
+          uniqueItems: true
+        escalation_rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/EscalationRule"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        tool_grants:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        memory_grants:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        external_send_rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyActionRule"
+        request_limits:
+          $ref: "#/components/schemas/PolicyRequestLimits"
+        extensions:
+          $ref: "#/components/schemas/NamespacedExtensions"
+      x-jarvis-forbidden-fields:
+        - credential
+        - raw_auth_token
+        - provider_secret
+        - billing_rule
+        - cloud_policy_id
+        - database_primary_key
+    PolicyDecision:
+      type: object
+      additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              result:
+                const: deny
+          then:
+            required:
+              - request_id
+        - if:
+            properties:
+              result:
+                const: review_required
+          then:
+            required:
+              - request_id
+      required:
+        - id
+        - work_session_id
+        - actor_id
+        - policy_id
+        - requested_action
+        - normalized_action_hash
+        - risk_class
+        - result
+        - reason
+        - created_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        policy_id:
+          $ref: "#/components/schemas/JarvisId"
+        requested_action:
+          $ref: "#/components/schemas/PolicyActionRequest"
+        normalized_action_hash:
+          type: string
+          minLength: 1
+        risk_class:
+          $ref: "#/components/schemas/RiskClass"
+        result:
+          $ref: "#/components/schemas/PolicyDecisionResult"
+        reason:
+          type: string
+          minLength: 1
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        data_sensitivity:
+          $ref: "#/components/schemas/DataSensitivity"
+        selected_grant_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        denied_grant_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        request_id:
+          $ref: "#/components/schemas/JarvisId"
+        evidence_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+      x-jarvis-forbidden-fields:
+        - hidden_policy_trace
+        - credential
+        - provider_secret
+        - database_primary_key
+        - runtime_decision_object
+    Request:
+      type: object
+      additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              status:
+                enum:
+                  - pending
+                  - acknowledged
+          then:
+            not:
+              anyOf:
+                - required:
+                    - resolved_at
+                - required:
+                    - resolved_by_review_id
+                - required:
+                    - resolved_by_takeover_id
+                - required:
+                    - closed_by_event_ref
+                - required:
+                    - superseded_by_request_id
+        - if:
+            properties:
+              status:
+                enum:
+                  - approved
+                  - denied
+                  - narrowed
+                  - answered
+                  - needs_revision
+                  - takeover
+                  - expired
+                  - cancelled
+                  - superseded
+          then:
+            required:
+              - resolved_at
+        - if:
+            properties:
+              status:
+                enum:
+                  - approved
+                  - denied
+                  - narrowed
+                  - answered
+                  - needs_revision
+          then:
+            required:
+              - resolved_by_review_id
+        - if:
+            properties:
+              status:
+                const: takeover
+          then:
+            required:
+              - resolved_by_takeover_id
+        - if:
+            properties:
+              status:
+                enum:
+                  - expired
+                  - cancelled
+                  - superseded
+          then:
+            required:
+              - closed_by_event_ref
+        - if:
+            properties:
+              status:
+                const: superseded
+          then:
+            required:
+              - superseded_by_request_id
+      required:
+        - id
+        - protocol_version
+        - work_session_id
+        - requester_actor_id
+        - requester_worker_id
+        - target_human_worker_id
+        - policy_decision_id
+        - type
+        - blocking_scope
+        - reason_code
+        - reason_summary
+        - requested_action
+        - requested_outcome
+        - risk_class
+        - human_decision_needed
+        - options
+        - default_if_no_response
+        - status
+        - created_at
+        - expires_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        protocol_version:
+          type: string
+          const: v0.1
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        requester_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        requester_worker_id:
+          $ref: "#/components/schemas/JarvisId"
+        target_human_worker_id:
+          $ref: "#/components/schemas/JarvisId"
+        policy_decision_id:
+          $ref: "#/components/schemas/JarvisId"
+        type:
+          $ref: "#/components/schemas/RequestType"
+        blocking_scope:
+          $ref: "#/components/schemas/BlockingScope"
+        reason_code:
+          type: string
+          minLength: 1
+        reason_summary:
+          type: string
+          minLength: 1
+        requested_action:
+          $ref: "#/components/schemas/PolicyActionRequest"
+        requested_outcome:
+          type: string
+          minLength: 1
+        risk_class:
+          $ref: "#/components/schemas/RiskClass"
+        human_decision_needed:
+          type: string
+          minLength: 1
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/RequestOption"
+          minItems: 1
+        default_if_no_response:
+          $ref: "#/components/schemas/SafeFallback"
+        status:
+          $ref: "#/components/schemas/RequestStatus"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        expires_at:
+          $ref: "#/components/schemas/Timestamp"
+        missing_permission_or_context:
+          type: string
+          minLength: 1
+        policy_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        data_sensitivity:
+          $ref: "#/components/schemas/DataSensitivity"
+        recommended_option:
+          $ref: "#/components/schemas/JarvisId"
+        safer_alternatives:
+          type: array
+          items:
+            $ref: "#/components/schemas/RequestOption"
+          uniqueItems: true
+        evidence_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        artifact_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        contribution_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        resolved_at:
+          $ref: "#/components/schemas/Timestamp"
+        resolved_by_review_id:
+          $ref: "#/components/schemas/JarvisId"
+        resolved_by_takeover_id:
+          $ref: "#/components/schemas/JarvisId"
+        closed_by_event_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        superseded_by_request_id:
+          $ref: "#/components/schemas/JarvisId"
+        duplicate_of_request_id:
+          $ref: "#/components/schemas/JarvisId"
+      x-jarvis-forbidden-fields:
+        - private_inbox_id
+        - notification_provider_id
+        - credential
+        - raw_auth_token
+        - database_primary_key
+        - runtime_state
+        - provider_secret
+        - billing_field
+        - deployment_field
+        - ui_state
+        - hidden_policy_trace
+        - unbounded_approval
+        - implicit_authority_grant
+    Review:
+      type: object
+      additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              decision:
+                enum:
+                  - approve
+                  - narrow
+          then:
+            required:
+              - approval_scope
+        - if:
+            properties:
+              decision:
+                enum:
+                  - deny
+                  - answer
+                  - correct
+                  - takeover
+                  - needs_revision
+          then:
+            not:
+              required:
+                - approval_scope
+        - if:
+            properties:
+              decision:
+                const: takeover
+          then:
+            required:
+              - takeover_id
+      required:
+        - id
+        - work_session_id
+        - reviewer_actor_id
+        - reviewer_worker_id
+        - target_ref
+        - decision
+        - created_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        reviewer_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        reviewer_worker_id:
+          $ref: "#/components/schemas/JarvisId"
+        target_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        decision:
+          $ref: "#/components/schemas/ReviewDecision"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        comments:
+          type: string
+          minLength: 1
+        required_changes:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        approval_scope:
+          $ref: "#/components/schemas/ApprovalScope"
+        takeover_id:
+          $ref: "#/components/schemas/JarvisId"
+      x-jarvis-forbidden-fields:
+        - private_comment_thread_id
+        - credential
+        - raw_auth_token
+        - database_primary_key
+        - ui_state
+        - unbounded_approval
+        - implicit_authority_grant
+    Takeover:
+      type: object
+      additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              state:
+                const: resumed
+          then:
+            required:
+              - reconciliation_refs
+              - resumed_by_actor_id
+              - resolved_at
+        - if:
+            properties:
+              state:
+                enum:
+                  - requested
+                  - locked
+                  - human_active
+          then:
+            not:
+              anyOf:
+                - required:
+                    - resumed_by_actor_id
+                - required:
+                    - reconciliation_refs
+                - required:
+                    - resolved_at
+      required:
+        - id
+        - work_session_id
+        - requested_by_actor_id
+        - controlling_actor_id
+        - affected_scope
+        - reason
+        - lock_epoch
+        - state
+        - created_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        requested_by_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        controlling_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        request_id:
+          $ref: "#/components/schemas/JarvisId"
+        affected_scope:
+          $ref: "#/components/schemas/TakeoverScope"
+        reason:
+          type: string
+          minLength: 1
+        lock_epoch:
+          type: integer
+          minimum: 0
+        state:
+          $ref: "#/components/schemas/TakeoverState"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        resumed_by_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        reconciliation_notes:
+          type: string
+          minLength: 1
+        reconciliation_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          minItems: 1
+          uniqueItems: true
+        resolved_at:
+          $ref: "#/components/schemas/Timestamp"
+      x-jarvis-forbidden-fields:
+        - runtime_lock_id
+        - database_primary_key
+        - credential
+        - raw_auth_token
+        - ui_session_id
+    Contribution:
+      type: object
+      additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              contributor_type:
+                const: shared
+          then:
+            properties:
+              contributor_refs:
+                minItems: 2
+      required:
+        - id
+        - work_session_id
+        - contributor_refs
+        - contributor_type
+        - contribution_type
+        - event_refs
+        - created_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        contributor_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContributorRef"
+          minItems: 1
+          uniqueItems: true
+          x-jarvis-unique-by:
+            - worker_id
+            - actor_id
+          x-jarvis-duplicate-rejection-id: duplicate_contributor_ref
+        contributor_type:
+          $ref: "#/components/schemas/ContributorType"
+        contribution_type:
+          $ref: "#/components/schemas/ContributionType"
+        event_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          minItems: 1
+          uniqueItems: true
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        artifact_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        review_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        evidence_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        limitations:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+      x-jarvis-forbidden-fields:
+        - payment_account
+        - compensation_rule
+        - private_score
+        - credential
+        - database_primary_key
+    EvidenceManifest:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - work_session_id
+        - generated_by_actor_id
+        - objective
+        - event_chain_root
+        - evidence_item_refs
+        - policy_decision_refs
+        - request_refs
+        - review_refs
+        - takeover_refs
+        - contribution_refs
+        - export_profile
+        - generated_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        generated_by_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        objective:
+          type: string
+          minLength: 1
+        event_chain_root:
+          type: string
+          minLength: 1
+        evidence_item_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/EvidenceItemRef"
+          minItems: 1
+          x-jarvis-unique-by:
+            - id
+          x-jarvis-duplicate-rejection-id: duplicate_evidence_item_ref
+        policy_decision_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        request_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        review_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        takeover_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        contribution_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          minItems: 1
+          uniqueItems: true
+        export_profile:
+          $ref: "#/components/schemas/ExportProfile"
+        generated_at:
+          $ref: "#/components/schemas/Timestamp"
+        artifact_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        limitation_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        redaction_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+      x-jarvis-forbidden-fields:
+        - credential
+        - raw_auth_token
+        - provider_secret
+        - session_cookie
+        - private_key
+        - database_primary_key
+        - cloud_storage_secret
+        - unredacted_secret_value
+        - raw_runtime_state
+        - host_only_database_id
+        - deployment_detail
+        - billing_data
+        - private_score
+        - ui_state
+      x-jarvis-invariants:
+        - final_export_requires_terminal_work_session_state
+        - sealed_evidence_manifest_rejects_mutation
+        - redaction_never_replaces_source_evidence
+    LearningRecord:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - work_session_id
+        - created_by_actor_id
+        - subject_type
+        - subject_ref
+        - lesson_type
+        - source_event_refs
+        - review_state
+        - scope
+        - created_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        created_by_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        subject_type:
+          $ref: "#/components/schemas/LearningSubjectType"
+        subject_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        lesson_type:
+          type: string
+          minLength: 1
+        source_event_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          minItems: 1
+          uniqueItems: true
+        review_state:
+          $ref: "#/components/schemas/LearningReviewState"
+        scope:
+          $ref: "#/components/schemas/OpaqueRef"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        proposed_change:
+          $ref: "#/components/schemas/PortableValue"
+        memory_proposal_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        skill_proposal_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        outcome_report_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+      x-jarvis-forbidden-fields:
+        - silent_memory_write
+        - unreviewed_skill_activation
+        - credential
+        - raw_auth_token
+        - database_primary_key
+    MemoryProposal:
+      type: object
+      additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              status:
+                const: accepted
+          then:
+            required:
+              - review_refs
+      required:
+        - id
+        - work_session_id
+        - proposed_by_actor_id
+        - proposed_for
+        - memory_scope
+        - memory_type
+        - content
+        - provenance
+        - confidence
+        - review_required
+        - status
+        - created_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        proposed_by_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        proposed_for:
+          $ref: "#/components/schemas/ProposalTargetType"
+        memory_scope:
+          $ref: "#/components/schemas/OpaqueRef"
+        memory_type:
+          type: string
+          minLength: 1
+        content:
+          $ref: "#/components/schemas/PortableValue"
+        provenance:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          minItems: 1
+          uniqueItems: true
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        review_required:
+          type: boolean
+          const: true
+        status:
+          $ref: "#/components/schemas/MemoryProposalStatus"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        source_event_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        review_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          minItems: 1
+          uniqueItems: true
+        expires_at:
+          $ref: "#/components/schemas/Timestamp"
+        learning_record_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+      x-jarvis-forbidden-fields:
+        - silent_memory_write
+        - credential
+        - raw_auth_token
+        - private_embedding_store_id
+        - database_primary_key
+      x-jarvis-invariants:
+        - accepted_memory_requires_review_refs
+        - model_derived_memory_cannot_self_confirm
+        - tool_derived_memory_cannot_self_confirm
+    SkillProposal:
+      type: object
+      additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              status:
+                const: accepted
+          then:
+            required:
+              - review_refs
+      required:
+        - id
+        - work_session_id
+        - proposed_by_actor_id
+        - proposed_for
+        - skill_scope
+        - skill_name
+        - trigger_conditions
+        - procedure
+        - review_checks
+        - failure_cases
+        - provenance
+        - status
+        - created_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        proposed_by_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        proposed_for:
+          $ref: "#/components/schemas/ProposalTargetType"
+        skill_scope:
+          $ref: "#/components/schemas/OpaqueRef"
+        skill_name:
+          type: string
+          minLength: 1
+        trigger_conditions:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+        procedure:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+        review_checks:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+        failure_cases:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+        provenance:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          minItems: 1
+          uniqueItems: true
+        status:
+          $ref: "#/components/schemas/SkillProposalStatus"
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        required_tools:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+        source_event_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+        review_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          minItems: 1
+          uniqueItems: true
+        learning_record_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          uniqueItems: true
+      x-jarvis-forbidden-fields:
+        - automatic_tool_grant
+        - unreviewed_skill_activation
+        - credential
+        - raw_auth_token
+        - database_primary_key
+      x-jarvis-invariants:
+        - accepted_skill_requires_review_refs
+        - skill_tool_access_expansion_requires_policy_review
+        - unreviewed_skill_change_cannot_activate
+    OutcomeReport:
+      type: object
+      description: v0.1 extension protocol object for post-session feedback ingress. OutcomeReport stays outside the sealed WorkSession export and does not mutate WorkSession, EvidenceManifest, or LearningRecord records.
+      additionalProperties: false
+      required:
+        - id
+        - work_session_id
+        - source_ref
+        - reporter_ref
+        - accepted_by_actor_id
+        - outcome
+        - learning_record_refs
+        - received_at
+      properties:
+        id:
+          $ref: "#/components/schemas/JarvisId"
+        work_session_id:
+          $ref: "#/components/schemas/JarvisId"
+        source_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        reporter_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        accepted_by_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        outcome:
+          type: string
+          minLength: 1
+        learning_record_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/JarvisId"
+          minItems: 1
+          uniqueItems: true
+        received_at:
+          $ref: "#/components/schemas/Timestamp"
+        external_system_ref:
+          $ref: "#/components/schemas/OpaqueRef"
+        reporter_actor_id:
+          $ref: "#/components/schemas/JarvisId"
+        reason:
+          type: string
+          minLength: 1
+        reviewer_feedback_refs:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpaqueRef"
+          uniqueItems: true
+      x-jarvis-forbidden-fields:
+        - task_marketplace_score_rule
+        - payment_status
+        - settlement_account
+        - credential
+        - raw_auth_token
+        - database_primary_key
+        - sealed_work_session_mutation
+        - sealed_evidence_mutation
+      x-jarvis-invariants:
+        - outcome_report_requires_terminal_source
+        - outcome_report_does_not_mutate_sealed_work_session
+        - outcome_report_does_not_mutate_sealed_evidence_manifest
+        - outcome_report_requires_learning_record_refs
+    ProtocolError:
+      type: object
+      additionalProperties: false
+      required:
+        - error_id
+        - protocol_version
+        - object_type
+        - field
+        - reason
+        - remediation
+        - trace_id
+      properties:
+        error_id:
+          $ref: "#/components/schemas/ProtocolErrorId"
+        protocol_version:
+          type: string
+          minLength: 1
+        object_type:
+          type: string
+          minLength: 1
+        field:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+        remediation:
+          type: string
+          minLength: 1
+        trace_id:
+          $ref: "#/components/schemas/OpaqueRef"
+      x-jarvis-forbidden-fields:
+        - credential
+        - raw_auth_token
+        - provider_secret
+        - session_cookie
+        - private_key
+        - database_primary_key
+        - raw_runtime_state
+        - host_only_database_id
+        - deployment_detail
+        - billing_data
+        - private_score
+        - ui_state
+  parameters:
+    WorkerIdPath:
+      name: worker_id
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/JarvisId"
+    ActorIdPath:
+      name: actor_id
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/JarvisId"
+    WorkSessionIdPath:
+      name: work_session_id
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/JarvisId"
+    ProtocolVersionHeader:
+      name: Jarvis-Protocol-Version
+      in: header
+      required: true
+      schema:
+        type: string
+        const: v0.1
+      description: Selects the Jarvis protocol version used by the request.
+    ActorHeader:
+      name: Jarvis-Actor-Id
+      in: header
+      required: true
+      schema:
+        $ref: "#/components/schemas/JarvisId"
+      description: Identifies the protocol Actor whose authority is checked and recorded.
+    IdempotencyHeader:
+      name: Jarvis-Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: Protects mutation replay for the same Actor, operation, protocol version, and canonical payload.
+    RequestTimestampHeader:
+      name: Jarvis-Request-Timestamp
+      in: header
+      required: true
+      schema:
+        $ref: "#/components/schemas/Timestamp"
+      description: Rejects stale or replayed requests outside protocol timestamp tolerance.
+    RevisionHeader:
+      name: Jarvis-Expected-WorkSession-Revision
+      in: header
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+      description: Protects WorkSession optimistic concurrency. Genesis WorkSession creation uses value 0.
+    PreviousHashHeader:
+      name: Jarvis-Previous-Event-Hash
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: Links the accepted mutation to the current WorkSession event chain. Genesis WorkSession creation uses the protocol genesis hash.
+    RequiredCapabilitiesHeader:
+      name: Jarvis-Required-Capabilities
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+      description: Declares caller-required optional Jarvis capabilities. Unsupported required capabilities reject as unsupported_capability.
+    ExtensionsHeader:
+      name: Jarvis-Extensions
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 1
+      description: Declares requested extension namespaces. Extension fields remain namespaced and MUST NOT override core fields.
+  headers:
+    ProtocolVersionResponseHeader:
+      description: Jarvis protocol version used by the response.
+      schema:
+        type: string
+        const: v0.1
+    HostCapabilitiesHeader:
+      description: Host-declared optional Jarvis capabilities.
+      schema:
+        type: string
+        minLength: 1
+  requestBodies:
+    WorkerBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Worker"
+    ActorBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Actor"
+    WorkSessionBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/WorkSession"
+    JarvisEventBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JarvisEvent"
+    PolicyDecisionBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PolicyDecision"
+    RequestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Request"
+    ReviewBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Review"
+    TakeoverBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Takeover"
+    ContributionBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Contribution"
+    LearningRecordBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LearningRecord"
+    MemoryProposalBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MemoryProposal"
+    SkillProposalBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SkillProposal"
+    OutcomeReportBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OutcomeReport"
+  responses:
+    WorkerResponse:
+      description: Worker protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Worker"
+    ActorResponse:
+      description: Actor protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Actor"
+    WorkSessionResponse:
+      description: WorkSession protocol record.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/WorkSession"
+    JarvisEventResponse:
+      description: JarvisEvent protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JarvisEvent"
+    PolicyDecisionResponse:
+      description: PolicyDecision protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PolicyDecision"
+    RequestResponse:
+      description: Request protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Request"
+    ReviewResponse:
+      description: Review protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Review"
+    TakeoverResponse:
+      description: Takeover protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Takeover"
+    ContributionResponse:
+      description: Contribution protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Contribution"
+    LearningRecordResponse:
+      description: LearningRecord protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LearningRecord"
+    MemoryProposalResponse:
+      description: MemoryProposal protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MemoryProposal"
+    SkillProposalResponse:
+      description: SkillProposal protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SkillProposal"
+    EvidenceManifestResponse:
+      description: EvidenceManifest protocol export.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EvidenceManifest"
+    OutcomeReportResponse:
+      description: OutcomeReport protocol record accepted.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OutcomeReport"
+    ProtocolErrorResponse:
+      description: Jarvis protocol error.
+      headers:
+        Jarvis-Protocol-Version:
+          $ref: "#/components/headers/ProtocolVersionResponseHeader"
+        Jarvis-Host-Capabilities:
+          $ref: "#/components/headers/HostCapabilitiesHeader"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProtocolError"
+  securitySchemes:
+    HostAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Host-owned caller authentication. Jarvis requires caller authentication for protocol operations and does not define credential format, token type, session store, or account system.
+  examples:
+    WorkSessionCreateExample:
+      summary: WorkSession created for governed human-agent work.
+      value:
+        id: ws-protocol-001
+        protocol_version: v0.1
+        created_by_actor_id: actor-human-001
+        objective: Produce a reviewed evidence-backed answer under bounded policy.
+        human_worker_id: worker-human-001
+        agent_worker_id: worker-agent-001
+        policy_id: policy-bounded-001
+        status: active
+        revision: 1
+        last_event_hash: hash:event-worksession-created
+        event_log_ref: event-log:ws-protocol-001
+        created_at: "2026-06-12T18:00:00Z"
+        updated_at: "2026-06-12T18:00:00Z"
+    PolicyDecisionDeniedExample:
+      summary: PolicyDecision recorded before denied AgentWorker action creates Request.
+      value:
+        id: pd-network-001
+        work_session_id: ws-protocol-001
+        actor_id: actor-agent-001
+        policy_id: policy-bounded-001
+        requested_action:
+          action: fetch_external_source
+          target_ref: source:external-reference
+          scope_ref: scope:source-collection
+        normalized_action_hash: hash:action-fetch-external-source
+        risk_class: medium
+        result: deny
+        reason: External source access requires HumanWorker review before continuation.
+        request_id: req-network-001
+        created_at: "2026-06-12T18:05:00Z"
+    RequestBlockedActionExample:
+      summary: Scoped Request blocks one action branch and waits for human judgment.
+      value:
+        id: req-network-001
+        protocol_version: v0.1
+        work_session_id: ws-protocol-001
+        requester_actor_id: actor-agent-001
+        requester_worker_id: worker-agent-001
+        target_human_worker_id: worker-human-001
+        policy_decision_id: pd-network-001
+        type: permission
+        blocking_scope: action
+        reason_code: policy_denied
+        reason_summary: External source access is outside current policy.
+        requested_action:
+          action: fetch_external_source
+          target_ref: source:external-reference
+          scope_ref: scope:source-collection
+        requested_outcome: Allow source collection for the current WorkSession only.
+        risk_class: medium
+        human_decision_needed: Approve, narrow, deny, correct, or take over this action branch.
+        options:
+          - id: option-approve-current-session
+            label: Approve current WorkSession scope
+            effect: AgentWorker collects the referenced source for this WorkSession only after bounded approval.
+            risk_class: medium
+            scope_ref: scope:source-collection
+          - id: option-deny
+            label: Deny source collection
+            effect: AgentWorker continues with existing evidence and records the limitation.
+            risk_class: low
+            scope_ref: scope:existing-evidence
+        default_if_no_response:
+          action: continue_with_limited_evidence
+          reason: The blocked action remains stopped and the WorkSession records an evidence limitation.
+          limitation_ref: limitation:external-source-not-reviewed
+        status: pending
+        created_at: "2026-06-12T18:06:00Z"
+        expires_at: "2026-06-12T18:36:00Z"
+    ReviewApproveRequestExample:
+      summary: HumanWorker Review resolves Request with bounded ApprovalScope.
+      value:
+        id: review-network-001
+        work_session_id: ws-protocol-001
+        reviewer_actor_id: actor-human-001
+        reviewer_worker_id: worker-human-001
+        target_ref: request:req-network-001
+        decision: approve
+        approval_scope:
+          request_id: req-network-001
+          review_id: review-network-001
+          policy_decision_id: pd-network-001
+          request_revision: 1
+          request_event_hash: hash:event-request-network
+          normalized_action_hash: hash:action-fetch-external-source
+          approved_action:
+            action: fetch_external_source
+            target_ref: source:external-reference
+            scope_ref: scope:source-collection
+          allowed_scope:
+            scope_ref: scope:source-collection
+            grant_refs:
+              - grant:read-source
+          denied_scope:
+            scope_ref: scope:any-other-external-source
+          expires_at: "2026-06-12T18:36:00Z"
+          max_uses: 1
+          applies_to_work_session_id: ws-protocol-001
+          applies_to_actor_id: actor-agent-001
+        created_at: "2026-06-12T18:08:00Z"
+    EvidenceManifestExportExample:
+      summary: EvidenceManifest exports portable proof from the WorkSession.
+      value:
+        id: evidence-manifest-001
+        work_session_id: ws-protocol-001
+        generated_by_actor_id: actor-human-001
+        objective: Produce a reviewed evidence-backed answer under bounded policy.
+        event_chain_root: hash:event-chain-root
+        evidence_item_refs:
+          - id: evidence-source-001
+            work_session_id: ws-protocol-001
+            source_event_refs:
+              - event-source-captured-001
+            captured_by_actor_id: actor-agent-001
+            evidence_type: source_summary
+            artifact_ref: artifact:source-summary-001
+            content_hash: hash:source-summary-001
+            trust_label: reviewed
+            redaction_state: redacted
+            captured_at: "2026-06-12T18:10:00Z"
+            limitation_refs:
+              - limitation:none-recorded
+        policy_decision_refs:
+          - pd-network-001
+        request_refs:
+          - req-network-001
+        review_refs:
+          - review-network-001
+        takeover_refs: []
+        contribution_refs:
+          - contribution-shared-001
+        export_profile:
+          profile: portable_evidence_manifest
+          version: v0.1
+        generated_at: "2026-06-12T18:20:00Z"
+    ProtocolErrorExample:
+      summary: ProtocolError reports typed rejection without host-private fields.
+      value:
+        error_id: missing_policy_decision
+        protocol_version: v0.1
+        object_type: jarvis_event
+        field: policy_decision_id
+        reason: AgentWorker action affected WorkSession state without prior PolicyDecision.
+        remediation: Record PolicyDecision before accepting the AgentWorker action as protocol state.
+        trace_id: trace:protocol-error-001
+x-jarvis-protocol:
+  version: v0.1
+  layer: OpenAPI 3.1 communication binding
+  source_of_truth:
+    - docs/protocol/14-protocol-lock.md
+    - docs/protocol/15-openapi-communication-binding.md
+    - docs/protocol/11-core-protocol-objects.md
+    - docs/protocol/12-request-protocol.md
+    - docs/protocol/13-contribution-evidence-learning.md
+    - docs/reviews/acceptance-criteria.md
+  owns:
+    - protocol objects
+    - protocol operations
+    - protocol headers
+    - protocol error envelope
+    - portable export boundary
+    - conformance entry
+  outside_jarvis:
+    - host-owned behavior outside the protocol contract
+  chunk_lock:
+    id: week-2-chunk-7-examples-conformance-entry
+    locks:
+      - OpenAPI 3.1.1 entry point
+      - v0.1 protocol metadata
+      - required top-level buckets
+      - tag taxonomy
+      - host-owned server boundary
+      - shared schema primitives
+      - Worker schema
+      - Actor schema
+      - HumanWorker schema
+      - AgentWorker schema
+      - WorkSession schema
+      - JarvisEvent schema
+      - Policy schema
+      - PolicyDecision schema
+      - Request schema
+      - Review schema
+      - ApprovalScope schema
+      - Takeover schema
+      - Contribution schema
+      - EvidenceItemRef schema
+      - EvidenceManifest schema
+      - LearningRecord schema
+      - MemoryProposal schema
+      - SkillProposal schema
+      - OutcomeReport schema
+      - ProtocolError schema
+      - path operation layout
+      - request body refs
+      - success response refs
+      - protocol header parameters
+      - HostAuth security scheme
+      - protocol error response
+      - protocol examples
+      - conformance entry documents
+    excludes:
+      - executable conformance fixtures

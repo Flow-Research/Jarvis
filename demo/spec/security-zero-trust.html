@@ -10,14 +10,14 @@
   </head>
   <body>
     <main class="shell spec-page">
-      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../#openapi">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>v0.1 specification</small></span></a><nav class="topnav" aria-label="Specification navigation"><a href="../">Home</a><a href="./">Spec</a><a href="../openapi/">OpenAPI</a><a href="../#conformance">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1</span></header>
       <section class="spec-hero"><div><p class="kicker">Security and zero trust</p><h1>Every accepted mutation proves authority and state.</h1><p>Jarvis starts from zero trust. Compatible implementations verify headers, Actor authority, revision, previous event hash, idempotency, timestamp, and export safety.</p></div></section>
       <section class="spec-layout">
         <nav class="spec-side" aria-label="Specification pages"><a href="./">Introduction</a><a href="./terminology.html">Terminology</a><a href="./protocol-objects.html">Protocol objects</a><a href="./worksession-lifecycle.html">WorkSession lifecycle</a><a href="./policy-decision.html">Policy and PolicyDecision</a><a href="./request-review-takeover.html">Request, Review, ApprovalScope, and Takeover</a><a href="./contribution-evidence.html">Contribution and EvidenceManifest</a><a href="./learning-proposals.html">LearningRecord, MemoryProposal, and SkillProposal</a><a href="./outcome-report.html">OutcomeReport</a><a href="./versioning-extensions.html">Versioning and extensions</a><a href="./security-zero-trust.html" aria-current="page">Security and zero trust</a></nav>
         <div class="spec-main">
           <article class="spec-panel">
             <h2>WorkSession-scoped mutation headers</h2>
-            <p>Every WorkSession-scoped mutating operation requires host authentication and these protocol headers:</p>
+            <p>Every WorkSession-scoped mutating operation uses the HostAuth security scheme and requires these protocol headers. Hosts own the authentication system.</p>
             <ul>
               <li><code>Jarvis-Protocol-Version</code></li>
               <li><code>Jarvis-Actor-Id</code></li>
@@ -34,7 +34,7 @@
           </article>
           <article class="spec-panel">
             <h2>Non-WorkSession mutation headers</h2>
-            <p>Worker registration, Actor registration, and OutcomeReport submission require host authentication and the non-WorkSession mutation header set:</p>
+            <p>Worker registration, Actor registration, and OutcomeReport submission use the HostAuth security scheme and require the non-WorkSession mutation header set. Hosts own the authentication system.</p>
             <ul>
               <li><code>Jarvis-Protocol-Version</code></li>
               <li><code>Jarvis-Actor-Id</code></li>
@@ -45,7 +45,7 @@
           </article>
           <article class="spec-panel">
             <h2>Read and export headers</h2>
-            <p>WorkSession-scoped read operations and EvidenceManifest export reads require host authentication, <code>Jarvis-Protocol-Version</code>, and <code>Jarvis-Actor-Id</code>.</p>
+            <p>WorkSession-scoped read operations and EvidenceManifest export reads use the HostAuth security scheme and require <code>Jarvis-Protocol-Version</code> and <code>Jarvis-Actor-Id</code>. Hosts own the authentication system.</p>
             <p>Read and export operations MUST NOT require mutation-only idempotency, expected revision, or previous event hash headers.</p>
           </article>
           <article class="spec-panel">

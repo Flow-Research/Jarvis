@@ -25,7 +25,7 @@
         <nav class="topnav" aria-label="Primary documentation links">
           <a href="#start">Start</a>
           <a href="#spec">Spec</a>
-          <a href="#openapi">OpenAPI</a>
+          <a href="./openapi/">OpenAPI</a>
           <a href="#conformance">Conformance</a>
           <a href="#guides">Guides</a>
           <a href="#examples">Examples</a>
@@ -57,10 +57,7 @@
             <a class="command primary" href="./spec/">
               Read v0.1 Spec
             </a>
-            <a
-              class="command"
-              href="https://raw.githubusercontent.com/Flow-Research/jarvis/main/docs/openapi/jarvis-openapi.yaml"
-            >
+            <a class="command" href="./openapi/">
               OpenAPI Spec
             </a>
             <a
@@ -149,7 +146,7 @@
           <strong>Understand Jarvis in 10 minutes.</strong>
           <p>Read the thesis, boundary, core loop, and WorkSession record.</p>
         </a>
-        <a href="#openapi">
+        <a href="./openapi/">
           <span>Build</span>
           <strong>Use the OpenAPI binding and SDK helpers.</strong>
           <p>Validate headers, records, event hashes, fixtures, and evidence exports.</p>
@@ -279,15 +276,21 @@
           <div class="inline-actions">
             <a
               class="command primary"
-              href="https://raw.githubusercontent.com/Flow-Research/jarvis/main/docs/openapi/jarvis-openapi.yaml"
+              href="./openapi/"
             >
-              Raw OpenAPI YAML
+              OpenAPI Reference
             </a>
             <a
               class="command"
               href="https://github.com/Flow-Research/jarvis/blob/main/docs/openapi/README.md"
             >
               OpenAPI README
+            </a>
+            <a
+              class="command"
+              href="https://raw.githubusercontent.com/Flow-Research/jarvis/main/docs/openapi/jarvis-openapi.yaml"
+            >
+              Raw YAML
             </a>
           </div>
         </div>
@@ -373,7 +376,7 @@
       <section class="guides-section" id="guides" aria-labelledby="guides-title">
         <div class="section-copy">
           <p class="kicker">Implementer guides</p>
-          <h2 id="guides-title">Implement the protocol spine before adding product behavior.</h2>
+          <h2 id="guides-title">Implementer guides define protocol obligations.</h2>
           <p>
             Guides explain what compatible implementations store, emit,
             validate, reject, export, and preserve. They do not define host UI,
@@ -451,10 +454,10 @@ python3 scripts/check_example_evidence_packs.py</code></pre>
       <section class="implementation-section" id="implementation" aria-labelledby="implementation-title">
         <div class="section-copy">
           <p class="kicker">Real implementation path</p>
-          <h2 id="implementation-title">Use an existing agent. Add Jarvis records around the work.</h2>
+          <h2 id="implementation-title">Existing agents remain host-owned.</h2>
           <p>
-            A host records native agent work as Jarvis protocol records. The
-            agent keeps native execution. The host records
+            Compatible implementations record Jarvis protocol state around
+            native work. The agent keeps native execution. The host records
             Worker, Actor, WorkSession, PolicyDecision, Request, Review,
             Takeover, Contribution, EvidenceManifest, LearningRecord, proposals,
             and OutcomeReport records.
@@ -477,8 +480,8 @@ python3 scripts/check_example_evidence_packs.py</code></pre>
         <div class="implementation-steps" aria-label="Implementation path steps">
           <article>
             <span>01</span>
-            <h3>Select a host surface</h3>
-            <p>Use a real coding-agent session, workspace app, or agent platform as host-owned execution.</p>
+            <h3>Host-owned execution</h3>
+            <p>Native coding-agent sessions, workspace apps, and agent platforms stay outside Jarvis.</p>
           </article>
           <article>
             <span>02</span>
