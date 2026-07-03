@@ -25,12 +25,13 @@ stable.
 - [15-openapi-communication-binding.md](./protocol/15-openapi-communication-binding.md)
 - [16-positioning-adoption-lock.md](./protocol/16-positioning-adoption-lock.md)
 
-## Active Planning
+## Post-v0.1 Work
 
-Active planning docs define current post-v0.1 execution without changing
-normative protocol rules.
+Post-v0.1 docs record implemented SDK helper tooling and active
+implementation-proof work without changing normative protocol rules.
 
 - [post-v0.1-sdk-helper-tooling/README.md](./planning/post-v0.1-sdk-helper-tooling/README.md)
+- [examples/implementation-proof/native-coding-agent/README.md](./examples/implementation-proof/native-coding-agent/README.md)
 
 ## Planning Archive
 
@@ -61,6 +62,7 @@ defining host-owned execution.
 - [examples/compatible-host-mapping.md](./examples/compatible-host-mapping.md)
 - [examples/evidence-packs/existing-agent-review/README.md](./examples/evidence-packs/existing-agent-review/README.md)
 - [examples/evidence-packs/existing-agent-takeover/README.md](./examples/evidence-packs/existing-agent-takeover/README.md)
+- [examples/implementation-proof/native-coding-agent/README.md](./examples/implementation-proof/native-coding-agent/README.md)
 
 ## OpenAPI
 

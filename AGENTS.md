@@ -226,8 +226,8 @@ and shared learning.
 
 ## Current Execution Focus
 
-The active focus is post-v0.1 SDK helper tooling planning and public docs site
-work.
+The active focus is existing-agent implementation proof, public docs site work,
+and next-phase protocol specification.
 
 Protocol lock is complete. Week 2 OpenAPI contract and conformance entry work
 is complete. Week 3 protocol compatibility mapping and conformance fixtures
@@ -242,11 +242,8 @@ create long-term support.
 Work on:
 
 - next-phase protocol specification
-- post-v0.1 SDK helper tooling plan
-- SDK helper boundary and package plan
-- TypeScript protocol types and validators
-- Python protocol types and validators
-- conformance runner and protocol helper CLI
+- existing-agent implementation proof records
+- SDK-helper generated proof validation
 - additional conformance evidence only when it preserves the protocol boundary
 
 The v0.1 acceptance review record starts from
@@ -312,6 +309,7 @@ python3 scripts/check_openapi_contract.py
 python3 scripts/check_markdown_links.py
 python3 scripts/check_docs_site.py
 python3 scripts/check_example_evidence_packs.py
+python3 scripts/check_implementation_proof.py
 python3 scripts/check_protocol_wording.py
 python3 scripts/check_sdk_boundary.py
 git diff --check
@@ -321,6 +319,9 @@ Fixture changes MUST run `python3 scripts/check_conformance_fixtures.py`.
 
 Example evidence pack changes MUST run
 `python3 scripts/check_example_evidence_packs.py`.
+
+Implementation proof changes MUST run
+`python3 scripts/check_implementation_proof.py`.
 
 SDK boundary, package, helper, and fixture-snapshot changes MUST still treat
 `python3 scripts/check_sdk_boundary.py` as a blocking gate.

@@ -26,6 +26,7 @@
 - [ ] `python3 scripts/check_markdown_links.py`
 - [ ] `python3 scripts/check_docs_site.py`
 - [ ] `python3 scripts/check_example_evidence_packs.py`
+- [ ] `python3 scripts/check_implementation_proof.py`
 - [ ] `python3 scripts/check_protocol_wording.py`
 - [ ] `python3 scripts/check_sdk_boundary.py`
 - [ ] `npm --workspace @jarvis-protocol/sdk test` if TypeScript helper paths changed

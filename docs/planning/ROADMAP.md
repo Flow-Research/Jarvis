@@ -21,8 +21,8 @@ Week 1 protocol lock is complete.
 
 Current protocol status: Jarvis v0.1.0 is released as Protocol Alpha.
 
-Current active work: protocol-record compatibility evidence and public docs
-site maintenance.
+Current active work: existing-agent implementation proof and public docs site
+maintenance.
 
 Release-readiness work for the v0.1.0 tag is complete:
 
@@ -45,6 +45,9 @@ adapters, runtimes, wrappers, host behavior, or integration code.
 
 Week 4 completed compatible examples, public README tightening, published
 conformance checklist, protocol record examples, and public story.
+
+Post-v0.1 SDK helper tooling is implemented. TypeScript, Python, and CLI helper
+surfaces stay limited to protocol implementation helpers.
 
 The v0.1 acceptance review now includes protocol-publication discipline:
 version consistency, precise conformance-claim language, release-readiness gap
@@ -488,6 +491,38 @@ Done when:
   host UI, model calls, tool execution, storage, auth, billing, scoring,
   payment, deployment, monitoring, host integration, or host workflow
   behavior
+- local validation passes
+
+## Existing-Agent Implementation Proof
+
+Status: implemented.
+
+Owner: Developer Experience
+
+Output:
+
+- SDK-helper generated native coding-agent proof
+- proof generator
+- proof validator
+- protocol record fixture-shaped proof envelope
+- EvidenceManifest export record
+- OutcomeReport terminal-source record
+
+Done when:
+
+- proof records are generated through SDK helper surfaces
+- checker rejects stale generated proof output
+- HumanWorker and AgentWorker records are present
+- WorkSession, Policy, PolicyDecision, Request, Review, Contribution,
+  EvidenceManifest, LearningRecord, MemoryProposal, SkillProposal, and
+  OutcomeReport records validate
+- JarvisEvent hash chain validates
+- operation headers validate through the v0.1 header gate
+- EvidenceManifest validates only from a terminal WorkSession source
+- OutcomeReport validates only from a terminal WorkSession source
+- proof records do not define runtime behavior, host UI, model calls, tool
+  execution, storage, auth, billing, scoring, payment, deployment, monitoring,
+  host integration, adapters, wrappers, or host workflow
 - local validation passes
 
 ## v0.2 Evidence And Learning Beta

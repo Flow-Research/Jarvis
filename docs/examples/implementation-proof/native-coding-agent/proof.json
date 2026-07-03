@@ -1,0 +1,1291 @@
+{
+  "proof_id": "native-coding-agent-sdk-helper-proof-v01",
+  "fixture_id": "native-coding-agent-sdk-helper-proof-v01",
+  "protocol_version": "v0.1",
+  "kind": "valid",
+  "expected_result": "accept",
+  "title": "Native coding-agent SDK-helper implementation proof",
+  "description": "Protocol-record proof that an existing native coding agent participates in Jarvis through SDK-generated records.",
+  "issue_ref": "https://github.com/Flow-Research/jarvis/issues/68",
+  "host_shape_ref": "command_line_host_boundary",
+  "native_agent_boundary": {
+    "agent_ref": "agent:native-coding-agent",
+    "execution_owner": "host",
+    "jarvis_scope": "protocol_records_only",
+    "native_execution_preserved": true
+  },
+  "sdk_helper_trace": [
+    "create_operation_envelope",
+    "create_work_session_mutation_headers",
+    "create_non_work_session_mutation_headers",
+    "create_read_headers",
+    "create_next_jarvis_event",
+    "create_evidence_manifest",
+    "validate_protocol_record",
+    "validate_operation_headers",
+    "validate_event_hash_chain",
+    "validate_evidence_manifest",
+    "validate_fixture"
+  ],
+  "source_contract_refs": [
+    "docs/examples/existing-agent-compatibility.md",
+    "docs/examples/protocol-records.md",
+    "docs/conformance/existing-agent-proof-plan.md",
+    "docs/conformance/checklist.md",
+    "docs/protocol/15-openapi-communication-binding.md",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Worker",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Actor",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/HumanWorker",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/AgentWorker",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/WorkSession",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/JarvisEvent",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Policy",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/PolicyDecision",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Request",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Review",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/Contribution",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/EvidenceManifest",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/LearningRecord",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/MemoryProposal",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/SkillProposal",
+    "docs/openapi/jarvis-openapi.yaml#/components/schemas/OutcomeReport"
+  ],
+  "records": {
+    "workers": {
+      "human": {
+        "id": "worker-human-proof",
+        "type": "human",
+        "role": "responsible reviewer",
+        "authority_scope": {
+          "grants": [
+            "policy:own",
+            "review:approve",
+            "takeover:start"
+          ]
+        },
+        "accountability_scope": {
+          "accountable_for": [
+            "objective",
+            "policy",
+            "final_review"
+          ]
+        },
+        "display_name": "HumanWorker Proof",
+        "capabilities": [
+          {
+            "ref": "capability:review",
+            "capability_type": "human_judgment",
+            "required": true
+          }
+        ]
+      },
+      "agent": {
+        "id": "worker-agent-proof",
+        "type": "agent",
+        "role": "bounded coding agent",
+        "authority_scope": {
+          "grants": [
+            "action:propose",
+            "action:execute_after_policy",
+            "evidence:capture"
+          ]
+        },
+        "accountability_scope": {
+          "accountable_for": [
+            "policy_checked_execution",
+            "evidence_capture"
+          ]
+        },
+        "display_name": "Native Coding Agent Proof",
+        "capabilities": [
+          {
+            "ref": "capability:code_review_summary",
+            "capability_type": "coding",
+            "required": true
+          }
+        ]
+      }
+    },
+    "actors": {
+      "human": {
+        "id": "actor-human-proof",
+        "worker_id": "worker-human-proof",
+        "type": "human",
+        "event_authority": {
+          "can_append_events": true,
+          "allowed_event_types": [
+            "work_session.created",
+            "review.recorded",
+            "contribution.recorded",
+            "learning.recorded",
+            "memory_proposal.created",
+            "skill_proposal.created",
+            "work_session.completed"
+          ]
+        },
+        "contribution_scope": {
+          "contribution_roles": [
+            "human",
+            "shared"
+          ]
+        },
+        "created_at": "2026-07-03T09:00:00Z",
+        "valid_from": "2026-07-03T09:00:00Z"
+      },
+      "agent": {
+        "id": "actor-agent-proof",
+        "worker_id": "worker-agent-proof",
+        "type": "agent",
+        "event_authority": {
+          "can_append_events": true,
+          "allowed_event_types": [
+            "policy_decision.recorded",
+            "request.created",
+            "evidence.captured",
+            "contribution.recorded"
+          ]
+        },
+        "contribution_scope": {
+          "contribution_roles": [
+            "agent",
+            "shared"
+          ]
+        },
+        "created_at": "2026-07-03T09:00:00Z",
+        "valid_from": "2026-07-03T09:00:00Z"
+      }
+    },
+    "human_workers": {
+      "primary": {
+        "worker_id": "worker-human-proof",
+        "actor_id": "actor-human-proof",
+        "role": "policy owner and reviewer",
+        "policy_authority": {
+          "grants": [
+            "policy:own",
+            "policy:narrow"
+          ]
+        },
+        "review_authority": {
+          "grants": [
+            "review:approve",
+            "review:narrow",
+            "review:deny",
+            "takeover:start"
+          ]
+        },
+        "profile_ref": "profile:human-proof",
+        "domain_context_refs": [
+          "context:coding-task-brief"
+        ],
+        "preferences": {
+          "review.default_detail": "evidence_first"
+        },
+        "boundaries": [
+          "external source access requires review"
+        ],
+        "known_patterns": [
+          "ask for bounded approval before external source collection"
+        ]
+      }
+    },
+    "agent_workers": {
+      "primary": {
+        "worker_id": "worker-agent-proof",
+        "actor_id": "actor-agent-proof",
+        "agent_ref": "agent:native-coding-agent",
+        "role": "bounded coding and research agent",
+        "capability_refs": [
+          {
+            "ref": "capability:code_review_summary",
+            "capability_type": "coding",
+            "required": true
+          }
+        ],
+        "autonomy_level": "bounded_execute",
+        "operating_constraints": [
+          "record PolicyDecision before action affects WorkSession state",
+          "create Request when Policy denies action",
+          "capture evidence during work"
+        ],
+        "tool_access_profile": "tool-profile:policy-bounded",
+        "memory_access_profile": "memory-profile:read-only"
+      }
+    },
+    "policies": {
+      "bounded": {
+        "id": "policy-proof-bounded",
+        "owner_worker_id": "worker-human-proof",
+        "created_by_actor_id": "actor-human-proof",
+        "autonomy_level": "bounded_execute",
+        "allowed_actions": [
+          {
+            "action": "inspect_local_context",
+            "scope_ref": "scope:local-worksession",
+            "grant_refs": [
+              "grant:local-context-read"
+            ]
+          }
+        ],
+        "denied_actions": [
+          {
+            "action": "fetch_external_source",
+            "scope_ref": "scope:external-source"
+          }
+        ],
+        "review_required_actions": [
+          {
+            "action": "submit_final_artifact",
+            "scope_ref": "scope:final-submission"
+          }
+        ],
+        "risk_classes": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "escalation_rules": [
+          {
+            "trigger": "external_source_access",
+            "risk_class": "medium",
+            "required_action": "create_request",
+            "reviewer_ref": "worker-human-proof",
+            "reason": "HumanWorker review gates external source collection."
+          }
+        ],
+        "created_at": "2026-07-03T09:00:00Z",
+        "tool_grants": [
+          "grant:local-context-read"
+        ],
+        "memory_grants": [
+          "grant:read-confirmed-memory"
+        ],
+        "request_limits": {
+          "max_pending_requests": 3,
+          "max_repeated_denials": 1,
+          "default_expiry_seconds": 1800
+        }
+      }
+    },
+    "work_sessions": {
+      "genesis_request": {
+        "id": "ws-native-coding-agent-proof",
+        "protocol_version": "v0.1",
+        "created_by_actor_id": "actor-human-proof",
+        "objective": "Show an existing coding agent participating through Jarvis protocol records.",
+        "human_worker_id": "worker-human-proof",
+        "agent_worker_id": "worker-agent-proof",
+        "policy_id": "policy-proof-bounded",
+        "status": "active",
+        "revision": 0,
+        "last_event_hash": "hash:protocol-genesis",
+        "event_log_ref": "event-log:ws-native-coding-agent-proof",
+        "created_at": "2026-07-03T09:01:00Z",
+        "updated_at": "2026-07-03T09:01:00Z",
+        "source_ref": "source:native-coding-agent-proof",
+        "context_manifest_ref": "context:coding-task-brief",
+        "contribution_ledger_ref": "ledger:ws-native-coding-agent-proof"
+      },
+      "active": {
+        "id": "ws-native-coding-agent-proof",
+        "protocol_version": "v0.1",
+        "created_by_actor_id": "actor-human-proof",
+        "objective": "Show an existing coding agent participating through Jarvis protocol records.",
+        "human_worker_id": "worker-human-proof",
+        "agent_worker_id": "worker-agent-proof",
+        "policy_id": "policy-proof-bounded",
+        "status": "active",
+        "revision": 1,
+        "last_event_hash": "hash:6642038436fa5c7cb4242ef3220b2ad609dcb773038e467b6b97cd28e8e137ef",
+        "event_log_ref": "event-log:ws-native-coding-agent-proof",
+        "created_at": "2026-07-03T09:01:00Z",
+        "updated_at": "2026-07-03T09:01:00Z",
+        "source_ref": "source:native-coding-agent-proof",
+        "context_manifest_ref": "context:coding-task-brief",
+        "contribution_ledger_ref": "ledger:ws-native-coding-agent-proof"
+      },
+      "completed": {
+        "id": "ws-native-coding-agent-proof",
+        "protocol_version": "v0.1",
+        "created_by_actor_id": "actor-human-proof",
+        "objective": "Show an existing coding agent participating through Jarvis protocol records.",
+        "human_worker_id": "worker-human-proof",
+        "agent_worker_id": "worker-agent-proof",
+        "policy_id": "policy-proof-bounded",
+        "status": "completed",
+        "revision": 11,
+        "last_event_hash": "hash:1042ebfb8f26eff875afa07080705c79c7314ac1982a36d98eef223bae0db578",
+        "event_log_ref": "event-log:ws-native-coding-agent-proof",
+        "created_at": "2026-07-03T09:01:00Z",
+        "updated_at": "2026-07-03T09:25:00Z",
+        "source_ref": "source:native-coding-agent-proof",
+        "context_manifest_ref": "context:coding-task-brief",
+        "contribution_ledger_ref": "ledger:ws-native-coding-agent-proof",
+        "evidence_manifest_ref": "evidence-manifest-native-agent-proof",
+        "learning_record_refs": [
+          "learning-native-agent-pair"
+        ]
+      }
+    },
+    "jarvis_events": {
+      "worksession_created": {
+        "id": "event-worksession-created",
+        "sequence": 1,
+        "type": "work_session.created",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-human-proof",
+        "timestamp": "2026-07-03T09:01:00Z",
+        "payload": {
+          "object_type": "work_session",
+          "object_id": "ws-native-coding-agent-proof",
+          "action": "created",
+          "summary": "WorkSession created with HumanWorker, AgentWorker, objective, and Policy."
+        },
+        "previous_hash": "hash:protocol-genesis",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:6642038436fa5c7cb4242ef3220b2ad609dcb773038e467b6b97cd28e8e137ef"
+      },
+      "policy_denied": {
+        "id": "event-policy-denied",
+        "sequence": 2,
+        "type": "policy_decision.recorded",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-agent-proof",
+        "timestamp": "2026-07-03T09:04:00Z",
+        "payload": {
+          "object_type": "policy_decision",
+          "object_id": "pd-native-agent-source-denied",
+          "action": "recorded",
+          "summary": "PolicyDecision denied external source collection and required Request."
+        },
+        "previous_hash": "hash:6642038436fa5c7cb4242ef3220b2ad609dcb773038e467b6b97cd28e8e137ef",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:0066654d781b9151b65dc20e02b8ad85f6cdbf1a87417c887c00b0e5ce6e0ecf"
+      },
+      "request_event": {
+        "id": "event-request-created",
+        "sequence": 3,
+        "type": "request.created",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-agent-proof",
+        "timestamp": "2026-07-03T09:05:00Z",
+        "payload": {
+          "object_type": "request",
+          "object_id": "req-native-agent-source",
+          "action": "created",
+          "summary": "AgentWorker created scoped Request for HumanWorker review."
+        },
+        "previous_hash": "hash:0066654d781b9151b65dc20e02b8ad85f6cdbf1a87417c887c00b0e5ce6e0ecf",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:b3d3a2304426ed51076c71b532fe4f7c08a691288781cd6e3211e34ccad9ee9d"
+      },
+      "review_approved": {
+        "id": "event-review-approved",
+        "sequence": 4,
+        "type": "review.recorded",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-human-proof",
+        "timestamp": "2026-07-03T09:08:00Z",
+        "payload": {
+          "object_type": "review",
+          "object_id": "review-native-agent-source-approval",
+          "action": "recorded",
+          "summary": "HumanWorker approved bounded external source collection."
+        },
+        "previous_hash": "hash:b3d3a2304426ed51076c71b532fe4f7c08a691288781cd6e3211e34ccad9ee9d",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:fce755826bde42cce50d741164be53f3ac718ea7e1b6841ce712ea157dcb8586"
+      },
+      "policy_allowed": {
+        "id": "event-policy-allowed",
+        "sequence": 5,
+        "type": "policy_decision.recorded",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-agent-proof",
+        "timestamp": "2026-07-03T09:08:30Z",
+        "payload": {
+          "object_type": "policy_decision",
+          "object_id": "pd-native-agent-source-approved",
+          "action": "recorded",
+          "summary": "PolicyDecision allowed the action inside ApprovalScope."
+        },
+        "previous_hash": "hash:fce755826bde42cce50d741164be53f3ac718ea7e1b6841ce712ea157dcb8586",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:5ee29ee725b8c89a4f3998e40e12cf6fd1a4771cb0df063b0da5d9536f077817"
+      },
+      "evidence_captured": {
+        "id": "event-evidence-captured",
+        "sequence": 6,
+        "type": "evidence.captured",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-agent-proof",
+        "timestamp": "2026-07-03T09:12:00Z",
+        "payload": {
+          "object_type": "evidence_manifest",
+          "object_id": "evidence-source-summary",
+          "action": "evidence_item_captured",
+          "summary": "AgentWorker captured evidence for the reviewed answer."
+        },
+        "previous_hash": "hash:5ee29ee725b8c89a4f3998e40e12cf6fd1a4771cb0df063b0da5d9536f077817",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:b8fa0dc7139219e3c691bc9cbe2cfc9190385939ceb1573ef3a50264bd3e1d0b"
+      },
+      "contribution_recorded": {
+        "id": "event-contribution-recorded",
+        "sequence": 7,
+        "type": "contribution.recorded",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-human-proof",
+        "timestamp": "2026-07-03T09:16:00Z",
+        "payload": {
+          "object_type": "contribution",
+          "object_id": "contribution-native-agent-shared-answer",
+          "action": "recorded",
+          "summary": "Shared contribution recorded for HumanWorker and AgentWorker."
+        },
+        "previous_hash": "hash:b8fa0dc7139219e3c691bc9cbe2cfc9190385939ceb1573ef3a50264bd3e1d0b",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:4ed07cd284c5de8ada58c26be5e6bdc3dc003fa05581f44981af268a3e64574d"
+      },
+      "learning_recorded": {
+        "id": "event-learning-recorded",
+        "sequence": 8,
+        "type": "learning.recorded",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-human-proof",
+        "timestamp": "2026-07-03T09:18:00Z",
+        "payload": {
+          "object_type": "learning_record",
+          "object_id": "learning-native-agent-pair",
+          "action": "recorded",
+          "summary": "Pair learning recorded from Request and Review resolution."
+        },
+        "previous_hash": "hash:4ed07cd284c5de8ada58c26be5e6bdc3dc003fa05581f44981af268a3e64574d",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:43d9a302fdc122a7042dcca75bbe3e596e5d2e38a3c80864c977df782f2498ec"
+      },
+      "memory_proposal_created": {
+        "id": "event-memory-proposal-created",
+        "sequence": 9,
+        "type": "memory_proposal.created",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-human-proof",
+        "timestamp": "2026-07-03T09:19:00Z",
+        "payload": {
+          "object_type": "memory_proposal",
+          "object_id": "memory-proposal-native-agent",
+          "action": "created",
+          "summary": "MemoryProposal created for future bounded-source work."
+        },
+        "previous_hash": "hash:43d9a302fdc122a7042dcca75bbe3e596e5d2e38a3c80864c977df782f2498ec",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:3383855e9ac0607ad508218d6e42f3a0110add89417b1c53e8a99f9edef0764e"
+      },
+      "skill_proposal_created": {
+        "id": "event-skill-proposal-created",
+        "sequence": 10,
+        "type": "skill_proposal.created",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-human-proof",
+        "timestamp": "2026-07-03T09:20:00Z",
+        "payload": {
+          "object_type": "skill_proposal",
+          "object_id": "skill-proposal-native-agent",
+          "action": "created",
+          "summary": "SkillProposal created for future bounded-source work."
+        },
+        "previous_hash": "hash:3383855e9ac0607ad508218d6e42f3a0110add89417b1c53e8a99f9edef0764e",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:419b7e5386af3402002289531cf486944ff1d44a683389f96deb6425d7d294aa"
+      },
+      "worksession_completed": {
+        "id": "event-worksession-completed",
+        "sequence": 11,
+        "type": "work_session.completed",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-human-proof",
+        "timestamp": "2026-07-03T09:25:00Z",
+        "payload": {
+          "object_type": "work_session",
+          "object_id": "ws-native-coding-agent-proof",
+          "action": "completed",
+          "summary": "WorkSession completed with evidence and governed learning."
+        },
+        "previous_hash": "hash:419b7e5386af3402002289531cf486944ff1d44a683389f96deb6425d7d294aa",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:1042ebfb8f26eff875afa07080705c79c7314ac1982a36d98eef223bae0db578"
+      }
+    },
+    "policy_decisions": {
+      "external_source_denied": {
+        "id": "pd-native-agent-source-denied",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-agent-proof",
+        "policy_id": "policy-proof-bounded",
+        "requested_action": {
+          "action": "fetch_external_source",
+          "target_ref": "source:existing-agent-reference",
+          "scope_ref": "scope:external-source"
+        },
+        "normalized_action_hash": "hash:54b8ee0e65375e668d2901001ed894a01b92f9b44bad31c359c817ed13616fc2",
+        "risk_class": "medium",
+        "result": "deny",
+        "reason": "Policy requires HumanWorker review before external source collection.",
+        "created_at": "2026-07-03T09:04:00Z",
+        "data_sensitivity": "public",
+        "denied_grant_refs": [
+          "grant:external-source-read"
+        ],
+        "request_id": "req-native-agent-source"
+      },
+      "external_source_allowed": {
+        "id": "pd-native-agent-source-approved",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-agent-proof",
+        "policy_id": "policy-proof-bounded",
+        "requested_action": {
+          "action": "fetch_external_source",
+          "target_ref": "source:existing-agent-reference",
+          "scope_ref": "scope:external-source"
+        },
+        "normalized_action_hash": "hash:54b8ee0e65375e668d2901001ed894a01b92f9b44bad31c359c817ed13616fc2",
+        "risk_class": "medium",
+        "result": "allow",
+        "reason": "HumanWorker Review created bounded ApprovalScope for this action.",
+        "created_at": "2026-07-03T09:08:30Z",
+        "data_sensitivity": "public",
+        "selected_grant_refs": [
+          "grant:review-approved-external-source"
+        ]
+      }
+    },
+    "requests": {
+      "pending": {
+        "id": "req-native-agent-source",
+        "protocol_version": "v0.1",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "requester_actor_id": "actor-agent-proof",
+        "requester_worker_id": "worker-agent-proof",
+        "target_human_worker_id": "worker-human-proof",
+        "policy_decision_id": "pd-native-agent-source-denied",
+        "type": "permission",
+        "blocking_scope": "action",
+        "reason_code": "policy_denied",
+        "reason_summary": "External source access is outside current Policy until HumanWorker review.",
+        "requested_action": {
+          "action": "fetch_external_source",
+          "target_ref": "source:existing-agent-reference",
+          "scope_ref": "scope:external-source"
+        },
+        "requested_outcome": "Approve external source collection for this WorkSession only.",
+        "risk_class": "medium",
+        "human_decision_needed": "Approve, narrow, deny, correct, or take over the blocked action.",
+        "options": [
+          {
+            "id": "option-approve-current-session",
+            "label": "Approve current WorkSession scope",
+            "effect": "AgentWorker collects the referenced source for this WorkSession only.",
+            "risk_class": "medium",
+            "scope_ref": "scope:external-source"
+          },
+          {
+            "id": "option-deny",
+            "label": "Deny external collection",
+            "effect": "AgentWorker continues with existing evidence and records the limitation.",
+            "risk_class": "low",
+            "scope_ref": "scope:local-worksession"
+          }
+        ],
+        "default_if_no_response": {
+          "action": "continue_with_limited_evidence",
+          "reason": "The blocked action remains stopped and the WorkSession records an evidence limitation.",
+          "limitation_ref": "limitation:external-source-not-reviewed"
+        },
+        "status": "pending",
+        "created_at": "2026-07-03T09:05:00Z",
+        "expires_at": "2026-07-03T09:35:00Z",
+        "missing_permission_or_context": "Policy grant for external source collection",
+        "policy_refs": [
+          "policy-proof-bounded"
+        ],
+        "data_sensitivity": "public",
+        "recommended_option": "option-approve-current-session"
+      },
+      "approved": {
+        "id": "req-native-agent-source",
+        "protocol_version": "v0.1",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "requester_actor_id": "actor-agent-proof",
+        "requester_worker_id": "worker-agent-proof",
+        "target_human_worker_id": "worker-human-proof",
+        "policy_decision_id": "pd-native-agent-source-denied",
+        "type": "permission",
+        "blocking_scope": "action",
+        "reason_code": "policy_denied",
+        "reason_summary": "External source access is outside current Policy until HumanWorker review.",
+        "requested_action": {
+          "action": "fetch_external_source",
+          "target_ref": "source:existing-agent-reference",
+          "scope_ref": "scope:external-source"
+        },
+        "requested_outcome": "Approve external source collection for this WorkSession only.",
+        "risk_class": "medium",
+        "human_decision_needed": "Approve, narrow, deny, correct, or take over the blocked action.",
+        "options": [
+          {
+            "id": "option-approve-current-session",
+            "label": "Approve current WorkSession scope",
+            "effect": "AgentWorker collects the referenced source for this WorkSession only.",
+            "risk_class": "medium",
+            "scope_ref": "scope:external-source"
+          },
+          {
+            "id": "option-deny",
+            "label": "Deny external collection",
+            "effect": "AgentWorker continues with existing evidence and records the limitation.",
+            "risk_class": "low",
+            "scope_ref": "scope:local-worksession"
+          }
+        ],
+        "default_if_no_response": {
+          "action": "continue_with_limited_evidence",
+          "reason": "The blocked action remains stopped and the WorkSession records an evidence limitation.",
+          "limitation_ref": "limitation:external-source-not-reviewed"
+        },
+        "status": "approved",
+        "created_at": "2026-07-03T09:05:00Z",
+        "expires_at": "2026-07-03T09:35:00Z",
+        "missing_permission_or_context": "Policy grant for external source collection",
+        "policy_refs": [
+          "policy-proof-bounded"
+        ],
+        "data_sensitivity": "public",
+        "recommended_option": "option-approve-current-session",
+        "resolved_at": "2026-07-03T09:08:00Z",
+        "resolved_by_review_id": "review-native-agent-source-approval"
+      }
+    },
+    "reviews": {
+      "approve_source": {
+        "id": "review-native-agent-source-approval",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "reviewer_actor_id": "actor-human-proof",
+        "reviewer_worker_id": "worker-human-proof",
+        "target_ref": "request:req-native-agent-source",
+        "decision": "approve",
+        "created_at": "2026-07-03T09:08:00Z",
+        "comments": "Approved for the referenced source and current WorkSession only.",
+        "approval_scope": {
+          "request_id": "req-native-agent-source",
+          "review_id": "review-native-agent-source-approval",
+          "policy_decision_id": "pd-native-agent-source-denied",
+          "request_revision": 3,
+          "request_event_hash": "hash:b3d3a2304426ed51076c71b532fe4f7c08a691288781cd6e3211e34ccad9ee9d",
+          "normalized_action_hash": "hash:54b8ee0e65375e668d2901001ed894a01b92f9b44bad31c359c817ed13616fc2",
+          "approved_action": {
+            "action": "fetch_external_source",
+            "target_ref": "source:existing-agent-reference",
+            "scope_ref": "scope:external-source"
+          },
+          "allowed_scope": {
+            "scope_ref": "scope:external-source",
+            "grant_refs": [
+              "grant:review-approved-external-source"
+            ]
+          },
+          "denied_scope": {
+            "scope_ref": "scope:all-other-external-sources"
+          },
+          "expires_at": "2026-07-03T09:35:00Z",
+          "max_uses": 1,
+          "applies_to_work_session_id": "ws-native-coding-agent-proof",
+          "applies_to_actor_id": "actor-agent-proof"
+        }
+      }
+    },
+    "contributions": {
+      "shared_answer": {
+        "id": "contribution-native-agent-shared-answer",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "contributor_refs": [
+          {
+            "worker_id": "worker-human-proof",
+            "actor_id": "actor-human-proof",
+            "contribution_role": "human"
+          },
+          {
+            "worker_id": "worker-agent-proof",
+            "actor_id": "actor-agent-proof",
+            "contribution_role": "agent"
+          }
+        ],
+        "contributor_type": "shared",
+        "contribution_type": "artifact",
+        "event_refs": [
+          "event-evidence-captured",
+          "event-contribution-recorded"
+        ],
+        "created_at": "2026-07-03T09:16:00Z",
+        "artifact_refs": [
+          "artifact:reviewed-agent-output"
+        ],
+        "review_refs": [
+          "review-native-agent-source-approval"
+        ],
+        "evidence_refs": [
+          "evidence-source-summary"
+        ],
+        "confidence": 0.92,
+        "limitations": [
+          "limitation:none-recorded"
+        ]
+      }
+    },
+    "learning_records": {
+      "pair": {
+        "id": "learning-native-agent-pair",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "created_by_actor_id": "actor-human-proof",
+        "subject_type": "pair",
+        "subject_ref": "pair:worker-human-proof+worker-agent-proof",
+        "lesson_type": "bounded_external_source_approval",
+        "source_event_refs": [
+          "event-request-created",
+          "event-review-approved",
+          "event-evidence-captured"
+        ],
+        "review_state": "accepted",
+        "scope": "scope:future-source-collection",
+        "created_at": "2026-07-03T09:18:00Z",
+        "proposed_change": {
+          "pattern": "Ask for bounded external source approval before collecting evidence outside local context."
+        },
+        "memory_proposal_refs": [
+          "memory-proposal-native-agent"
+        ],
+        "skill_proposal_refs": [
+          "skill-proposal-native-agent"
+        ]
+      }
+    },
+    "memory_proposals": {
+      "source_policy_pattern": {
+        "id": "memory-proposal-native-agent",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "proposed_by_actor_id": "actor-human-proof",
+        "proposed_for": "pair",
+        "memory_scope": "scope:future-source-collection",
+        "memory_type": "collaboration_pattern",
+        "content": {
+          "pattern": "External source collection requires bounded approval tied to WorkSession, Actor, action hash, expiry, and max uses."
+        },
+        "provenance": [
+          "event-request-created",
+          "event-review-approved",
+          "learning-native-agent-pair"
+        ],
+        "confidence": 0.9,
+        "review_required": true,
+        "status": "pending_review",
+        "created_at": "2026-07-03T09:19:00Z",
+        "source_event_refs": [
+          "event-review-approved",
+          "event-learning-recorded"
+        ],
+        "learning_record_refs": [
+          "learning-native-agent-pair"
+        ]
+      }
+    },
+    "skill_proposals": {
+      "bounded_source_collection": {
+        "id": "skill-proposal-native-agent",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "proposed_by_actor_id": "actor-human-proof",
+        "proposed_for": "pair",
+        "skill_scope": "scope:future-source-collection",
+        "skill_name": "bounded_external_source_collection",
+        "trigger_conditions": [
+          "AgentWorker needs evidence outside local context",
+          "Policy denies or requires review for the action"
+        ],
+        "procedure": [
+          "Record PolicyDecision before action acceptance",
+          "Create scoped Request with risk, options, and fallback",
+          "Wait for Review approval or narrowing",
+          "Execute only inside ApprovalScope",
+          "Capture evidence refs during work"
+        ],
+        "review_checks": [
+          "Request references blocking PolicyDecision",
+          "ApprovalScope binds action hash, WorkSession, Actor, expiry, and max uses",
+          "EvidenceManifest excludes host-private fields"
+        ],
+        "failure_cases": [
+          "Request resolves without Review",
+          "Evidence appears after the fact",
+          "Skill activates without review"
+        ],
+        "provenance": [
+          "event-request-created",
+          "event-review-approved",
+          "event-evidence-captured",
+          "learning-native-agent-pair"
+        ],
+        "status": "pending_review",
+        "created_at": "2026-07-03T09:20:00Z",
+        "required_tools": [
+          "tool:source-reader"
+        ],
+        "source_event_refs": [
+          "event-request-created",
+          "event-review-approved",
+          "event-evidence-captured"
+        ],
+        "learning_record_refs": [
+          "learning-native-agent-pair"
+        ]
+      }
+    },
+    "outcome_reports": {
+      "post_session": {
+        "id": "outcome-report-native-agent",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "source_ref": "source:completed-worksession:ws-native-coding-agent-proof",
+        "reporter_ref": "reporter:proof-evaluator",
+        "accepted_by_actor_id": "actor-human-proof",
+        "outcome": "accepted",
+        "learning_record_refs": [
+          "learning-native-agent-pair"
+        ],
+        "received_at": "2026-07-03T09:30:00Z",
+        "external_system_ref": "external:evaluation-system",
+        "reporter_actor_id": "actor-human-proof",
+        "reason": "Post-session feedback confirms the bounded Request and Review loop improved future source collection.",
+        "reviewer_feedback_refs": [
+          "feedback:bounded-source-loop-accepted"
+        ]
+      }
+    },
+    "evidence_manifests": {
+      "portable_export": {
+        "id": "evidence-manifest-native-agent-proof",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "generated_by_actor_id": "actor-human-proof",
+        "objective": "Show an existing coding agent participating through Jarvis protocol records.",
+        "event_chain_root": "hash:1042ebfb8f26eff875afa07080705c79c7314ac1982a36d98eef223bae0db578",
+        "evidence_item_refs": [
+          {
+            "id": "evidence-source-summary",
+            "work_session_id": "ws-native-coding-agent-proof",
+            "source_event_refs": [
+              "event-evidence-captured"
+            ],
+            "captured_by_actor_id": "actor-agent-proof",
+            "evidence_type": "source_summary",
+            "artifact_ref": "artifact:source-summary",
+            "content_hash": "hash:source-summary",
+            "trust_label": "reviewed",
+            "redaction_state": "redacted",
+            "captured_at": "2026-07-03T09:12:00Z",
+            "limitation_refs": [
+              "limitation:none-recorded"
+            ]
+          }
+        ],
+        "policy_decision_refs": [
+          "pd-native-agent-source-denied",
+          "pd-native-agent-source-approved"
+        ],
+        "request_refs": [
+          "req-native-agent-source"
+        ],
+        "review_refs": [
+          "review-native-agent-source-approval"
+        ],
+        "takeover_refs": [],
+        "contribution_refs": [
+          "contribution-native-agent-shared-answer"
+        ],
+        "export_profile": {
+          "profile": "portable_evidence_manifest",
+          "version": "v0.1",
+          "redaction_profile_ref": "redaction:portable-safe"
+        },
+        "generated_at": "2026-07-03T09:26:00Z",
+        "artifact_refs": [
+          "artifact:reviewed-agent-output",
+          "artifact:source-summary"
+        ],
+        "limitation_refs": [
+          "limitation:none-recorded"
+        ],
+        "redaction_refs": [
+          "redaction:portable-safe"
+        ]
+      }
+    }
+  },
+  "operations": [
+    {
+      "operation_id": "registerWorker",
+      "method": "PUT",
+      "path": "/workers/worker-human-proof",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-proof-registrar",
+        "Jarvis-Idempotency-Key": "idem-register-worker-human-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:00:00Z"
+      },
+      "actor_id": "actor-proof-registrar",
+      "expected_status": 200,
+      "body_ref": "records.workers.human"
+    },
+    {
+      "operation_id": "registerWorker",
+      "method": "PUT",
+      "path": "/workers/worker-agent-proof",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-proof-registrar",
+        "Jarvis-Idempotency-Key": "idem-register-worker-agent-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:00:01Z"
+      },
+      "actor_id": "actor-proof-registrar",
+      "expected_status": 200,
+      "body_ref": "records.workers.agent"
+    },
+    {
+      "operation_id": "registerActor",
+      "method": "PUT",
+      "path": "/actors/actor-human-proof",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-proof-registrar",
+        "Jarvis-Idempotency-Key": "idem-register-actor-human-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:00:02Z"
+      },
+      "actor_id": "actor-proof-registrar",
+      "expected_status": 200,
+      "body_ref": "records.actors.human"
+    },
+    {
+      "operation_id": "registerActor",
+      "method": "PUT",
+      "path": "/actors/actor-agent-proof",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-proof-registrar",
+        "Jarvis-Idempotency-Key": "idem-register-actor-agent-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:00:03Z"
+      },
+      "actor_id": "actor-proof-registrar",
+      "expected_status": 200,
+      "body_ref": "records.actors.agent"
+    },
+    {
+      "operation_id": "createWorkSession",
+      "method": "POST",
+      "path": "/work-sessions",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-proof",
+        "Jarvis-Idempotency-Key": "idem-create-worksession-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:01:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 0,
+        "Jarvis-Previous-Event-Hash": "hash:protocol-genesis"
+      },
+      "actor_id": "actor-human-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.work_sessions.genesis_request"
+    },
+    {
+      "operation_id": "recordPolicyDecision",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/policy-decisions",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-agent-proof",
+        "Jarvis-Idempotency-Key": "idem-policy-denied-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:04:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 1,
+        "Jarvis-Previous-Event-Hash": "hash:6642038436fa5c7cb4242ef3220b2ad609dcb773038e467b6b97cd28e8e137ef"
+      },
+      "actor_id": "actor-agent-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.policy_decisions.external_source_denied"
+    },
+    {
+      "operation_id": "createRequest",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/requests",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-agent-proof",
+        "Jarvis-Idempotency-Key": "idem-request-source-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:05:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 2,
+        "Jarvis-Previous-Event-Hash": "hash:0066654d781b9151b65dc20e02b8ad85f6cdbf1a87417c887c00b0e5ce6e0ecf"
+      },
+      "actor_id": "actor-agent-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.requests.pending"
+    },
+    {
+      "operation_id": "recordReview",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/reviews",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-proof",
+        "Jarvis-Idempotency-Key": "idem-review-source-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:08:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 3,
+        "Jarvis-Previous-Event-Hash": "hash:b3d3a2304426ed51076c71b532fe4f7c08a691288781cd6e3211e34ccad9ee9d"
+      },
+      "actor_id": "actor-human-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.reviews.approve_source"
+    },
+    {
+      "operation_id": "recordPolicyDecision",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/policy-decisions",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-agent-proof",
+        "Jarvis-Idempotency-Key": "idem-policy-allowed-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:08:30Z",
+        "Jarvis-Expected-WorkSession-Revision": 4,
+        "Jarvis-Previous-Event-Hash": "hash:fce755826bde42cce50d741164be53f3ac718ea7e1b6841ce712ea157dcb8586"
+      },
+      "actor_id": "actor-agent-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.policy_decisions.external_source_allowed"
+    },
+    {
+      "operation_id": "appendJarvisEvent",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/events",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-agent-proof",
+        "Jarvis-Idempotency-Key": "idem-evidence-captured-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:12:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 5,
+        "Jarvis-Previous-Event-Hash": "hash:5ee29ee725b8c89a4f3998e40e12cf6fd1a4771cb0df063b0da5d9536f077817"
+      },
+      "actor_id": "actor-agent-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.jarvis_events.evidence_captured"
+    },
+    {
+      "operation_id": "recordContribution",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/contributions",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-proof",
+        "Jarvis-Idempotency-Key": "idem-contribution-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:16:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 6,
+        "Jarvis-Previous-Event-Hash": "hash:b8fa0dc7139219e3c691bc9cbe2cfc9190385939ceb1573ef3a50264bd3e1d0b"
+      },
+      "actor_id": "actor-human-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.contributions.shared_answer"
+    },
+    {
+      "operation_id": "createLearningRecord",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/learning-records",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-proof",
+        "Jarvis-Idempotency-Key": "idem-learning-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:18:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 7,
+        "Jarvis-Previous-Event-Hash": "hash:4ed07cd284c5de8ada58c26be5e6bdc3dc003fa05581f44981af268a3e64574d"
+      },
+      "actor_id": "actor-human-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.learning_records.pair"
+    },
+    {
+      "operation_id": "createMemoryProposal",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/memory-proposals",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-proof",
+        "Jarvis-Idempotency-Key": "idem-memory-proposal-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:19:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 8,
+        "Jarvis-Previous-Event-Hash": "hash:43d9a302fdc122a7042dcca75bbe3e596e5d2e38a3c80864c977df782f2498ec"
+      },
+      "actor_id": "actor-human-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.memory_proposals.source_policy_pattern"
+    },
+    {
+      "operation_id": "createSkillProposal",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/skill-proposals",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-proof",
+        "Jarvis-Idempotency-Key": "idem-skill-proposal-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:20:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 9,
+        "Jarvis-Previous-Event-Hash": "hash:3383855e9ac0607ad508218d6e42f3a0110add89417b1c53e8a99f9edef0764e"
+      },
+      "actor_id": "actor-human-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.skill_proposals.bounded_source_collection"
+    },
+    {
+      "operation_id": "appendJarvisEvent",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/events",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-proof",
+        "Jarvis-Idempotency-Key": "idem-worksession-completed-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:25:00Z",
+        "Jarvis-Expected-WorkSession-Revision": 10,
+        "Jarvis-Previous-Event-Hash": "hash:419b7e5386af3402002289531cf486944ff1d44a683389f96deb6425d7d294aa"
+      },
+      "actor_id": "actor-human-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.jarvis_events.worksession_completed"
+    },
+    {
+      "operation_id": "exportEvidenceManifest",
+      "method": "GET",
+      "path": "/work-sessions/ws-native-coding-agent-proof/export",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-proof"
+      },
+      "actor_id": "actor-human-proof",
+      "expected_status": 200,
+      "work_session_id": "ws-native-coding-agent-proof"
+    },
+    {
+      "operation_id": "submitOutcomeReport",
+      "method": "POST",
+      "path": "/outcome-reports",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-human-proof",
+        "Jarvis-Idempotency-Key": "idem-outcome-report-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:30:00Z"
+      },
+      "actor_id": "actor-human-proof",
+      "expected_status": 202,
+      "body_ref": "records.outcome_reports.post_session"
+    }
+  ],
+  "assertions": [
+    "native agent execution stays outside Jarvis",
+    "Jarvis records HumanWorker and AgentWorker collaboration",
+    "PolicyDecision precedes accepted AgentWorker state",
+    "Request resolves through HumanWorker Review",
+    "EvidenceManifest exports from terminal WorkSession state",
+    "OutcomeReport enters after WorkSession completion",
+    "LearningRecord, MemoryProposal, and SkillProposal carry governed learning forward"
+  ],
+  "pack_limits": {
+    "certifies_implementation": false,
+    "claims_production_adoption": false,
+    "defines_host_execution": false,
+    "defines_runtime_behavior": false,
+    "defines_agent_runtime": false,
+    "defines_host_ui": false,
+    "defines_storage": false,
+    "defines_auth": false,
+    "defines_model_calls": false,
+    "defines_tool_execution": false,
+    "defines_billing": false,
+    "defines_scoring": false,
+    "defines_payment": false,
+    "defines_deployment": false,
+    "defines_monitoring": false,
+    "defines_host_integration": false,
+    "defines_host_workflow": false,
+    "defines_adapter_code": false,
+    "defines_wrapper_code": false
+  }
+}
