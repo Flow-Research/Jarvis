@@ -69,6 +69,27 @@ body::after {
   mix-blend-mode: soft-light;
 }
 
+.skip-link {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 20;
+  transform: translateY(-160%);
+  border: 1px solid var(--mint);
+  border-radius: 8px;
+  background: var(--carbon);
+  color: var(--mint);
+  padding: 10px 12px;
+  text-decoration: none;
+  font-weight: 900;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
+}
+
 button {
   border: 0;
   font: inherit;
@@ -809,7 +830,8 @@ a {
   margin-top: 16px;
 }
 
-.schema-list span {
+.schema-list span,
+.schema-list a {
   min-height: 36px;
   display: inline-flex;
   align-items: center;
@@ -820,6 +842,21 @@ a {
   padding: 0 12px;
   font-size: 0.82rem;
   font-weight: 900;
+}
+
+.schema-list a {
+  text-decoration: none;
+}
+
+.schema-list a:hover,
+.schema-list a:focus-visible {
+  border-color: rgb(120 247 180 / 62%);
+  color: var(--cyan);
+}
+
+.schema-list a:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
 }
 
 .code-sample,

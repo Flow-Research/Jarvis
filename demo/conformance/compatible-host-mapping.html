@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Compatible Host Mapping | Jarvis Conformance</title>
+    <meta name="description" content="Jarvis v0.1 compatible host mapping page for equivalent Jarvis records across native host shapes." />
+    <link rel="icon" href="../assets/favicon.svg?v=conformance1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=conformance1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>conformance</small></span></a><nav class="topnav" aria-label="Conformance navigation"><a href="../">Home</a><a href="../spec/">Spec</a><a href="../openapi/">OpenAPI</a><a href="./" aria-current="location">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1.0</span></header>
+      <section class="spec-hero"><div><p class="kicker">Compatible host mapping</p><h1>Different host shapes produce equivalent Jarvis records.</h1><p>Compatibility mapping proves that native execution boundaries change no Jarvis object, operation, header, assertion, error id, or export field. Hosts own native execution. Jarvis records portable protocol state.</p></div><a class="command primary" href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/compatible-host-mapping.md">Open source example</a></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Conformance pages"><a href="./">Overview</a><a href="./golden-path.html">Golden path</a><a href="./failure-modes.html">Failure modes</a><a href="./fixtures.html">Fixture list</a><a href="./compatibility-claim.html">Compatibility claim</a><a href="./existing-agent-compatibility.html">Existing-agent compatibility</a><a href="./compatible-host-mapping.html" aria-current="page">Compatible host mapping</a></nav>
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Host shape references</h2>
+            <div class="schema-list" aria-label="Allowed host shape refs"><span>command_line_host_boundary</span><span>local_execution_host_boundary</span><span>hosted_execution_host_boundary</span><span>tool_use_protocol_boundary</span></div>
+            <p><code>host_shape_ref</code> is fixture metadata only. It never enters protocol records, operation bodies, JarvisEvents, EvidenceManifest, or portable export payloads.</p>
+          </article>
+          <article class="spec-panel">
+            <h2>Required mapping</h2>
+            <div class="operation-table">
+              <div><h3>Human participant</h3><p>Maps to Worker, HumanWorker, and Actor records.</p></div>
+              <div><h3>Agent participant</h3><p>Maps to Worker, AgentWorker, and Actor records.</p></div>
+              <div><h3>Work objective</h3><p>Maps to WorkSession objective, Policy, revision, and event hash state.</p></div>
+              <div><h3>Agent action</h3><p>Maps to PolicyDecision before accepted protocol state.</p></div>
+              <div><h3>Blocked action</h3><p>Maps to Request with scope, reason, risk, options, fallback, expiry, and PolicyDecision ref.</p></div>
+              <div><h3>Human approval</h3><p>Maps to Review and bounded ApprovalScope.</p></div>
+              <div><h3>Human direct control</h3><p>Maps to Takeover with lock_epoch and reconciliation refs.</p></div>
+              <div><h3>Performed work</h3><p>Maps to Contribution with human, agent, shared, service, or tool attribution.</p></div>
+              <div><h3>Portable proof</h3><p>Maps to EvidenceManifest evidence refs, event chain root, limitations, and export profile.</p></div>
+              <div><h3>Future work change</h3><p>Maps to LearningRecord, MemoryProposal, SkillProposal, and OutcomeReport when feedback changes future behavior.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Mapping order</h2>
+            <ol>
+              <li>Register Worker records.</li>
+              <li>Register Actor records.</li>
+              <li>Create HumanWorker and AgentWorker records.</li>
+              <li>Start WorkSession with objective, Policy, revision, and event hash state.</li>
+              <li>Record PolicyDecision before AgentWorker action affects protocol state.</li>
+              <li>Append JarvisEvent for accepted protocol state.</li>
+              <li>Create Request for denied, review-required, or blocked scope.</li>
+              <li>Record Review or Takeover for human resolution.</li>
+              <li>Record Contribution for performed work.</li>
+              <li>Capture evidence refs from source events and portable artifacts.</li>
+              <li>Record LearningRecord for confirmed human, agent, or pair learning.</li>
+              <li>Record MemoryProposal or SkillProposal when learning changes future work.</li>
+              <li>Submit OutcomeReport only as post-session feedback ingress.</li>
+            </ol>
+          </article>
+          <article class="spec-panel">
+            <h2>Source contract</h2>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/compatible-host-mapping.md">Source: compatible host mapping example</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/compatibility-mapping.md">Source: compatibility mapping rules</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

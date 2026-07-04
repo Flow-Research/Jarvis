@@ -26,7 +26,7 @@
           <a href="#start">Start</a>
           <a href="#spec">Spec</a>
           <a href="./openapi/">OpenAPI</a>
-          <a href="#conformance">Conformance</a>
+          <a href="./conformance/">Conformance</a>
           <a href="#guides">Guides</a>
           <a href="#examples">Examples</a>
           <a href="#sdk">SDK</a>
@@ -62,9 +62,9 @@
             </a>
             <a
               class="command"
-              href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/checklist.md"
+              href="./conformance/"
             >
-              Conformance Checklist
+              Conformance
             </a>
             <a class="command" href="#implementation">Implementation Path</a>
             <a class="command" href="#walkthrough-controls">Run Walkthrough</a>
@@ -127,7 +127,7 @@
             Compatible implementations pass the conformance checklist and
             fixture expectations without adopting a Jarvis-owned runtime.
           </p>
-          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/README.md">Conformance docs</a>
+          <a href="./conformance/">Conformance docs</a>
         </article>
         <article class="doc-card">
           <span>04</span>
@@ -151,7 +151,7 @@
           <strong>Use the OpenAPI binding and SDK helpers.</strong>
           <p>Validate headers, records, event hashes, fixtures, and evidence exports.</p>
         </a>
-        <a href="#conformance">
+        <a href="./conformance/">
           <span>Prove</span>
           <strong>Run conformance before claiming compatibility.</strong>
           <p>Compatible implementations prove behavior through records and fixtures.</p>
@@ -414,6 +414,11 @@
             Contribution attribution, EvidenceManifest export safety, and
             governed learning.
           </p>
+          <div class="inline-actions">
+            <a class="command primary" href="./conformance/">Open conformance pages</a>
+            <a class="command" href="./conformance/compatibility-claim.html">Claim format</a>
+            <a class="command" href="./conformance/fixtures.html">Fixture list</a>
+          </div>
         </div>
         <pre aria-label="Protocol validation commands"><code>npm run test:cli
 node packages/cli/src/index.js validate fixtures docs/conformance/fixtures

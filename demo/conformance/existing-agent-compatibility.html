@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Existing-Agent Compatibility | Jarvis Conformance</title>
+    <meta name="description" content="Jarvis v0.1 existing-agent compatibility page for native agents that emit Jarvis protocol records." />
+    <link rel="icon" href="../assets/favicon.svg?v=conformance1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=conformance1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>conformance</small></span></a><nav class="topnav" aria-label="Conformance navigation"><a href="../">Home</a><a href="../spec/">Spec</a><a href="../openapi/">OpenAPI</a><a href="./" aria-current="location">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1.0</span></header>
+      <section class="spec-hero"><div><p class="kicker">Existing-agent compatibility</p><h1>Existing agents keep native execution and emit Jarvis-compatible records.</h1><p>An existing native agent participates in Jarvis by recording the human-agent collaboration contract around native work. Jarvis does not replace the agent, route the model, execute tools, own memory, own UI, own auth, own storage, or become the host adapter.</p></div><a class="command primary" href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/existing-agent-compatibility.md">Open source example</a></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Conformance pages"><a href="./">Overview</a><a href="./golden-path.html">Golden path</a><a href="./failure-modes.html">Failure modes</a><a href="./fixtures.html">Fixture list</a><a href="./compatibility-claim.html">Compatibility claim</a><a href="./existing-agent-compatibility.html" aria-current="page">Existing-agent compatibility</a><a href="./compatible-host-mapping.html">Compatible host mapping</a></nav>
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Native surface to Jarvis records</h2>
+            <div class="operation-table">
+              <div><h3>Native agent session</h3><p>Maps to AgentWorker and Actor records.</p></div>
+              <div><h3>Human operator identity</h3><p>Maps to HumanWorker and Actor records. Hosts own identity provider and auth backend.</p></div>
+              <div><h3>Task instruction</h3><p>Maps to WorkSession objective. Hosts own prompt transport.</p></div>
+              <div><h3>Native policy settings</h3><p>Map to Policy record. Hosts own policy UI and storage.</p></div>
+              <div><h3>Allowed native step</h3><p>Maps to PolicyDecision result allow before accepted state.</p></div>
+              <div><h3>Blocked native step</h3><p>Maps to PolicyDecision review_required or deny plus scoped Request.</p></div>
+              <div><h3>Human narrowed authority</h3><p>Maps to Review decision narrow plus ApprovalScope.</p></div>
+              <div><h3>Human direct control</h3><p>Maps to Takeover with lock_epoch and reconciliation_refs.</p></div>
+              <div><h3>Native output</h3><p>Maps to Contribution and EvidenceManifest refs.</p></div>
+              <div><h3>Reviewed lesson</h3><p>Maps to LearningRecord, MemoryProposal, and SkillProposal.</p></div>
+              <div><h3>External result</h3><p>Maps to OutcomeReport referencing LearningRecord.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Compatibility proof branches</h2>
+            <div class="field-grid">
+              <div class="field-card"><h3>Review resolution</h3><p>Agent reaches external-source action, records PolicyDecision, creates Request, receives human Review with bounded ApprovalScope, and resumes only inside approved scope.</p></div>
+              <div class="field-card"><h3>Takeover resolution</h3><p>Agent reaches high-risk branch, records PolicyDecision, creates Request, human assumes direct control through Takeover, stale continuation rejects, and resume requires reconciliation refs.</p></div>
+            </div>
+          </article>
+          <article class="spec-panel">
+            <h2>Boundary</h2>
+            <p>Hosts own native agent runtime, model calls, tool calls, memory, skills, tracing, session handling, execution flow, UI, storage, auth, billing, scoring, payment, deployment, adapters, wrappers, and host-specific SDK integration.</p>
+          </article>
+          <article class="spec-panel">
+            <h2>Source contract</h2>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/existing-agent-compatibility.md">Source: existing-agent compatibility example</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/existing-agent-proof-plan.md">Source: existing-agent proof plan</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

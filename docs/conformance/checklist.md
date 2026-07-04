@@ -24,9 +24,10 @@ The machine-readable fixture entry is:
 
 - [fixtures/README.md](./fixtures/README.md)
 
-The current valid fixture is:
+The current valid fixtures are:
 
 - [valid/golden-path.json](./fixtures/valid/golden-path.json)
+- [valid/takeover-path.json](./fixtures/valid/takeover-path.json)
 
 The current invalid fixtures are listed in the fixture-backed rejection table
 below.

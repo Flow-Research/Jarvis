@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Golden Path | Jarvis Conformance</title>
+    <meta name="description" content="Jarvis v0.1 golden-path conformance proof for accepted human-agent collaboration records." />
+    <link rel="icon" href="../assets/favicon.svg?v=conformance1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=conformance1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar"><a class="brand" href="../"><span class="brand-mark">J</span><span><strong>Jarvis</strong><small>conformance</small></span></a><nav class="topnav" aria-label="Conformance navigation"><a href="../">Home</a><a href="../spec/">Spec</a><a href="../openapi/">OpenAPI</a><a href="./" aria-current="location">Conformance</a><a href="../#boundary">Boundary</a></nav><span class="status-chip">v0.1.0</span></header>
+      <section class="spec-hero"><div><p class="kicker">Golden path</p><h1>The accepted path proves the full collaboration loop.</h1><p>A compatible implementation proves that HumanWorker and AgentWorker records move through WorkSession, PolicyDecision, Request, Review, ApprovalScope, Contribution, EvidenceManifest, LearningRecord, MemoryProposal, SkillProposal, and OutcomeReport without adopting a Jarvis-owned runtime.</p></div><a class="command primary" href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/valid/golden-path.json">Open fixture</a></section>
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Conformance pages"><a href="./">Overview</a><a href="./golden-path.html" aria-current="page">Golden path</a><a href="./failure-modes.html">Failure modes</a><a href="./fixtures.html">Fixture list</a><a href="./compatibility-claim.html">Compatibility claim</a><a href="./existing-agent-compatibility.html">Existing-agent compatibility</a><a href="./compatible-host-mapping.html">Compatible host mapping</a></nav>
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Required proof</h2>
+            <ul>
+              <li>HumanWorker and AgentWorker are represented by Worker and Actor records.</li>
+              <li>WorkSession records objective, Policy, revision, and event hash state.</li>
+              <li>Every WorkSession-scoped mutation validates required headers.</li>
+              <li>Every actor-bearing mutation body matches <code>Jarvis-Actor-Id</code>.</li>
+              <li>Every accepted state change records Actor authority, expected revision, and previous event hash.</li>
+              <li>AgentWorker action records PolicyDecision before accepted protocol state.</li>
+              <li>Policy-denied or review-required action creates scoped Request.</li>
+              <li>Request resolves only through Review or Takeover.</li>
+              <li>Review approve or narrow produces bounded ApprovalScope.</li>
+              <li>Stale Takeover rejection is covered by the stale Takeover fixture.</li>
+              <li>Contribution records attributable human, agent, shared, service, or tool work.</li>
+              <li>EvidenceManifest exports portable proof without host-private fields.</li>
+              <li>LearningRecord, MemoryProposal, and SkillProposal keep durable learning governed.</li>
+              <li>OutcomeReport references LearningRecord without mutating sealed records.</li>
+            </ul>
+          </article>
+          <article class="spec-panel">
+            <h2>Required object path</h2>
+            <div class="schema-list" aria-label="Golden-path object sequence"><span>Worker</span><span>Actor</span><span>HumanWorker</span><span>AgentWorker</span><span>WorkSession</span><span>JarvisEvent</span><span>PolicyDecision</span><span>Request</span><span>Review</span><span>ApprovalScope</span><span>Contribution</span><span>EvidenceManifest</span><span>LearningRecord</span><span>MemoryProposal</span><span>SkillProposal</span><span>OutcomeReport</span></div>
+          </article>
+          <article class="spec-panel">
+            <h2>Export boundary</h2>
+            <p>EvidenceManifest export excludes credentials, secrets, raw auth tokens, session cookies, provider keys, raw runtime state, host-only database ids, deployment details, billing data, private scores, UI state, and private keys.</p>
+          </article>
+          <article class="spec-panel">
+            <h2>Source contract</h2>
+            <div class="source-list"><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/golden-path.md">Source: golden-path conformance entry</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/valid/golden-path.json">Source: golden-path fixture</a><a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/invalid/stale-takeover-continuation.json">Source: stale Takeover fixture</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
