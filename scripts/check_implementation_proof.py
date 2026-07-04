@@ -168,7 +168,7 @@ REQUIRED_OPERATION_SPINE = [
 ]
 EVENT_HASH_EXCLUDED_FIELDS = {"event_hash", "actor_signature", "signing_key_ref"}
 SECRET_PATTERNS = (
-    re.compile(r"sk-[A-Za-z0-9_\-]+"),
+    re.compile(r"\bsk-[A-Za-z0-9_\-]+"),
     re.compile(r"Bearer\s+[A-Za-z0-9_\-\.]+", re.IGNORECASE),
     re.compile(r"OPENAI_API_KEY"),
 )
