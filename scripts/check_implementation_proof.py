@@ -12,7 +12,7 @@ from typing import Any
 
 import yaml
 
-from generate_implementation_proof import PROOF_PATH, ROOT, build_proof
+from generate_implementation_proof import LANGGRAPH_TRACE_PATH, PROOF_PATH, ROOT, build_proof
 
 
 PYTHON_PACKAGE_SRC = ROOT / "packages" / "python" / "src"
@@ -115,6 +115,7 @@ REQUIRED_OPERATION_SPINE = [
     ("recordReview", "records.reviews.approve_source", "ws-native-coding-agent-proof", "actor-human-proof"),
     ("recordPolicyDecision", "records.policy_decisions.external_source_allowed", "ws-native-coding-agent-proof", "actor-agent-proof"),
     ("appendJarvisEvent", "records.jarvis_events.evidence_captured", "ws-native-coding-agent-proof", "actor-agent-proof"),
+    ("appendJarvisEvent", "records.jarvis_events.framework_trace_captured", "ws-native-coding-agent-proof", "actor-agent-proof"),
     ("recordContribution", "records.contributions.shared_answer", "ws-native-coding-agent-proof", "actor-human-proof"),
     ("createLearningRecord", "records.learning_records.pair", "ws-native-coding-agent-proof", "actor-human-proof"),
     ("createMemoryProposal", "records.memory_proposals.source_policy_pattern", "ws-native-coding-agent-proof", "actor-human-proof"),
@@ -371,6 +372,7 @@ def validate_operation_spine(proof: dict[str, Any]) -> None:
                 )
     event_sequence_by_body_ref = {
         "records.jarvis_events.evidence_captured": "event-evidence-captured",
+        "records.jarvis_events.framework_trace_captured": "event-framework-trace-captured",
         "records.jarvis_events.worksession_completed": "event-worksession-completed",
     }
     for operation in operations:
@@ -463,6 +465,73 @@ def validate_actor_authority(proof: dict[str, Any]) -> None:
             raise ImplementationProofError(f"Actor {event.get('actor_id')} lacks authority for {event.get('type')}")
 
 
+def validate_native_framework_trace(proof: dict[str, Any]) -> None:
+    if not LANGGRAPH_TRACE_PATH.exists():
+        raise ImplementationProofError(f"{rel(LANGGRAPH_TRACE_PATH)} is missing")
+    trace = load_json(LANGGRAPH_TRACE_PATH)
+    if not isinstance(trace, dict):
+        raise ImplementationProofError(f"{rel(LANGGRAPH_TRACE_PATH)} MUST be an object")
+    native_boundary = proof.get("native_agent_boundary")
+    if not isinstance(native_boundary, dict):
+        raise ImplementationProofError("native_agent_boundary MUST be an object")
+    if native_boundary.get("framework_trace_ref") != rel(LANGGRAPH_TRACE_PATH):
+        raise ImplementationProofError("native_agent_boundary.framework_trace_ref MUST point to the native framework trace")
+    expected_hash = jarvis_protocol.hash_protocol_value(trace)
+    if native_boundary.get("framework_trace_hash") != expected_hash:
+        raise ImplementationProofError("native_agent_boundary.framework_trace_hash MUST match the native framework trace")
+    framework = trace.get("framework")
+    if not isinstance(framework, dict):
+        raise ImplementationProofError("native framework trace MUST identify the framework")
+    for field in ("name", "package", "package_version", "api"):
+        if not isinstance(framework.get(field), str) or not framework[field]:
+            raise ImplementationProofError(f"native framework trace framework.{field} MUST be present")
+    mapping = trace.get("jarvis_mapping")
+    if not isinstance(mapping, dict):
+        raise ImplementationProofError("native framework trace MUST map native execution to Jarvis records")
+    expected_mapping = {
+        "work_session_id": terminal_work_session(proof).get("id"),
+        "policy_decision_id": "pd-native-agent-source-denied",
+        "request_id": "req-native-agent-source",
+        "review_id": "review-native-agent-source-approval",
+        "contribution_id": "contribution-native-agent-shared-answer",
+        "evidence_manifest_id": "evidence-manifest-native-agent-proof",
+        "learning_record_id": "learning-native-agent-pair",
+        "memory_proposal_id": "memory-proposal-native-agent",
+        "skill_proposal_id": "skill-proposal-native-agent",
+        "outcome_report_id": "outcome-report-native-agent",
+    }
+    for key, expected_value in expected_mapping.items():
+        if mapping.get(key) != expected_value:
+            raise ImplementationProofError(f"native framework trace {key} MUST match Jarvis proof records")
+    manifest = proof["records"]["evidence_manifests"]["portable_export"]
+    evidence_items = manifest.get("evidence_item_refs", [])
+    trace_evidence = next(
+        (
+            item
+            for item in evidence_items
+            if isinstance(item, dict) and item.get("id") == "evidence-langgraph-stategraph-trace"
+        ),
+        None,
+    )
+    if not trace_evidence:
+        raise ImplementationProofError("EvidenceManifest MUST include native framework trace evidence")
+    if trace_evidence.get("content_hash") != expected_hash:
+        raise ImplementationProofError("native framework trace evidence content_hash MUST match trace hash")
+    source_event_refs = trace_evidence.get("source_event_refs")
+    if source_event_refs != ["event-framework-trace-captured"]:
+        raise ImplementationProofError("native framework trace evidence MUST reference the trace-capture event")
+    trace_event = event_by_id(proof, "event-framework-trace-captured")
+    if trace_event.get("payload", {}).get("object_id") != trace_evidence.get("id"):
+        raise ImplementationProofError("trace-capture JarvisEvent MUST identify the trace evidence item")
+    boundary = trace.get("boundary")
+    if not isinstance(boundary, dict) or boundary.get("jarvis_scope") != "protocol_records_only":
+        raise ImplementationProofError("native framework trace boundary MUST keep Jarvis limited to protocol records")
+    if boundary.get("native_execution_preserved") is not True:
+        raise ImplementationProofError("native framework trace boundary MUST preserve native execution")
+    if boundary.get("adapter_or_wrapper_added") is not False:
+        raise ImplementationProofError("native framework trace MUST NOT add adapter or wrapper behavior")
+
+
 def validate_proof(proof: dict[str, Any]) -> int:
     if set(proof) != TOP_LEVEL_KEYS:
         extra = sorted(set(proof) - TOP_LEVEL_KEYS)
@@ -519,6 +588,8 @@ def validate_proof(proof: dict[str, Any]) -> int:
     validate_terminal_exports(proof)
     checked += 1
     validate_actor_authority(proof)
+    checked += 1
+    validate_native_framework_trace(proof)
     checked += 1
 
     evidence_manifest = records["evidence_manifests"]["portable_export"]

@@ -1,0 +1,113 @@
+{
+  "trace_id": "langgraph-stategraph-native-run-v01",
+  "framework": {
+    "name": "LangGraph",
+    "package": "langgraph",
+    "package_version": "1.2.7",
+    "api": "StateGraph"
+  },
+  "graph": {
+    "state_schema": "AgentState",
+    "nodes": [
+      "inspect_policy",
+      "create_request",
+      "human_review",
+      "resume_after_review",
+      "finalize"
+    ],
+    "edges": [
+      [
+        "START",
+        "inspect_policy"
+      ],
+      [
+        "inspect_policy",
+        "create_request"
+      ],
+      [
+        "create_request",
+        "human_review"
+      ],
+      [
+        "human_review",
+        "resume_after_review"
+      ],
+      [
+        "resume_after_review",
+        "finalize"
+      ],
+      [
+        "finalize",
+        "END"
+      ]
+    ]
+  },
+  "initial_state": {
+    "objective": "Run a bounded coding-agent graph and record Jarvis protocol state around it.",
+    "policy_result": "",
+    "blocked_action": "",
+    "request_status": "",
+    "review_decision": "",
+    "evidence_refs": [],
+    "actions": [],
+    "status": "active",
+    "learning_summary": ""
+  },
+  "final_state": {
+    "objective": "Run a bounded coding-agent graph and record Jarvis protocol state around it.",
+    "policy_result": "allow",
+    "blocked_action": "fetch_external_source",
+    "request_status": "approved",
+    "review_decision": "approve",
+    "evidence_refs": [
+      "evidence-langgraph-stategraph-trace"
+    ],
+    "actions": [
+      {
+        "node": "inspect_policy",
+        "jarvis_record": "PolicyDecision",
+        "result": "deny"
+      },
+      {
+        "node": "create_request",
+        "jarvis_record": "Request",
+        "result": "pending"
+      },
+      {
+        "node": "human_review",
+        "jarvis_record": "Review",
+        "result": "approve"
+      },
+      {
+        "node": "resume_after_review",
+        "jarvis_record": "EvidenceItemRef",
+        "result": "captured"
+      },
+      {
+        "node": "finalize",
+        "jarvis_record": "Contribution, EvidenceManifest, LearningRecord",
+        "result": "completed"
+      }
+    ],
+    "status": "completed",
+    "learning_summary": "The pair learned to turn policy-denied framework actions into scoped Requests resolved by Review."
+  },
+  "jarvis_mapping": {
+    "work_session_id": "ws-native-coding-agent-proof",
+    "policy_decision_id": "pd-native-agent-source-denied",
+    "request_id": "req-native-agent-source",
+    "review_id": "review-native-agent-source-approval",
+    "contribution_id": "contribution-native-agent-shared-answer",
+    "evidence_manifest_id": "evidence-manifest-native-agent-proof",
+    "learning_record_id": "learning-native-agent-pair",
+    "memory_proposal_id": "memory-proposal-native-agent",
+    "skill_proposal_id": "skill-proposal-native-agent",
+    "outcome_report_id": "outcome-report-native-agent"
+  },
+  "boundary": {
+    "execution_owner": "LangGraph host application",
+    "jarvis_scope": "protocol_records_only",
+    "native_execution_preserved": true,
+    "adapter_or_wrapper_added": false
+  }
+}
