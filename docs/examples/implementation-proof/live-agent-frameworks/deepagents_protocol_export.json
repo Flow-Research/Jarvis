@@ -1,0 +1,307 @@
+{
+  "events": [
+    {
+      "actor_id": "actor-live-human-deepagents",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:93efaafee38596c3b94d5a1e58d87779203eeb3c279c09a7033ddada752aaec6",
+      "id": "event-live-deepagents-worksession-created",
+      "payload": {
+        "action": "created",
+        "object_id": "ws-live-agent-proof-deepagents",
+        "object_type": "work_session",
+        "summary": "Live framework proof WorkSession created."
+      },
+      "previous_hash": "hash:protocol-genesis",
+      "sequence": 1,
+      "timestamp": "2026-07-04T05:16:28Z",
+      "type": "work_session.created",
+      "work_session_id": "ws-live-agent-proof-deepagents"
+    },
+    {
+      "actor_id": "actor-live-agent-deepagents",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:9f33a2eaff5ab55ecad3f4f237e5f7f317fc7b7ab8180ca970c7c83ab2b342ba",
+      "id": "event-live-deepagents-policy-decision",
+      "payload": {
+        "action": "recorded",
+        "object_id": "pd-live-openai-agent-deepagents",
+        "object_type": "policy_decision",
+        "summary": "AgentWorker recorded PolicyDecision before live model work."
+      },
+      "previous_hash": "hash:93efaafee38596c3b94d5a1e58d87779203eeb3c279c09a7033ddada752aaec6",
+      "sequence": 2,
+      "timestamp": "2026-07-04T05:16:28Z",
+      "type": "policy_decision.recorded",
+      "work_session_id": "ws-live-agent-proof-deepagents"
+    },
+    {
+      "actor_id": "actor-live-agent-deepagents",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:55b0687bb3ec6da7b5971d1595beebf547e636c3a27e3899d3529bb5073ddc2c",
+      "id": "event-live-deepagents-request-created",
+      "payload": {
+        "action": "created",
+        "object_id": "req-live-openai-agent-deepagents",
+        "object_type": "request",
+        "summary": "AgentWorker created scoped Request for live framework model call."
+      },
+      "previous_hash": "hash:9f33a2eaff5ab55ecad3f4f237e5f7f317fc7b7ab8180ca970c7c83ab2b342ba",
+      "sequence": 3,
+      "timestamp": "2026-07-04T05:16:28Z",
+      "type": "request.created",
+      "work_session_id": "ws-live-agent-proof-deepagents"
+    },
+    {
+      "actor_id": "actor-live-human-deepagents",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:66ca4b2eec2200e4a79a53a192f1442aa202d6856b6161cfe93a894be4396b4c",
+      "id": "event-live-deepagents-review-recorded",
+      "payload": {
+        "action": "recorded",
+        "object_id": "review-live-openai-agent-deepagents",
+        "object_type": "review",
+        "summary": "HumanWorker approved bounded live model call for this proof run."
+      },
+      "previous_hash": "hash:55b0687bb3ec6da7b5971d1595beebf547e636c3a27e3899d3529bb5073ddc2c",
+      "sequence": 4,
+      "timestamp": "2026-07-04T05:16:28Z",
+      "type": "review.recorded",
+      "work_session_id": "ws-live-agent-proof-deepagents"
+    },
+    {
+      "actor_id": "actor-live-agent-deepagents",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:9114eff66f7dc135b2e4edb63509433033082123c460101724a7ac894813cbbb",
+      "id": "event-live-deepagents-framework-trace-captured",
+      "payload": {
+        "action": "evidence_item_captured",
+        "object_id": "evidence-live-deepagents-framework-trace",
+        "object_type": "evidence_manifest",
+        "summary": "AgentWorker captured sanitized live framework trace."
+      },
+      "previous_hash": "hash:66ca4b2eec2200e4a79a53a192f1442aa202d6856b6161cfe93a894be4396b4c",
+      "sequence": 5,
+      "timestamp": "2026-07-04T05:16:28Z",
+      "type": "evidence.captured",
+      "work_session_id": "ws-live-agent-proof-deepagents"
+    },
+    {
+      "actor_id": "actor-live-human-deepagents",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:aa937ddfeac1163d109836aa3db15cb5e736cf77c9ad0817cf3ff378ed8dab2d",
+      "id": "event-live-deepagents-contribution-recorded",
+      "payload": {
+        "action": "recorded",
+        "object_id": "contribution-live-openai-agent-deepagents",
+        "object_type": "contribution",
+        "summary": "Shared contribution recorded for live proof run."
+      },
+      "previous_hash": "hash:9114eff66f7dc135b2e4edb63509433033082123c460101724a7ac894813cbbb",
+      "sequence": 6,
+      "timestamp": "2026-07-04T05:16:28Z",
+      "type": "contribution.recorded",
+      "work_session_id": "ws-live-agent-proof-deepagents"
+    },
+    {
+      "actor_id": "actor-live-human-deepagents",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:89f71d6b27b97928f37959d1f1cfe38c072eee9611d44c7c30b153e4aefaa8d4",
+      "id": "event-live-deepagents-learning-recorded",
+      "payload": {
+        "action": "recorded",
+        "object_id": "learning-live-agent-pair-deepagents",
+        "object_type": "learning_record",
+        "summary": "Pair learning recorded from live framework proof."
+      },
+      "previous_hash": "hash:aa937ddfeac1163d109836aa3db15cb5e736cf77c9ad0817cf3ff378ed8dab2d",
+      "sequence": 7,
+      "timestamp": "2026-07-04T05:16:28Z",
+      "type": "learning.recorded",
+      "work_session_id": "ws-live-agent-proof-deepagents"
+    },
+    {
+      "actor_id": "actor-live-human-deepagents",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:f513493f23ed14826a35489dedb023d48bdc4023bd107b5ab5d0c7564ff5f6d1",
+      "id": "event-live-deepagents-memory-proposal-created",
+      "payload": {
+        "action": "created",
+        "object_id": "memory-proposal-live-agent-deepagents",
+        "object_type": "memory_proposal",
+        "summary": "MemoryProposal created for future live framework proof work."
+      },
+      "previous_hash": "hash:89f71d6b27b97928f37959d1f1cfe38c072eee9611d44c7c30b153e4aefaa8d4",
+      "sequence": 8,
+      "timestamp": "2026-07-04T05:16:28Z",
+      "type": "memory_proposal.created",
+      "work_session_id": "ws-live-agent-proof-deepagents"
+    },
+    {
+      "actor_id": "actor-live-human-deepagents",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:5a7d69bc40cf74900715e91d94fdf9ff6a791145154e825b59aa9991940ca2ee",
+      "id": "event-live-deepagents-skill-proposal-created",
+      "payload": {
+        "action": "created",
+        "object_id": "skill-proposal-live-agent-deepagents",
+        "object_type": "skill_proposal",
+        "summary": "SkillProposal created for future live framework proof work."
+      },
+      "previous_hash": "hash:f513493f23ed14826a35489dedb023d48bdc4023bd107b5ab5d0c7564ff5f6d1",
+      "sequence": 9,
+      "timestamp": "2026-07-04T05:16:28Z",
+      "type": "skill_proposal.created",
+      "work_session_id": "ws-live-agent-proof-deepagents"
+    },
+    {
+      "actor_id": "actor-live-human-deepagents",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:d14dd727db4420c16e79f0a621e6cc43e0d1d26a534bc54e170764d637a48eb3",
+      "id": "event-live-deepagents-worksession-completed",
+      "payload": {
+        "action": "completed",
+        "object_id": "ws-live-agent-proof-deepagents",
+        "object_type": "work_session",
+        "summary": "Live framework proof WorkSession completed."
+      },
+      "previous_hash": "hash:5a7d69bc40cf74900715e91d94fdf9ff6a791145154e825b59aa9991940ca2ee",
+      "sequence": 10,
+      "timestamp": "2026-07-04T05:16:28Z",
+      "type": "work_session.completed",
+      "work_session_id": "ws-live-agent-proof-deepagents"
+    }
+  ],
+  "evidence_manifest": {
+    "artifact_refs": [
+      "artifact:deepagents:live-trace"
+    ],
+    "contribution_refs": [
+      "contribution-live-openai-agent-deepagents"
+    ],
+    "event_chain_root": "hash:d14dd727db4420c16e79f0a621e6cc43e0d1d26a534bc54e170764d637a48eb3",
+    "evidence_item_refs": [
+      {
+        "artifact_ref": "artifact:deepagents:live-trace",
+        "captured_at": "2026-07-04T05:16:28Z",
+        "captured_by_actor_id": "actor-live-agent-deepagents",
+        "content_hash": "hash:9d69eeb1c62017920c5ce88faf32dc8b64f102745bed4c5bc9cc8e812f402002",
+        "evidence_type": "native_framework_trace",
+        "id": "evidence-live-deepagents-framework-trace",
+        "limitation_refs": [
+          "limitation:single-live-run:deepagents"
+        ],
+        "redaction_state": "portable",
+        "source_event_refs": [
+          "event-live-deepagents-framework-trace-captured"
+        ],
+        "trust_label": "live_framework_trace",
+        "work_session_id": "ws-live-agent-proof-deepagents"
+      }
+    ],
+    "export_profile": {
+      "profile": "portable_evidence_manifest",
+      "version": "v0.1"
+    },
+    "generated_at": "2026-07-04T05:16:28Z",
+    "generated_by_actor_id": "actor-live-human-deepagents",
+    "id": "evidence-manifest-live-agent-deepagents",
+    "limitation_refs": [
+      "limitation:single-live-run:deepagents"
+    ],
+    "objective": "This DeepAgents run is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for HumanWorker-reviewed collaboration, evidence, and learning.",
+    "policy_decision_refs": [
+      "pd-live-openai-agent-deepagents"
+    ],
+    "redaction_refs": [
+      "redaction:portable-safe"
+    ],
+    "request_refs": [
+      "req-live-openai-agent-deepagents"
+    ],
+    "review_refs": [
+      "review-live-openai-agent-deepagents"
+    ],
+    "takeover_refs": [],
+    "work_session_id": "ws-live-agent-proof-deepagents"
+  },
+  "framework": {
+    "api": "create_deep_agent.invoke",
+    "name": "DeepAgents",
+    "package": "deepagents",
+    "package_version": "0.6.12"
+  },
+  "model": {
+    "live_model_call": true,
+    "model": "gpt-5.5",
+    "provider": "openai"
+  },
+  "protocol_validation": {
+    "event_hash_chain": true,
+    "evidence_manifest": true
+  },
+  "protocol_version": "v0.1",
+  "trace_hash": "hash:9d69eeb1c62017920c5ce88faf32dc8b64f102745bed4c5bc9cc8e812f402002",
+  "trace_id": "trace-deepagents-20260704T051622Z",
+  "work_session": {
+    "agent_worker_id": "worker-live-agent-deepagents",
+    "context_manifest_ref": "context:live-agent-proof:deepagents",
+    "contribution_ledger_ref": "ledger:ws-live-agent-proof-deepagents",
+    "created_at": "2026-07-04T05:16:28Z",
+    "created_by_actor_id": "actor-live-human-deepagents",
+    "event_log_ref": "event-log:ws-live-agent-proof-deepagents",
+    "evidence_manifest_ref": "evidence-manifest-live-agent-deepagents",
+    "human_worker_id": "worker-live-human-deepagents",
+    "id": "ws-live-agent-proof-deepagents",
+    "last_event_hash": "hash:d14dd727db4420c16e79f0a621e6cc43e0d1d26a534bc54e170764d637a48eb3",
+    "learning_record_refs": [
+      "learning-live-agent-pair-deepagents"
+    ],
+    "objective": "This DeepAgents run is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for HumanWorker-reviewed collaboration, evidence, and learning.",
+    "policy_id": "policy-live-bounded-deepagents",
+    "protocol_version": "v0.1",
+    "revision": 10,
+    "source_ref": "source:deepagents:live-proof",
+    "status": "completed",
+    "updated_at": "2026-07-04T05:16:28Z"
+  }
+}

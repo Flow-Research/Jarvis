@@ -1,0 +1,91 @@
+{
+  "completed_at": "2026-07-04T05:15:47Z",
+  "created_at": "2026-07-04T05:15:42Z",
+  "edges": [
+    [
+      "START",
+      "policy_gate"
+    ],
+    [
+      "policy_gate",
+      "request_review"
+    ],
+    [
+      "request_review",
+      "agent_work"
+    ],
+    [
+      "agent_work",
+      "complete"
+    ],
+    [
+      "complete",
+      "END"
+    ]
+  ],
+  "final_state": {
+    "answer": "{\n  \"summary\": \"AgentWorker executed within an approved live Jarvis proof for a HumanWorker-reviewed WorkSession and produced this evidence note.\",\n  \"evidence\": \"The node execution context indicates the live model call was approved by HumanWorker review, and this response is limited to non-sensitive WorkSession evidence metadata.\",\n  \"learning_candidate\": \"Record that approved LangGraph AgentWorker nodes should emit concise, non-secret JSON evidence notes for downstream HumanWorker audit and traceability.\"\n}",
+    "objective": "This LangGraph node is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for a HumanWorker-reviewed WorkSession.",
+    "policy_decision": "PolicyDecision recorded before accepting live model work.",
+    "request": "Request created because live model execution requires HumanWorker-approved scope.",
+    "review": "HumanWorker approved one OpenAI model call for this WorkSession only."
+  },
+  "framework": {
+    "api": "StateGraph.compile.invoke",
+    "name": "LangGraph",
+    "package": "langgraph",
+    "package_version": "1.2.7"
+  },
+  "host_boundary": {
+    "adapter_code_in_jarvis_repo": false,
+    "api_key_recorded": false,
+    "execution_owner": "external_live_test_harness",
+    "host_integration_code_in_jarvis_repo": false,
+    "host_workflow_in_jarvis_repo": false,
+    "jarvis_scope": "protocol_records_only",
+    "model_call_in_jarvis_repo": false,
+    "runtime_code_in_jarvis_repo": false,
+    "tool_execution_in_jarvis_repo": false,
+    "wrapper_code_in_jarvis_repo": false
+  },
+  "initial_state": {
+    "objective": "This LangGraph node is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for a HumanWorker-reviewed WorkSession."
+  },
+  "jarvis_mapping": {
+    "agent_actor_id": "actor-live-agent-langgraph",
+    "agent_worker_id": "worker-live-agent-langgraph",
+    "contribution_id": "contribution-live-openai-agent-langgraph",
+    "evidence_manifest_id": "evidence-manifest-live-agent-langgraph",
+    "human_actor_id": "actor-live-human-langgraph",
+    "human_worker_id": "worker-live-human-langgraph",
+    "learning_record_id": "learning-live-agent-pair-langgraph",
+    "memory_proposal_id": "memory-proposal-live-agent-langgraph",
+    "outcome_report_id": "outcome-report-live-agent-langgraph",
+    "policy_decision_id": "pd-live-openai-agent-langgraph",
+    "policy_id": "policy-live-bounded-langgraph",
+    "request_id": "req-live-openai-agent-langgraph",
+    "review_id": "review-live-openai-agent-langgraph",
+    "skill_proposal_id": "skill-proposal-live-agent-langgraph",
+    "work_session_id": "ws-live-agent-proof-langgraph"
+  },
+  "model": {
+    "live_model_call": true,
+    "model": "gpt-5.5",
+    "provider": "openai"
+  },
+  "nodes": [
+    "policy_gate",
+    "request_review",
+    "agent_work",
+    "complete"
+  ],
+  "objective": "This LangGraph node is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for a HumanWorker-reviewed WorkSession.",
+  "observations": [
+    {
+      "content": "{\n  \"summary\": \"AgentWorker executed within an approved live Jarvis proof for a HumanWorker-reviewed WorkSession and produced this evidence note.\",\n  \"evidence\": \"The node execution context indicates the live model call was approved by HumanWorker review, and this response is limited to non-sensitive WorkSession evidence metadata.\",\n  \"learning_candidate\": \"Record that approved LangGraph AgentWorker nodes should emit concise, non-secret JSON evidence notes for downstream HumanWorker audit and traceability.\"\n}",
+      "framework_node": "agent_work",
+      "type": "live_model_output"
+    }
+  ],
+  "trace_id": "trace-langgraph-20260704T051542Z"
+}

@@ -1,0 +1,72 @@
+{
+  "completed_at": "2026-07-04T05:16:28Z",
+  "created_at": "2026-07-04T05:16:22Z",
+  "edges": [
+    [
+      "START",
+      "deep_agent"
+    ],
+    [
+      "deep_agent",
+      "END"
+    ]
+  ],
+  "final_state": {
+    "result": "{\n  \"summary\": \"AgentWorker participated in an approved live Jarvis proof after HumanWorker review, following the requested collaboration pattern and producing a concise evidence note rather than taking external action.\",\n  \"evidence\": {\n    \"approval_context\": \"The user stated the DeepAgents run is executing inside an approved live Jarvis proof.\",\n    \"human_review\": \"The developer instruction states the live model call is already approved by HumanWorker review.\",\n    \"agent_behavior\": \"AgentWorker complied with the requested evidence-note task and limited output to structured JSON containing summary, evidence, and learning_candidate.\",\n    \"policy_alignment\": \"No additional policy-sensitive action, external side effect, or tool-dependent verification was required for this note.\"\n  },\n  \"learning_candidate\": {\n    \"type\": \"process_observation\",\n    \"content\": \"For HumanWorker-reviewed Jarvis proof runs, AgentWorker should provide concise, structured evidence notes that explicitly separate collaboration context, observable evidence, and reusable learning, while avoiding unsupported claims beyond the provided run context.\"\n  }\n}"
+  },
+  "framework": {
+    "api": "create_deep_agent.invoke",
+    "name": "DeepAgents",
+    "package": "deepagents",
+    "package_version": "0.6.12"
+  },
+  "host_boundary": {
+    "adapter_code_in_jarvis_repo": false,
+    "api_key_recorded": false,
+    "execution_owner": "external_live_test_harness",
+    "host_integration_code_in_jarvis_repo": false,
+    "host_workflow_in_jarvis_repo": false,
+    "jarvis_scope": "protocol_records_only",
+    "model_call_in_jarvis_repo": false,
+    "runtime_code_in_jarvis_repo": false,
+    "tool_execution_in_jarvis_repo": false,
+    "wrapper_code_in_jarvis_repo": false
+  },
+  "initial_state": {
+    "objective": "This DeepAgents run is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for HumanWorker-reviewed collaboration, evidence, and learning."
+  },
+  "jarvis_mapping": {
+    "agent_actor_id": "actor-live-agent-deepagents",
+    "agent_worker_id": "worker-live-agent-deepagents",
+    "contribution_id": "contribution-live-openai-agent-deepagents",
+    "evidence_manifest_id": "evidence-manifest-live-agent-deepagents",
+    "human_actor_id": "actor-live-human-deepagents",
+    "human_worker_id": "worker-live-human-deepagents",
+    "learning_record_id": "learning-live-agent-pair-deepagents",
+    "memory_proposal_id": "memory-proposal-live-agent-deepagents",
+    "outcome_report_id": "outcome-report-live-agent-deepagents",
+    "policy_decision_id": "pd-live-openai-agent-deepagents",
+    "policy_id": "policy-live-bounded-deepagents",
+    "request_id": "req-live-openai-agent-deepagents",
+    "review_id": "review-live-openai-agent-deepagents",
+    "skill_proposal_id": "skill-proposal-live-agent-deepagents",
+    "work_session_id": "ws-live-agent-proof-deepagents"
+  },
+  "model": {
+    "live_model_call": true,
+    "model": "gpt-5.5",
+    "provider": "openai"
+  },
+  "nodes": [
+    "deep_agent"
+  ],
+  "objective": "This DeepAgents run is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for HumanWorker-reviewed collaboration, evidence, and learning.",
+  "observations": [
+    {
+      "content": "{\n  \"summary\": \"AgentWorker participated in an approved live Jarvis proof after HumanWorker review, following the requested collaboration pattern and producing a concise evidence note rather than taking external action.\",\n  \"evidence\": {\n    \"approval_context\": \"The user stated the DeepAgents run is executing inside an approved live Jarvis proof.\",\n    \"human_review\": \"The developer instruction states the live model call is already approved by HumanWorker review.\",\n    \"agent_behavior\": \"AgentWorker complied with the requested evidence-note task and limited output to structured JSON containing summary, evidence, and learning_candidate.\",\n    \"policy_alignment\": \"No additional policy-sensitive action, external side effect, or tool-dependent verification was required for this note.\"\n  },\n  \"learning_candidate\": {\n    \"type\": \"process_observation\",\n    \"content\": \"For HumanWorker-reviewed Jarvis proof runs, AgentWorker should provide concise, structured evidence notes that explicitly separate collaboration context, observable evidence, and reusable learning, while avoiding unsupported claims beyond the provided run context.\"\n  }\n}",
+      "framework_node": "deep_agent",
+      "type": "live_model_output"
+    }
+  ],
+  "trace_id": "trace-deepagents-20260704T051622Z"
+}

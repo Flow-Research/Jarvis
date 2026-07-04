@@ -32,6 +32,7 @@ implementation-proof work without changing normative protocol rules.
 
 - [post-v0.1-sdk-helper-tooling/README.md](./planning/post-v0.1-sdk-helper-tooling/README.md)
 - [examples/implementation-proof/native-coding-agent/README.md](./examples/implementation-proof/native-coding-agent/README.md)
+- [examples/implementation-proof/live-agent-frameworks/README.md](./examples/implementation-proof/live-agent-frameworks/README.md)
 
 ## Planning Archive
 
@@ -63,6 +64,7 @@ defining host-owned execution.
 - [examples/evidence-packs/existing-agent-review/README.md](./examples/evidence-packs/existing-agent-review/README.md)
 - [examples/evidence-packs/existing-agent-takeover/README.md](./examples/evidence-packs/existing-agent-takeover/README.md)
 - [examples/implementation-proof/native-coding-agent/README.md](./examples/implementation-proof/native-coding-agent/README.md)
+- [examples/implementation-proof/live-agent-frameworks/README.md](./examples/implementation-proof/live-agent-frameworks/README.md)
 
 ## OpenAPI
 
