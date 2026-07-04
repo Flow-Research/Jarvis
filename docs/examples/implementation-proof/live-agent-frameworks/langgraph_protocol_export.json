@@ -1,0 +1,307 @@
+{
+  "events": [
+    {
+      "actor_id": "actor-live-human-langgraph",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:809197f8472e95f7b1d18023ba492d97d8ea555cf0be14eefc93cdc7293760df",
+      "id": "event-live-langgraph-worksession-created",
+      "payload": {
+        "action": "created",
+        "object_id": "ws-live-agent-proof-langgraph",
+        "object_type": "work_session",
+        "summary": "Live framework proof WorkSession created."
+      },
+      "previous_hash": "hash:protocol-genesis",
+      "sequence": 1,
+      "timestamp": "2026-07-04T05:15:47Z",
+      "type": "work_session.created",
+      "work_session_id": "ws-live-agent-proof-langgraph"
+    },
+    {
+      "actor_id": "actor-live-agent-langgraph",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:f78d03b16081fe720957e5652024c692cd3429698eb7045d1dfc18a6813cc72c",
+      "id": "event-live-langgraph-policy-decision",
+      "payload": {
+        "action": "recorded",
+        "object_id": "pd-live-openai-agent-langgraph",
+        "object_type": "policy_decision",
+        "summary": "AgentWorker recorded PolicyDecision before live model work."
+      },
+      "previous_hash": "hash:809197f8472e95f7b1d18023ba492d97d8ea555cf0be14eefc93cdc7293760df",
+      "sequence": 2,
+      "timestamp": "2026-07-04T05:15:47Z",
+      "type": "policy_decision.recorded",
+      "work_session_id": "ws-live-agent-proof-langgraph"
+    },
+    {
+      "actor_id": "actor-live-agent-langgraph",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:fba2687cb9539fd36ef1dbe98b836fc0251cf24f4919b95b92744e6c68219011",
+      "id": "event-live-langgraph-request-created",
+      "payload": {
+        "action": "created",
+        "object_id": "req-live-openai-agent-langgraph",
+        "object_type": "request",
+        "summary": "AgentWorker created scoped Request for live framework model call."
+      },
+      "previous_hash": "hash:f78d03b16081fe720957e5652024c692cd3429698eb7045d1dfc18a6813cc72c",
+      "sequence": 3,
+      "timestamp": "2026-07-04T05:15:47Z",
+      "type": "request.created",
+      "work_session_id": "ws-live-agent-proof-langgraph"
+    },
+    {
+      "actor_id": "actor-live-human-langgraph",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:a1289210929ec795ccb8ad680ee54be7e17f3abdb1f043a63efab49fee08bc59",
+      "id": "event-live-langgraph-review-recorded",
+      "payload": {
+        "action": "recorded",
+        "object_id": "review-live-openai-agent-langgraph",
+        "object_type": "review",
+        "summary": "HumanWorker approved bounded live model call for this proof run."
+      },
+      "previous_hash": "hash:fba2687cb9539fd36ef1dbe98b836fc0251cf24f4919b95b92744e6c68219011",
+      "sequence": 4,
+      "timestamp": "2026-07-04T05:15:47Z",
+      "type": "review.recorded",
+      "work_session_id": "ws-live-agent-proof-langgraph"
+    },
+    {
+      "actor_id": "actor-live-agent-langgraph",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:de213282c8b33bd78020d182bcc6065e1ba10fc51b1114cc2eaa2a91d6469594",
+      "id": "event-live-langgraph-framework-trace-captured",
+      "payload": {
+        "action": "evidence_item_captured",
+        "object_id": "evidence-live-langgraph-framework-trace",
+        "object_type": "evidence_manifest",
+        "summary": "AgentWorker captured sanitized live framework trace."
+      },
+      "previous_hash": "hash:a1289210929ec795ccb8ad680ee54be7e17f3abdb1f043a63efab49fee08bc59",
+      "sequence": 5,
+      "timestamp": "2026-07-04T05:15:47Z",
+      "type": "evidence.captured",
+      "work_session_id": "ws-live-agent-proof-langgraph"
+    },
+    {
+      "actor_id": "actor-live-human-langgraph",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:d3efb0704831f549f4a2c83469e3f0a3bf4b7e06b9cb9e1e944a559fb734e62d",
+      "id": "event-live-langgraph-contribution-recorded",
+      "payload": {
+        "action": "recorded",
+        "object_id": "contribution-live-openai-agent-langgraph",
+        "object_type": "contribution",
+        "summary": "Shared contribution recorded for live proof run."
+      },
+      "previous_hash": "hash:de213282c8b33bd78020d182bcc6065e1ba10fc51b1114cc2eaa2a91d6469594",
+      "sequence": 6,
+      "timestamp": "2026-07-04T05:15:47Z",
+      "type": "contribution.recorded",
+      "work_session_id": "ws-live-agent-proof-langgraph"
+    },
+    {
+      "actor_id": "actor-live-human-langgraph",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:1c5f49100d20205d4715c2b7b934c5f83cdd9927707a0c9144bd1eb27d131c5a",
+      "id": "event-live-langgraph-learning-recorded",
+      "payload": {
+        "action": "recorded",
+        "object_id": "learning-live-agent-pair-langgraph",
+        "object_type": "learning_record",
+        "summary": "Pair learning recorded from live framework proof."
+      },
+      "previous_hash": "hash:d3efb0704831f549f4a2c83469e3f0a3bf4b7e06b9cb9e1e944a559fb734e62d",
+      "sequence": 7,
+      "timestamp": "2026-07-04T05:15:47Z",
+      "type": "learning.recorded",
+      "work_session_id": "ws-live-agent-proof-langgraph"
+    },
+    {
+      "actor_id": "actor-live-human-langgraph",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:258b5202dbc444a10723a66a8bb9416cb9e29921fcb17d9f8818f10f051feac2",
+      "id": "event-live-langgraph-memory-proposal-created",
+      "payload": {
+        "action": "created",
+        "object_id": "memory-proposal-live-agent-langgraph",
+        "object_type": "memory_proposal",
+        "summary": "MemoryProposal created for future live framework proof work."
+      },
+      "previous_hash": "hash:1c5f49100d20205d4715c2b7b934c5f83cdd9927707a0c9144bd1eb27d131c5a",
+      "sequence": 8,
+      "timestamp": "2026-07-04T05:15:47Z",
+      "type": "memory_proposal.created",
+      "work_session_id": "ws-live-agent-proof-langgraph"
+    },
+    {
+      "actor_id": "actor-live-human-langgraph",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:394fb59120886eb403a0917e850620e96cab38d1a9905d7c74d70cc094294f9d",
+      "id": "event-live-langgraph-skill-proposal-created",
+      "payload": {
+        "action": "created",
+        "object_id": "skill-proposal-live-agent-langgraph",
+        "object_type": "skill_proposal",
+        "summary": "SkillProposal created for future live framework proof work."
+      },
+      "previous_hash": "hash:258b5202dbc444a10723a66a8bb9416cb9e29921fcb17d9f8818f10f051feac2",
+      "sequence": 9,
+      "timestamp": "2026-07-04T05:15:47Z",
+      "type": "skill_proposal.created",
+      "work_session_id": "ws-live-agent-proof-langgraph"
+    },
+    {
+      "actor_id": "actor-live-human-langgraph",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:24c1a7ed844716f4132b7b49adee62196b5dd19996331a0656a1383e902c4be7",
+      "id": "event-live-langgraph-worksession-completed",
+      "payload": {
+        "action": "completed",
+        "object_id": "ws-live-agent-proof-langgraph",
+        "object_type": "work_session",
+        "summary": "Live framework proof WorkSession completed."
+      },
+      "previous_hash": "hash:394fb59120886eb403a0917e850620e96cab38d1a9905d7c74d70cc094294f9d",
+      "sequence": 10,
+      "timestamp": "2026-07-04T05:15:47Z",
+      "type": "work_session.completed",
+      "work_session_id": "ws-live-agent-proof-langgraph"
+    }
+  ],
+  "evidence_manifest": {
+    "artifact_refs": [
+      "artifact:langgraph:live-trace"
+    ],
+    "contribution_refs": [
+      "contribution-live-openai-agent-langgraph"
+    ],
+    "event_chain_root": "hash:24c1a7ed844716f4132b7b49adee62196b5dd19996331a0656a1383e902c4be7",
+    "evidence_item_refs": [
+      {
+        "artifact_ref": "artifact:langgraph:live-trace",
+        "captured_at": "2026-07-04T05:15:47Z",
+        "captured_by_actor_id": "actor-live-agent-langgraph",
+        "content_hash": "hash:013ff7c6ff49af743dfc6cf0385daf1f54b3459b08edd37d1ebacd3e7187f53c",
+        "evidence_type": "native_framework_trace",
+        "id": "evidence-live-langgraph-framework-trace",
+        "limitation_refs": [
+          "limitation:single-live-run:langgraph"
+        ],
+        "redaction_state": "portable",
+        "source_event_refs": [
+          "event-live-langgraph-framework-trace-captured"
+        ],
+        "trust_label": "live_framework_trace",
+        "work_session_id": "ws-live-agent-proof-langgraph"
+      }
+    ],
+    "export_profile": {
+      "profile": "portable_evidence_manifest",
+      "version": "v0.1"
+    },
+    "generated_at": "2026-07-04T05:15:47Z",
+    "generated_by_actor_id": "actor-live-human-langgraph",
+    "id": "evidence-manifest-live-agent-langgraph",
+    "limitation_refs": [
+      "limitation:single-live-run:langgraph"
+    ],
+    "objective": "This LangGraph node is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for a HumanWorker-reviewed WorkSession.",
+    "policy_decision_refs": [
+      "pd-live-openai-agent-langgraph"
+    ],
+    "redaction_refs": [
+      "redaction:portable-safe"
+    ],
+    "request_refs": [
+      "req-live-openai-agent-langgraph"
+    ],
+    "review_refs": [
+      "review-live-openai-agent-langgraph"
+    ],
+    "takeover_refs": [],
+    "work_session_id": "ws-live-agent-proof-langgraph"
+  },
+  "framework": {
+    "api": "StateGraph.compile.invoke",
+    "name": "LangGraph",
+    "package": "langgraph",
+    "package_version": "1.2.7"
+  },
+  "model": {
+    "live_model_call": true,
+    "model": "gpt-5.5",
+    "provider": "openai"
+  },
+  "protocol_validation": {
+    "event_hash_chain": true,
+    "evidence_manifest": true
+  },
+  "protocol_version": "v0.1",
+  "trace_hash": "hash:013ff7c6ff49af743dfc6cf0385daf1f54b3459b08edd37d1ebacd3e7187f53c",
+  "trace_id": "trace-langgraph-20260704T051542Z",
+  "work_session": {
+    "agent_worker_id": "worker-live-agent-langgraph",
+    "context_manifest_ref": "context:live-agent-proof:langgraph",
+    "contribution_ledger_ref": "ledger:ws-live-agent-proof-langgraph",
+    "created_at": "2026-07-04T05:15:47Z",
+    "created_by_actor_id": "actor-live-human-langgraph",
+    "event_log_ref": "event-log:ws-live-agent-proof-langgraph",
+    "evidence_manifest_ref": "evidence-manifest-live-agent-langgraph",
+    "human_worker_id": "worker-live-human-langgraph",
+    "id": "ws-live-agent-proof-langgraph",
+    "last_event_hash": "hash:24c1a7ed844716f4132b7b49adee62196b5dd19996331a0656a1383e902c4be7",
+    "learning_record_refs": [
+      "learning-live-agent-pair-langgraph"
+    ],
+    "objective": "This LangGraph node is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for a HumanWorker-reviewed WorkSession.",
+    "policy_id": "policy-live-bounded-langgraph",
+    "protocol_version": "v0.1",
+    "revision": 10,
+    "source_ref": "source:langgraph:live-proof",
+    "status": "completed",
+    "updated_at": "2026-07-04T05:15:47Z"
+  }
+}

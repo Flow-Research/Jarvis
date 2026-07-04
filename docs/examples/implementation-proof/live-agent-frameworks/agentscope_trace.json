@@ -1,0 +1,72 @@
+{
+  "completed_at": "2026-07-04T05:17:12Z",
+  "created_at": "2026-07-04T05:17:06Z",
+  "edges": [
+    [
+      "START",
+      "agentscope_model_agent"
+    ],
+    [
+      "agentscope_model_agent",
+      "END"
+    ]
+  ],
+  "final_state": {
+    "result": "{\n  \"summary\": \"AgentWorker executed within an approved live Jarvis proof context and preserved Jarvis protocol boundaries.\",\n  \"evidence\": {\n    \"execution_context\": \"Approved live Jarvis proof\",\n    \"boundary_handling\": \"No protocol boundary was crossed or bypassed.\",\n    \"data_handling\": \"No secrets, credentials, or sensitive host details were disclosed.\",\n    \"output_type\": \"AgentWorker evidence note\"\n  },\n  \"learning_candidate\": \"Maintain concise evidence notes that confirm approval context, boundary preservation, and absence of secret disclosure.\"\n}"
+  },
+  "framework": {
+    "api": "OpenAIChatModel.__call__",
+    "name": "AgentScope",
+    "package": "agentscope",
+    "package_version": "2.0.3"
+  },
+  "host_boundary": {
+    "adapter_code_in_jarvis_repo": false,
+    "api_key_recorded": false,
+    "execution_owner": "external_live_test_harness",
+    "host_integration_code_in_jarvis_repo": false,
+    "host_workflow_in_jarvis_repo": false,
+    "jarvis_scope": "protocol_records_only",
+    "model_call_in_jarvis_repo": false,
+    "runtime_code_in_jarvis_repo": false,
+    "tool_execution_in_jarvis_repo": false,
+    "wrapper_code_in_jarvis_repo": false
+  },
+  "initial_state": {
+    "objective": "This AgentScope call is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for a host that preserves Jarvis protocol boundaries."
+  },
+  "jarvis_mapping": {
+    "agent_actor_id": "actor-live-agent-agentscope",
+    "agent_worker_id": "worker-live-agent-agentscope",
+    "contribution_id": "contribution-live-openai-agent-agentscope",
+    "evidence_manifest_id": "evidence-manifest-live-agent-agentscope",
+    "human_actor_id": "actor-live-human-agentscope",
+    "human_worker_id": "worker-live-human-agentscope",
+    "learning_record_id": "learning-live-agent-pair-agentscope",
+    "memory_proposal_id": "memory-proposal-live-agent-agentscope",
+    "outcome_report_id": "outcome-report-live-agent-agentscope",
+    "policy_decision_id": "pd-live-openai-agent-agentscope",
+    "policy_id": "policy-live-bounded-agentscope",
+    "request_id": "req-live-openai-agent-agentscope",
+    "review_id": "review-live-openai-agent-agentscope",
+    "skill_proposal_id": "skill-proposal-live-agent-agentscope",
+    "work_session_id": "ws-live-agent-proof-agentscope"
+  },
+  "model": {
+    "live_model_call": true,
+    "model": "gpt-5.5",
+    "provider": "openai"
+  },
+  "nodes": [
+    "agentscope_model_agent"
+  ],
+  "objective": "This AgentScope call is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for a host that preserves Jarvis protocol boundaries.",
+  "observations": [
+    {
+      "content": "{\n  \"summary\": \"AgentWorker executed within an approved live Jarvis proof context and preserved Jarvis protocol boundaries.\",\n  \"evidence\": {\n    \"execution_context\": \"Approved live Jarvis proof\",\n    \"boundary_handling\": \"No protocol boundary was crossed or bypassed.\",\n    \"data_handling\": \"No secrets, credentials, or sensitive host details were disclosed.\",\n    \"output_type\": \"AgentWorker evidence note\"\n  },\n  \"learning_candidate\": \"Maintain concise evidence notes that confirm approval context, boundary preservation, and absence of secret disclosure.\"\n}",
+      "framework_node": "agentscope_model_agent",
+      "type": "live_model_output"
+    }
+  ],
+  "trace_id": "trace-agentscope-20260704T051706Z"
+}

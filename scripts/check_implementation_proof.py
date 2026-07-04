@@ -12,11 +12,53 @@ from typing import Any
 
 import yaml
 
-from generate_implementation_proof import PROOF_PATH, ROOT, build_proof
+from generate_implementation_proof import LANGGRAPH_TRACE_PATH, PROOF_PATH, ROOT, build_proof
 
 
 PYTHON_PACKAGE_SRC = ROOT / "packages" / "python" / "src"
 PROTOCOL_VERSION = "v0.1"
+LIVE_FRAMEWORK_PROOF_ROOT = (
+    ROOT
+    / "docs"
+    / "examples"
+    / "implementation-proof"
+    / "live-agent-frameworks"
+)
+LIVE_FRAMEWORK_PROOFS = {
+    "langgraph": {
+        "trace": "langgraph_trace.json",
+        "export": "langgraph_protocol_export.json",
+        "framework_name": "LangGraph",
+        "framework_package": "langgraph",
+        "framework_api": "StateGraph.compile.invoke",
+    },
+    "deepagents": {
+        "trace": "deepagents_trace.json",
+        "export": "deepagents_protocol_export.json",
+        "framework_name": "DeepAgents",
+        "framework_package": "deepagents",
+        "framework_api": "create_deep_agent.invoke",
+    },
+    "agentscope": {
+        "trace": "agentscope_trace.json",
+        "export": "agentscope_protocol_export.json",
+        "framework_name": "AgentScope",
+        "framework_package": "agentscope",
+        "framework_api": "OpenAIChatModel.__call__",
+    },
+}
+LIVE_HOST_BOUNDARY_KEYS = {
+    "adapter_code_in_jarvis_repo",
+    "api_key_recorded",
+    "execution_owner",
+    "host_integration_code_in_jarvis_repo",
+    "host_workflow_in_jarvis_repo",
+    "jarvis_scope",
+    "model_call_in_jarvis_repo",
+    "runtime_code_in_jarvis_repo",
+    "tool_execution_in_jarvis_repo",
+    "wrapper_code_in_jarvis_repo",
+}
 REQUIRED_HELPERS = {
     "create_operation_envelope",
     "create_work_session_mutation_headers",
@@ -115,6 +157,7 @@ REQUIRED_OPERATION_SPINE = [
     ("recordReview", "records.reviews.approve_source", "ws-native-coding-agent-proof", "actor-human-proof"),
     ("recordPolicyDecision", "records.policy_decisions.external_source_allowed", "ws-native-coding-agent-proof", "actor-agent-proof"),
     ("appendJarvisEvent", "records.jarvis_events.evidence_captured", "ws-native-coding-agent-proof", "actor-agent-proof"),
+    ("appendJarvisEvent", "records.jarvis_events.framework_trace_captured", "ws-native-coding-agent-proof", "actor-agent-proof"),
     ("recordContribution", "records.contributions.shared_answer", "ws-native-coding-agent-proof", "actor-human-proof"),
     ("createLearningRecord", "records.learning_records.pair", "ws-native-coding-agent-proof", "actor-human-proof"),
     ("createMemoryProposal", "records.memory_proposals.source_policy_pattern", "ws-native-coding-agent-proof", "actor-human-proof"),
@@ -124,6 +167,11 @@ REQUIRED_OPERATION_SPINE = [
     ("submitOutcomeReport", "records.outcome_reports.post_session", None, "actor-human-proof"),
 ]
 EVENT_HASH_EXCLUDED_FIELDS = {"event_hash", "actor_signature", "signing_key_ref"}
+SECRET_PATTERNS = (
+    re.compile(r"\bsk-[A-Za-z0-9_\-]+"),
+    re.compile(r"Bearer\s+[A-Za-z0-9_\-\.]+", re.IGNORECASE),
+    re.compile(r"OPENAI_API_KEY"),
+)
 
 sys.path.insert(0, str(PYTHON_PACKAGE_SRC))
 
@@ -320,6 +368,29 @@ def assert_result(label: str, result: Any) -> None:
     )
 
 
+def ordered_events(label: str, events: Any) -> list[dict[str, Any]]:
+    if not isinstance(events, list) or not events:
+        raise ImplementationProofError(f"{label} MUST include JarvisEvents")
+    for event in events:
+        if not isinstance(event, dict) or not isinstance(event.get("sequence"), int):
+            raise ImplementationProofError(f"{label} JarvisEvent sequence MUST be an integer")
+    return sorted(events, key=lambda item: item["sequence"])
+
+
+def validate_event_hash_list(label: str, events: list[dict[str, Any]]) -> None:
+    for event in events:
+        hash_input = {
+            key: value
+            for key, value in event.items()
+            if key not in EVENT_HASH_EXCLUDED_FIELDS
+        }
+        expected_hash = jarvis_protocol.hash_protocol_value(hash_input)
+        if event.get("event_hash") != expected_hash:
+            raise ImplementationProofError(
+                f"{label} JarvisEvent {event.get('id')} event_hash MUST match canonical event body hash"
+            )
+
+
 def operation_body(proof: dict[str, Any], operation: dict[str, Any]) -> Any:
     body_ref = operation.get("body_ref")
     if not isinstance(body_ref, str):
@@ -371,6 +442,7 @@ def validate_operation_spine(proof: dict[str, Any]) -> None:
                 )
     event_sequence_by_body_ref = {
         "records.jarvis_events.evidence_captured": "event-evidence-captured",
+        "records.jarvis_events.framework_trace_captured": "event-framework-trace-captured",
         "records.jarvis_events.worksession_completed": "event-worksession-completed",
     }
     for operation in operations:
@@ -380,15 +452,7 @@ def validate_operation_spine(proof: dict[str, Any]) -> None:
 
 
 def validate_event_hashes(proof: dict[str, Any]) -> None:
-    for event in all_records(proof["records"], "jarvis_events"):
-        hash_input = {
-            key: value
-            for key, value in event.items()
-            if key not in EVENT_HASH_EXCLUDED_FIELDS
-        }
-        expected_hash = jarvis_protocol.hash_protocol_value(hash_input)
-        if event.get("event_hash") != expected_hash:
-            raise ImplementationProofError(f"JarvisEvent {event.get('id')} event_hash MUST match canonical event body hash")
+    validate_event_hash_list("native implementation proof", all_records(proof["records"], "jarvis_events"))
 
 
 def validate_request_resolution(proof: dict[str, Any]) -> None:
@@ -463,6 +527,271 @@ def validate_actor_authority(proof: dict[str, Any]) -> None:
             raise ImplementationProofError(f"Actor {event.get('actor_id')} lacks authority for {event.get('type')}")
 
 
+def validate_native_framework_trace(proof: dict[str, Any]) -> None:
+    if not LANGGRAPH_TRACE_PATH.exists():
+        raise ImplementationProofError(f"{rel(LANGGRAPH_TRACE_PATH)} is missing")
+    trace = load_json(LANGGRAPH_TRACE_PATH)
+    if not isinstance(trace, dict):
+        raise ImplementationProofError(f"{rel(LANGGRAPH_TRACE_PATH)} MUST be an object")
+    native_boundary = proof.get("native_agent_boundary")
+    if not isinstance(native_boundary, dict):
+        raise ImplementationProofError("native_agent_boundary MUST be an object")
+    if native_boundary.get("framework_trace_ref") != rel(LANGGRAPH_TRACE_PATH):
+        raise ImplementationProofError("native_agent_boundary.framework_trace_ref MUST point to the native framework trace")
+    expected_hash = jarvis_protocol.hash_protocol_value(trace)
+    if native_boundary.get("framework_trace_hash") != expected_hash:
+        raise ImplementationProofError("native_agent_boundary.framework_trace_hash MUST match the native framework trace")
+    framework = trace.get("framework")
+    if not isinstance(framework, dict):
+        raise ImplementationProofError("native framework trace MUST identify the framework")
+    for field in ("name", "package", "package_version", "api"):
+        if not isinstance(framework.get(field), str) or not framework[field]:
+            raise ImplementationProofError(f"native framework trace framework.{field} MUST be present")
+    if native_boundary.get("framework_trace_id") != trace.get("trace_id"):
+        raise ImplementationProofError("native_agent_boundary.framework_trace_id MUST match the native framework trace")
+    if native_boundary.get("framework_package") != framework.get("package"):
+        raise ImplementationProofError("native_agent_boundary.framework_package MUST match the native framework trace")
+    if native_boundary.get("framework_package_version") != framework.get("package_version"):
+        raise ImplementationProofError("native_agent_boundary.framework_package_version MUST match the native framework trace")
+    if native_boundary.get("framework_api") != framework.get("api"):
+        raise ImplementationProofError("native_agent_boundary.framework_api MUST match the native framework trace")
+    mapping = trace.get("jarvis_mapping")
+    if not isinstance(mapping, dict):
+        raise ImplementationProofError("native framework trace MUST map native execution to Jarvis records")
+    expected_mapping = {
+        "work_session_id": terminal_work_session(proof).get("id"),
+        "policy_decision_id": "pd-native-agent-source-denied",
+        "request_id": "req-native-agent-source",
+        "review_id": "review-native-agent-source-approval",
+        "contribution_id": "contribution-native-agent-shared-answer",
+        "evidence_manifest_id": "evidence-manifest-native-agent-proof",
+        "learning_record_id": "learning-native-agent-pair",
+        "memory_proposal_id": "memory-proposal-native-agent",
+        "skill_proposal_id": "skill-proposal-native-agent",
+        "outcome_report_id": "outcome-report-native-agent",
+    }
+    for key, expected_value in expected_mapping.items():
+        if mapping.get(key) != expected_value:
+            raise ImplementationProofError(f"native framework trace {key} MUST match Jarvis proof records")
+    manifest = proof["records"]["evidence_manifests"]["portable_export"]
+    evidence_items = manifest.get("evidence_item_refs", [])
+    trace_evidence = next(
+        (
+            item
+            for item in evidence_items
+            if isinstance(item, dict) and item.get("id") == "evidence-langgraph-stategraph-trace"
+        ),
+        None,
+    )
+    if not trace_evidence:
+        raise ImplementationProofError("EvidenceManifest MUST include native framework trace evidence")
+    if trace_evidence.get("content_hash") != expected_hash:
+        raise ImplementationProofError("native framework trace evidence content_hash MUST match trace hash")
+    source_event_refs = trace_evidence.get("source_event_refs")
+    if source_event_refs != ["event-framework-trace-captured"]:
+        raise ImplementationProofError("native framework trace evidence MUST reference the trace-capture event")
+    trace_event = event_by_id(proof, "event-framework-trace-captured")
+    if trace_event.get("payload", {}).get("object_id") != trace_evidence.get("id"):
+        raise ImplementationProofError("trace-capture JarvisEvent MUST identify the trace evidence item")
+    boundary = trace.get("boundary")
+    if not isinstance(boundary, dict) or boundary.get("jarvis_scope") != "protocol_records_only":
+        raise ImplementationProofError("native framework trace boundary MUST keep Jarvis limited to protocol records")
+    if boundary.get("native_execution_preserved") is not True:
+        raise ImplementationProofError("native framework trace boundary MUST preserve native execution")
+    rejected_boundary_flags = {
+        "adapter_or_wrapper_added": "adapter or wrapper behavior",
+        "runtime_behavior_added": "runtime behavior",
+        "host_integration_added": "host integration behavior",
+        "host_workflow_added": "host workflow behavior",
+        "host_ui_added": "host UI behavior",
+        "model_calls_added": "model calls",
+        "tool_execution_added": "tool execution",
+    }
+    for flag, label in rejected_boundary_flags.items():
+        if boundary.get(flag) is not False:
+            raise ImplementationProofError(f"native framework trace MUST NOT add {label}")
+
+
+def validate_live_framework_proofs() -> int:
+    if not LIVE_FRAMEWORK_PROOF_ROOT.exists():
+        raise ImplementationProofError(f"{rel(LIVE_FRAMEWORK_PROOF_ROOT)} is missing")
+    readme = LIVE_FRAMEWORK_PROOF_ROOT / "README.md"
+    if not readme.exists():
+        raise ImplementationProofError(f"{rel(readme)} is missing")
+
+    checked = 0
+    seen_protocol_ids: set[str] = set()
+    for proof_id, expected in LIVE_FRAMEWORK_PROOFS.items():
+        trace_path = LIVE_FRAMEWORK_PROOF_ROOT / expected["trace"]
+        export_path = LIVE_FRAMEWORK_PROOF_ROOT / expected["export"]
+        if not trace_path.exists():
+            raise ImplementationProofError(f"{rel(trace_path)} is missing")
+        if not export_path.exists():
+            raise ImplementationProofError(f"{rel(export_path)} is missing")
+
+        trace_text = trace_path.read_text(encoding="utf-8")
+        export_text = export_path.read_text(encoding="utf-8")
+        for pattern in SECRET_PATTERNS:
+            if pattern.search(trace_text) or pattern.search(export_text):
+                raise ImplementationProofError(f"{proof_id} live proof artifact contains a secret-like value")
+
+        trace = load_json(trace_path)
+        export = load_json(export_path)
+        if not isinstance(trace, dict) or not isinstance(export, dict):
+            raise ImplementationProofError(f"{proof_id} live proof artifacts MUST be objects")
+
+        framework = trace.get("framework")
+        if not isinstance(framework, dict):
+            raise ImplementationProofError(f"{proof_id} trace MUST identify the framework")
+        if framework.get("name") != expected["framework_name"]:
+            raise ImplementationProofError(f"{proof_id} trace framework name mismatch")
+        if framework.get("package") != expected["framework_package"]:
+            raise ImplementationProofError(f"{proof_id} trace framework package mismatch")
+        if framework.get("api") != expected["framework_api"]:
+            raise ImplementationProofError(f"{proof_id} trace framework API mismatch")
+        if not isinstance(framework.get("package_version"), str) or not framework["package_version"]:
+            raise ImplementationProofError(f"{proof_id} trace framework package_version MUST be present")
+
+        model = trace.get("model")
+        if not isinstance(model, dict):
+            raise ImplementationProofError(f"{proof_id} trace MUST identify the model")
+        if model.get("provider") != "openai":
+            raise ImplementationProofError(f"{proof_id} live proof model provider MUST be openai")
+        if model.get("live_model_call") is not True:
+            raise ImplementationProofError(f"{proof_id} live proof MUST mark live_model_call true")
+        model_name = model.get("model")
+        if not isinstance(model_name, str) or not model_name.startswith(("gpt-4", "gpt-5")):
+            raise ImplementationProofError(f"{proof_id} live proof MUST use a GPT-4 or GPT-5 model")
+
+        boundary = trace.get("host_boundary")
+        if not isinstance(boundary, dict):
+            raise ImplementationProofError(f"{proof_id} trace MUST include host_boundary")
+        if set(boundary) != LIVE_HOST_BOUNDARY_KEYS:
+            extra = sorted(set(boundary) - LIVE_HOST_BOUNDARY_KEYS)
+            missing = sorted(LIVE_HOST_BOUNDARY_KEYS - set(boundary))
+            raise ImplementationProofError(
+                f"{proof_id} host_boundary keys mismatch; extra={extra}; missing={missing}"
+            )
+        if boundary.get("jarvis_scope") != "protocol_records_only":
+            raise ImplementationProofError(f"{proof_id} host_boundary MUST keep Jarvis protocol-only")
+        if boundary.get("execution_owner") != "external_live_test_harness":
+            raise ImplementationProofError(f"{proof_id} host_boundary MUST assign execution outside Jarvis")
+        false_flags = LIVE_HOST_BOUNDARY_KEYS - {"execution_owner", "jarvis_scope"}
+        for flag in false_flags:
+            if boundary.get(flag) is not False:
+                raise ImplementationProofError(f"{proof_id} host_boundary.{flag} MUST be false")
+
+        if export.get("trace_id") != trace.get("trace_id"):
+            raise ImplementationProofError(f"{proof_id} export trace_id MUST match trace")
+        if export.get("framework") != framework:
+            raise ImplementationProofError(f"{proof_id} export framework MUST match trace")
+        if export.get("model") != model:
+            raise ImplementationProofError(f"{proof_id} export model MUST match trace")
+        expected_hash = jarvis_protocol.hash_protocol_value(trace)
+        if export.get("trace_hash") != expected_hash:
+            raise ImplementationProofError(f"{proof_id} export trace_hash MUST match trace")
+
+        work_session = export.get("work_session")
+        events = export.get("events")
+        manifest = export.get("evidence_manifest")
+        if not isinstance(work_session, dict) or work_session.get("status") != "completed":
+            raise ImplementationProofError(f"{proof_id} export MUST include completed WorkSession")
+        if not isinstance(manifest, dict):
+            raise ImplementationProofError(f"{proof_id} export MUST include EvidenceManifest")
+
+        mapping = trace.get("jarvis_mapping")
+        if not isinstance(mapping, dict):
+            raise ImplementationProofError(f"{proof_id} trace MUST include jarvis_mapping")
+        if mapping.get("work_session_id") != work_session.get("id"):
+            raise ImplementationProofError(f"{proof_id} jarvis_mapping.work_session_id MUST match export")
+        if mapping.get("evidence_manifest_id") != manifest.get("id"):
+            raise ImplementationProofError(f"{proof_id} jarvis_mapping.evidence_manifest_id MUST match export")
+
+        event_list = ordered_events(f"{proof_id} live proof", events)
+        validate_event_hash_list(f"{proof_id} live proof", event_list)
+        final_event_hash = event_list[-1].get("event_hash")
+        if work_session.get("last_event_hash") != final_event_hash:
+            raise ImplementationProofError(f"{proof_id} WorkSession last_event_hash MUST match final JarvisEvent")
+        if manifest.get("event_chain_root") != final_event_hash:
+            raise ImplementationProofError(f"{proof_id} EvidenceManifest event_chain_root MUST match final JarvisEvent")
+
+        assert_result(
+            f"{proof_id} live event hash chain",
+            jarvis_protocol.validate_event_hash_chain(event_list),
+        )
+        assert_result(
+            f"{proof_id} live EvidenceManifest",
+            jarvis_protocol.validate_evidence_manifest(
+                manifest,
+                {"work_session": work_session},
+            ),
+        )
+        validation = export.get("protocol_validation")
+        if validation != {"event_hash_chain": True, "evidence_manifest": True}:
+            raise ImplementationProofError(f"{proof_id} protocol_validation MUST record passing checks")
+
+        evidence_items = manifest.get("evidence_item_refs")
+        if not isinstance(evidence_items, list):
+            raise ImplementationProofError(f"{proof_id} EvidenceManifest MUST include evidence_item_refs")
+        evidence_item_ids = [
+            item.get("id")
+            for item in evidence_items
+            if isinstance(item, dict)
+        ]
+        mapped_protocol_ids = [
+            value
+            for value in mapping.values()
+            if isinstance(value, str) and value
+        ]
+        current_protocol_ids = set()
+        for protocol_id in (
+            work_session.get("id"),
+            manifest.get("id"),
+            *mapped_protocol_ids,
+            *evidence_item_ids,
+            *(event.get("id") for event in event_list),
+        ):
+            if not isinstance(protocol_id, str) or not protocol_id:
+                raise ImplementationProofError(f"{proof_id} protocol ids MUST be nonempty strings")
+            current_protocol_ids.add(protocol_id)
+        for protocol_id in current_protocol_ids:
+            if protocol_id in seen_protocol_ids:
+                raise ImplementationProofError(f"{proof_id} protocol id reused across live proofs: {protocol_id}")
+        seen_protocol_ids.update(current_protocol_ids)
+        trace_evidence = next(
+            (
+                item
+                for item in evidence_items
+                if isinstance(item, dict) and item.get("evidence_type") == "native_framework_trace"
+            ),
+            None,
+        )
+        if not trace_evidence:
+            raise ImplementationProofError(f"{proof_id} EvidenceManifest MUST include native framework trace evidence")
+        if trace_evidence.get("content_hash") != expected_hash:
+            raise ImplementationProofError(f"{proof_id} trace evidence content_hash MUST match trace hash")
+        source_event_refs = trace_evidence.get("source_event_refs")
+        if not isinstance(source_event_refs, list) or len(source_event_refs) != 1:
+            raise ImplementationProofError(f"{proof_id} trace evidence MUST reference one trace-capture event")
+        source_event = next(
+            (
+                event
+                for event in event_list
+                if event.get("id") == source_event_refs[0]
+            ),
+            None,
+        )
+        if not source_event:
+            raise ImplementationProofError(f"{proof_id} trace evidence source_event_refs MUST resolve")
+        if source_event.get("type") != "evidence.captured":
+            raise ImplementationProofError(f"{proof_id} trace evidence source event MUST be evidence.captured")
+        if source_event.get("payload", {}).get("object_id") != trace_evidence.get("id"):
+            raise ImplementationProofError(f"{proof_id} trace-capture event MUST identify trace evidence item")
+        checked += 1
+
+    return checked
+
+
 def validate_proof(proof: dict[str, Any]) -> int:
     if set(proof) != TOP_LEVEL_KEYS:
         extra = sorted(set(proof) - TOP_LEVEL_KEYS)
@@ -520,6 +849,8 @@ def validate_proof(proof: dict[str, Any]) -> int:
     checked += 1
     validate_actor_authority(proof)
     checked += 1
+    validate_native_framework_trace(proof)
+    checked += 1
 
     evidence_manifest = records["evidence_manifests"]["portable_export"]
     assert_result(
@@ -558,6 +889,7 @@ def validate_proof(proof: dict[str, Any]) -> int:
 
     assert_result("SDK fixture validator", jarvis_protocol.validate_fixture(proof))
     checked += 1
+    checked += validate_live_framework_proofs()
     return checked
 
 

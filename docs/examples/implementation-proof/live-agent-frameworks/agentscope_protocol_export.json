@@ -1,0 +1,307 @@
+{
+  "events": [
+    {
+      "actor_id": "actor-live-human-agentscope",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:f79d9340fef155d5cbd71cd77702796281eea90c6e7bdc398257b244a2056b16",
+      "id": "event-live-agentscope-worksession-created",
+      "payload": {
+        "action": "created",
+        "object_id": "ws-live-agent-proof-agentscope",
+        "object_type": "work_session",
+        "summary": "Live framework proof WorkSession created."
+      },
+      "previous_hash": "hash:protocol-genesis",
+      "sequence": 1,
+      "timestamp": "2026-07-04T05:17:12Z",
+      "type": "work_session.created",
+      "work_session_id": "ws-live-agent-proof-agentscope"
+    },
+    {
+      "actor_id": "actor-live-agent-agentscope",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:10067a08ae22561a5d240660ca8fd1bd8f15224ec34afcefad4be7f8b5ff38fb",
+      "id": "event-live-agentscope-policy-decision",
+      "payload": {
+        "action": "recorded",
+        "object_id": "pd-live-openai-agent-agentscope",
+        "object_type": "policy_decision",
+        "summary": "AgentWorker recorded PolicyDecision before live model work."
+      },
+      "previous_hash": "hash:f79d9340fef155d5cbd71cd77702796281eea90c6e7bdc398257b244a2056b16",
+      "sequence": 2,
+      "timestamp": "2026-07-04T05:17:12Z",
+      "type": "policy_decision.recorded",
+      "work_session_id": "ws-live-agent-proof-agentscope"
+    },
+    {
+      "actor_id": "actor-live-agent-agentscope",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:d789a834830f629013e35dad9a4fbb393ba6f4a1769f6240ccf290c83f951b20",
+      "id": "event-live-agentscope-request-created",
+      "payload": {
+        "action": "created",
+        "object_id": "req-live-openai-agent-agentscope",
+        "object_type": "request",
+        "summary": "AgentWorker created scoped Request for live framework model call."
+      },
+      "previous_hash": "hash:10067a08ae22561a5d240660ca8fd1bd8f15224ec34afcefad4be7f8b5ff38fb",
+      "sequence": 3,
+      "timestamp": "2026-07-04T05:17:12Z",
+      "type": "request.created",
+      "work_session_id": "ws-live-agent-proof-agentscope"
+    },
+    {
+      "actor_id": "actor-live-human-agentscope",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:490eeb640711acea828c3883a7dfd1d79cabb2d5e0de8bf54e6e6ec13ecf64ab",
+      "id": "event-live-agentscope-review-recorded",
+      "payload": {
+        "action": "recorded",
+        "object_id": "review-live-openai-agent-agentscope",
+        "object_type": "review",
+        "summary": "HumanWorker approved bounded live model call for this proof run."
+      },
+      "previous_hash": "hash:d789a834830f629013e35dad9a4fbb393ba6f4a1769f6240ccf290c83f951b20",
+      "sequence": 4,
+      "timestamp": "2026-07-04T05:17:12Z",
+      "type": "review.recorded",
+      "work_session_id": "ws-live-agent-proof-agentscope"
+    },
+    {
+      "actor_id": "actor-live-agent-agentscope",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:b38a96b19c31b136dfc98be2e778e84e12c43f37164090ceb04277a13bb37347",
+      "id": "event-live-agentscope-framework-trace-captured",
+      "payload": {
+        "action": "evidence_item_captured",
+        "object_id": "evidence-live-agentscope-framework-trace",
+        "object_type": "evidence_manifest",
+        "summary": "AgentWorker captured sanitized live framework trace."
+      },
+      "previous_hash": "hash:490eeb640711acea828c3883a7dfd1d79cabb2d5e0de8bf54e6e6ec13ecf64ab",
+      "sequence": 5,
+      "timestamp": "2026-07-04T05:17:12Z",
+      "type": "evidence.captured",
+      "work_session_id": "ws-live-agent-proof-agentscope"
+    },
+    {
+      "actor_id": "actor-live-human-agentscope",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:5e3719e5b342a6eec1865ffb8b873223d3ad04a100c4f20693524a1070ebd328",
+      "id": "event-live-agentscope-contribution-recorded",
+      "payload": {
+        "action": "recorded",
+        "object_id": "contribution-live-openai-agent-agentscope",
+        "object_type": "contribution",
+        "summary": "Shared contribution recorded for live proof run."
+      },
+      "previous_hash": "hash:b38a96b19c31b136dfc98be2e778e84e12c43f37164090ceb04277a13bb37347",
+      "sequence": 6,
+      "timestamp": "2026-07-04T05:17:12Z",
+      "type": "contribution.recorded",
+      "work_session_id": "ws-live-agent-proof-agentscope"
+    },
+    {
+      "actor_id": "actor-live-human-agentscope",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:0cb6e8f38d2567c9453aa2052663fd2fc3856bd2b4af3ec376a7661cf1316ec3",
+      "id": "event-live-agentscope-learning-recorded",
+      "payload": {
+        "action": "recorded",
+        "object_id": "learning-live-agent-pair-agentscope",
+        "object_type": "learning_record",
+        "summary": "Pair learning recorded from live framework proof."
+      },
+      "previous_hash": "hash:5e3719e5b342a6eec1865ffb8b873223d3ad04a100c4f20693524a1070ebd328",
+      "sequence": 7,
+      "timestamp": "2026-07-04T05:17:12Z",
+      "type": "learning.recorded",
+      "work_session_id": "ws-live-agent-proof-agentscope"
+    },
+    {
+      "actor_id": "actor-live-human-agentscope",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:cde2d66fc468ce4983251b92b0a6d641505aeeb2f40ab655d94032d08209156c",
+      "id": "event-live-agentscope-memory-proposal-created",
+      "payload": {
+        "action": "created",
+        "object_id": "memory-proposal-live-agent-agentscope",
+        "object_type": "memory_proposal",
+        "summary": "MemoryProposal created for future live framework proof work."
+      },
+      "previous_hash": "hash:0cb6e8f38d2567c9453aa2052663fd2fc3856bd2b4af3ec376a7661cf1316ec3",
+      "sequence": 8,
+      "timestamp": "2026-07-04T05:17:12Z",
+      "type": "memory_proposal.created",
+      "work_session_id": "ws-live-agent-proof-agentscope"
+    },
+    {
+      "actor_id": "actor-live-human-agentscope",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:d52f58841e930aa8693b3642405d5632e7b649a9b125d38aed0263619e1f3a71",
+      "id": "event-live-agentscope-skill-proposal-created",
+      "payload": {
+        "action": "created",
+        "object_id": "skill-proposal-live-agent-agentscope",
+        "object_type": "skill_proposal",
+        "summary": "SkillProposal created for future live framework proof work."
+      },
+      "previous_hash": "hash:cde2d66fc468ce4983251b92b0a6d641505aeeb2f40ab655d94032d08209156c",
+      "sequence": 9,
+      "timestamp": "2026-07-04T05:17:12Z",
+      "type": "skill_proposal.created",
+      "work_session_id": "ws-live-agent-proof-agentscope"
+    },
+    {
+      "actor_id": "actor-live-human-agentscope",
+      "canonicalization": {
+        "hash_method": "sha256",
+        "profile_ref": "canonicalization:v0.1",
+        "serialization": "json-c14n"
+      },
+      "event_hash": "hash:7ac0b41951c95a4494ad8903f225baf150152f721829f1ce1dd579e14d603027",
+      "id": "event-live-agentscope-worksession-completed",
+      "payload": {
+        "action": "completed",
+        "object_id": "ws-live-agent-proof-agentscope",
+        "object_type": "work_session",
+        "summary": "Live framework proof WorkSession completed."
+      },
+      "previous_hash": "hash:d52f58841e930aa8693b3642405d5632e7b649a9b125d38aed0263619e1f3a71",
+      "sequence": 10,
+      "timestamp": "2026-07-04T05:17:12Z",
+      "type": "work_session.completed",
+      "work_session_id": "ws-live-agent-proof-agentscope"
+    }
+  ],
+  "evidence_manifest": {
+    "artifact_refs": [
+      "artifact:agentscope:live-trace"
+    ],
+    "contribution_refs": [
+      "contribution-live-openai-agent-agentscope"
+    ],
+    "event_chain_root": "hash:7ac0b41951c95a4494ad8903f225baf150152f721829f1ce1dd579e14d603027",
+    "evidence_item_refs": [
+      {
+        "artifact_ref": "artifact:agentscope:live-trace",
+        "captured_at": "2026-07-04T05:17:12Z",
+        "captured_by_actor_id": "actor-live-agent-agentscope",
+        "content_hash": "hash:cef8ea8704fede3619edbb9d9414cdb776a1dca98f16a079bcf630ba7e522021",
+        "evidence_type": "native_framework_trace",
+        "id": "evidence-live-agentscope-framework-trace",
+        "limitation_refs": [
+          "limitation:single-live-run:agentscope"
+        ],
+        "redaction_state": "portable",
+        "source_event_refs": [
+          "event-live-agentscope-framework-trace-captured"
+        ],
+        "trust_label": "live_framework_trace",
+        "work_session_id": "ws-live-agent-proof-agentscope"
+      }
+    ],
+    "export_profile": {
+      "profile": "portable_evidence_manifest",
+      "version": "v0.1"
+    },
+    "generated_at": "2026-07-04T05:17:12Z",
+    "generated_by_actor_id": "actor-live-human-agentscope",
+    "id": "evidence-manifest-live-agent-agentscope",
+    "limitation_refs": [
+      "limitation:single-live-run:agentscope"
+    ],
+    "objective": "This AgentScope call is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for a host that preserves Jarvis protocol boundaries.",
+    "policy_decision_refs": [
+      "pd-live-openai-agent-agentscope"
+    ],
+    "redaction_refs": [
+      "redaction:portable-safe"
+    ],
+    "request_refs": [
+      "req-live-openai-agent-agentscope"
+    ],
+    "review_refs": [
+      "review-live-openai-agent-agentscope"
+    ],
+    "takeover_refs": [],
+    "work_session_id": "ws-live-agent-proof-agentscope"
+  },
+  "framework": {
+    "api": "OpenAIChatModel.__call__",
+    "name": "AgentScope",
+    "package": "agentscope",
+    "package_version": "2.0.3"
+  },
+  "model": {
+    "live_model_call": true,
+    "model": "gpt-5.5",
+    "provider": "openai"
+  },
+  "protocol_validation": {
+    "event_hash_chain": true,
+    "evidence_manifest": true
+  },
+  "protocol_version": "v0.1",
+  "trace_hash": "hash:cef8ea8704fede3619edbb9d9414cdb776a1dca98f16a079bcf630ba7e522021",
+  "trace_id": "trace-agentscope-20260704T051706Z",
+  "work_session": {
+    "agent_worker_id": "worker-live-agent-agentscope",
+    "context_manifest_ref": "context:live-agent-proof:agentscope",
+    "contribution_ledger_ref": "ledger:ws-live-agent-proof-agentscope",
+    "created_at": "2026-07-04T05:17:12Z",
+    "created_by_actor_id": "actor-live-human-agentscope",
+    "event_log_ref": "event-log:ws-live-agent-proof-agentscope",
+    "evidence_manifest_ref": "evidence-manifest-live-agent-agentscope",
+    "human_worker_id": "worker-live-human-agentscope",
+    "id": "ws-live-agent-proof-agentscope",
+    "last_event_hash": "hash:7ac0b41951c95a4494ad8903f225baf150152f721829f1ce1dd579e14d603027",
+    "learning_record_refs": [
+      "learning-live-agent-pair-agentscope"
+    ],
+    "objective": "This AgentScope call is executing inside an approved live Jarvis proof. Produce the AgentWorker evidence note for a host that preserves Jarvis protocol boundaries.",
+    "policy_id": "policy-live-bounded-agentscope",
+    "protocol_version": "v0.1",
+    "revision": 10,
+    "source_ref": "source:agentscope:live-proof",
+    "status": "completed",
+    "updated_at": "2026-07-04T05:17:12Z"
+  }
+}

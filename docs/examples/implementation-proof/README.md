@@ -7,7 +7,10 @@ Jarvis records protocol state. Hosts own native execution.
 ## Proofs
 
 - [native-coding-agent/README.md](./native-coding-agent/README.md) - SDK-helper
-  generated proof for one native coding-agent collaboration loop.
+  generated proof for one LangGraph StateGraph coding-agent collaboration loop.
+- [live-agent-frameworks/README.md](./live-agent-frameworks/README.md) -
+  live external-host proof for LangGraph, DeepAgents, and AgentScope with
+  OpenAI model execution mapped into Jarvis protocol records.
 
 ## Boundary
 
@@ -15,7 +18,9 @@ Implementation proof records do not define runtime behavior, host UI, storage,
 auth, model calls, tool execution, billing, scoring, payment, deployment,
 monitoring, host integration, adapters, wrappers, or host workflow.
 
-The proof validates protocol records only.
+The proofs validate protocol records, committed native framework traces,
+trace-to-record mappings, hash linkage, operation ordering, fixture shape, and
+live framework evidence exports.
 
 ## Validation
 

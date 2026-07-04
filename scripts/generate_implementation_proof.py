@@ -19,6 +19,14 @@ PROOF_PATH = (
     / "native-coding-agent"
     / "proof.json"
 )
+LANGGRAPH_TRACE_PATH = (
+    ROOT
+    / "docs"
+    / "examples"
+    / "implementation-proof"
+    / "native-coding-agent"
+    / "langgraph_trace.json"
+)
 AUTHORIZATION = "HostAuth proof"
 PROTOCOL_VERSION = "v0.1"
 WORK_SESSION_ID = "ws-native-coding-agent-proof"
@@ -44,6 +52,14 @@ def requested_action() -> dict[str, str]:
 
 def action_hash() -> str:
     return jarvis_protocol.hash_protocol_value(requested_action())
+
+
+def load_langgraph_trace() -> dict[str, Any]:
+    return json.loads(LANGGRAPH_TRACE_PATH.read_text(encoding="utf-8"))
+
+
+def langgraph_trace_hash(trace: dict[str, Any]) -> str:
+    return jarvis_protocol.hash_protocol_value(trace)
 
 
 def worker_records() -> dict[str, dict[str, Any]]:
@@ -323,6 +339,16 @@ def build_events() -> list[dict[str, Any]]:
             "AgentWorker captured evidence for the reviewed answer.",
         ),
         (
+            "event-framework-trace-captured",
+            "evidence.captured",
+            "evidence_manifest",
+            "evidence_item_captured",
+            "evidence-langgraph-stategraph-trace",
+            AGENT_ACTOR_ID,
+            "2026-07-03T09:12:30Z",
+            "AgentWorker captured the external native framework trace as portable evidence.",
+        ),
+        (
             "event-contribution-recorded",
             "contribution.recorded",
             "contribution",
@@ -519,11 +545,21 @@ def build_collaboration_records(events: list[dict[str, Any]]) -> dict[str, Any]:
         ],
         "contributor_type": "shared",
         "contribution_type": "artifact",
-        "event_refs": ["event-evidence-captured", "event-contribution-recorded"],
+        "event_refs": [
+            "event-evidence-captured",
+            "event-framework-trace-captured",
+            "event-contribution-recorded",
+        ],
         "created_at": "2026-07-03T09:16:00Z",
-        "artifact_refs": ["artifact:reviewed-agent-output"],
+        "artifact_refs": [
+            "artifact:reviewed-agent-output",
+            "artifact:langgraph-stategraph-trace",
+        ],
         "review_refs": [review["id"]],
-        "evidence_refs": ["evidence-source-summary"],
+        "evidence_refs": [
+            "evidence-source-summary",
+            "evidence-langgraph-stategraph-trace",
+        ],
         "confidence": 0.92,
         "limitations": ["limitation:none-recorded"],
     }
@@ -538,6 +574,7 @@ def build_collaboration_records(events: list[dict[str, Any]]) -> dict[str, Any]:
             "event-request-created",
             "event-review-approved",
             "event-evidence-captured",
+            "event-framework-trace-captured",
         ],
         "review_state": "accepted",
         "scope": "scope:future-source-collection",
@@ -561,6 +598,7 @@ def build_collaboration_records(events: list[dict[str, Any]]) -> dict[str, Any]:
         "provenance": [
             "event-request-created",
             "event-review-approved",
+            "event-framework-trace-captured",
             learning["id"],
         ],
         "confidence": 0.9,
@@ -602,6 +640,7 @@ def build_collaboration_records(events: list[dict[str, Any]]) -> dict[str, Any]:
             "event-request-created",
             "event-review-approved",
             "event-evidence-captured",
+            "event-framework-trace-captured",
             learning["id"],
         ],
         "status": "pending_review",
@@ -611,6 +650,7 @@ def build_collaboration_records(events: list[dict[str, Any]]) -> dict[str, Any]:
             "event-request-created",
             "event-review-approved",
             "event-evidence-captured",
+            "event-framework-trace-captured",
         ],
         "learning_record_refs": [learning["id"]],
     }
@@ -747,13 +787,23 @@ def build_operations(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
             body_ref="records.jarvis_events.evidence_captured",
         ),
         op(
+            operation_id="appendJarvisEvent",
+            actor_id=AGENT_ACTOR_ID,
+            work_session_id=WORK_SESSION_ID,
+            idempotency_key="idem-framework-trace-captured-proof",
+            request_timestamp="2026-07-03T09:12:30Z",
+            expected_work_session_revision=6,
+            previous_event_hash=events[5]["event_hash"],
+            body_ref="records.jarvis_events.framework_trace_captured",
+        ),
+        op(
             operation_id="recordContribution",
             actor_id=HUMAN_ACTOR_ID,
             work_session_id=WORK_SESSION_ID,
             idempotency_key="idem-contribution-proof",
             request_timestamp="2026-07-03T09:16:00Z",
-            expected_work_session_revision=6,
-            previous_event_hash=events[5]["event_hash"],
+            expected_work_session_revision=7,
+            previous_event_hash=events[6]["event_hash"],
             body_ref="records.contributions.shared_answer",
         ),
         op(
@@ -762,8 +812,8 @@ def build_operations(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
             work_session_id=WORK_SESSION_ID,
             idempotency_key="idem-learning-proof",
             request_timestamp="2026-07-03T09:18:00Z",
-            expected_work_session_revision=7,
-            previous_event_hash=events[6]["event_hash"],
+            expected_work_session_revision=8,
+            previous_event_hash=events[7]["event_hash"],
             body_ref="records.learning_records.pair",
         ),
         op(
@@ -772,8 +822,8 @@ def build_operations(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
             work_session_id=WORK_SESSION_ID,
             idempotency_key="idem-memory-proposal-proof",
             request_timestamp="2026-07-03T09:19:00Z",
-            expected_work_session_revision=8,
-            previous_event_hash=events[7]["event_hash"],
+            expected_work_session_revision=9,
+            previous_event_hash=events[8]["event_hash"],
             body_ref="records.memory_proposals.source_policy_pattern",
         ),
         op(
@@ -782,8 +832,8 @@ def build_operations(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
             work_session_id=WORK_SESSION_ID,
             idempotency_key="idem-skill-proposal-proof",
             request_timestamp="2026-07-03T09:20:00Z",
-            expected_work_session_revision=9,
-            previous_event_hash=events[8]["event_hash"],
+            expected_work_session_revision=10,
+            previous_event_hash=events[9]["event_hash"],
             body_ref="records.skill_proposals.bounded_source_collection",
         ),
         op(
@@ -792,8 +842,8 @@ def build_operations(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
             work_session_id=WORK_SESSION_ID,
             idempotency_key="idem-worksession-completed-proof",
             request_timestamp="2026-07-03T09:25:00Z",
-            expected_work_session_revision=10,
-            previous_event_hash=events[9]["event_hash"],
+            expected_work_session_revision=11,
+            previous_event_hash=events[10]["event_hash"],
             body_ref="records.jarvis_events.worksession_completed",
         ),
         op(
@@ -812,6 +862,8 @@ def build_operations(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def build_proof() -> dict[str, Any]:
+    langgraph_trace = load_langgraph_trace()
+    trace_hash = langgraph_trace_hash(langgraph_trace)
     workers = worker_records()
     actors = actor_records()
     human_worker, agent_worker = participant_records()
@@ -831,7 +883,7 @@ def build_proof() -> dict[str, Any]:
             updated_at="2026-07-03T09:01:00Z",
         ),
         "completed": base_work_session(
-            revision=11,
+            revision=12,
             last_event_hash=events[-1]["event_hash"],
             status="completed",
             updated_at="2026-07-03T09:25:00Z",
@@ -858,6 +910,19 @@ def build_proof() -> dict[str, Any]:
                 "captured_at": "2026-07-03T09:12:00Z",
                 "limitation_refs": ["limitation:none-recorded"],
             },
+            {
+                "id": "evidence-langgraph-stategraph-trace",
+                "work_session_id": WORK_SESSION_ID,
+                "source_event_refs": ["event-framework-trace-captured"],
+                "captured_by_actor_id": AGENT_ACTOR_ID,
+                "evidence_type": "native_framework_trace",
+                "artifact_ref": "artifact:langgraph-stategraph-trace",
+                "content_hash": trace_hash,
+                "trust_label": "generated_framework_trace",
+                "redaction_state": "portable",
+                "captured_at": "2026-07-03T09:12:30Z",
+                "limitation_refs": ["limitation:none-recorded"],
+            },
         ],
         policy_decision_refs=[
             "pd-native-agent-source-denied",
@@ -867,7 +932,11 @@ def build_proof() -> dict[str, Any]:
         review_refs=["review-native-agent-source-approval"],
         takeover_refs=[],
         contribution_refs=["contribution-native-agent-shared-answer"],
-        artifact_refs=["artifact:reviewed-agent-output", "artifact:source-summary"],
+        artifact_refs=[
+            "artifact:reviewed-agent-output",
+            "artifact:source-summary",
+            "artifact:langgraph-stategraph-trace",
+        ],
         limitation_refs=["limitation:none-recorded"],
         redaction_refs=["redaction:portable-safe"],
         export_profile={
@@ -890,11 +959,12 @@ def build_proof() -> dict[str, Any]:
             "review_approved": events[3],
             "policy_allowed": events[4],
             "evidence_captured": events[5],
-            "contribution_recorded": events[6],
-            "learning_recorded": events[7],
-            "memory_proposal_created": events[8],
-            "skill_proposal_created": events[9],
-            "worksession_completed": events[10],
+            "framework_trace_captured": events[6],
+            "contribution_recorded": events[7],
+            "learning_recorded": events[8],
+            "memory_proposal_created": events[9],
+            "skill_proposal_created": events[10],
+            "worksession_completed": events[11],
         },
         **collaboration_records,
         "evidence_manifests": {"portable_export": evidence_manifest},
@@ -913,7 +983,14 @@ def build_proof() -> dict[str, Any]:
         "issue_ref": "https://github.com/Flow-Research/jarvis/issues/68",
         "host_shape_ref": "command_line_host_boundary",
         "native_agent_boundary": {
-            "agent_ref": "agent:native-coding-agent",
+            "agent_ref": "agent:langgraph-stategraph",
+            "framework_ref": "framework:langgraph-stategraph",
+            "framework_trace_ref": str(LANGGRAPH_TRACE_PATH.relative_to(ROOT)),
+            "framework_trace_hash": trace_hash,
+            "framework_trace_id": langgraph_trace["trace_id"],
+            "framework_package": langgraph_trace["framework"]["package"],
+            "framework_package_version": langgraph_trace["framework"]["package_version"],
+            "framework_api": langgraph_trace["framework"]["api"],
             "execution_owner": "host",
             "jarvis_scope": "protocol_records_only",
             "native_execution_preserved": True,

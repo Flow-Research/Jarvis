@@ -25,6 +25,9 @@ adapters, wrappers, SDK implementation, or host workflow.
 - [implementation-proof/native-coding-agent/README.md](./implementation-proof/native-coding-agent/README.md)
   SDK-helper generated implementation proof for one native coding-agent
   collaboration loop.
+- [implementation-proof/live-agent-frameworks/README.md](./implementation-proof/live-agent-frameworks/README.md)
+  live external-host proof for LangGraph, DeepAgents, and AgentScope mapped
+  into Jarvis protocol records.
 
 ## Validation
 

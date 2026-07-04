@@ -9,7 +9,14 @@
   "issue_ref": "https://github.com/Flow-Research/jarvis/issues/68",
   "host_shape_ref": "command_line_host_boundary",
   "native_agent_boundary": {
-    "agent_ref": "agent:native-coding-agent",
+    "agent_ref": "agent:langgraph-stategraph",
+    "framework_ref": "framework:langgraph-stategraph",
+    "framework_trace_ref": "docs/examples/implementation-proof/native-coding-agent/langgraph_trace.json",
+    "framework_trace_hash": "hash:8b987a4c3be5c2586871c7b57d47390a54023e7a8629593ea13b649f9e2b30b1",
+    "framework_trace_id": "langgraph-stategraph-native-run-v01",
+    "framework_package": "langgraph",
+    "framework_package_version": "1.2.7",
+    "framework_api": "StateGraph",
     "execution_owner": "host",
     "jarvis_scope": "protocol_records_only",
     "native_execution_preserved": true
@@ -313,8 +320,8 @@
         "agent_worker_id": "worker-agent-proof",
         "policy_id": "policy-proof-bounded",
         "status": "completed",
-        "revision": 11,
-        "last_event_hash": "hash:1042ebfb8f26eff875afa07080705c79c7314ac1982a36d98eef223bae0db578",
+        "revision": 12,
+        "last_event_hash": "hash:215f68ceb350e16a95fbad73a752eb29cdc40aba7bcbfd4b1b1bf3fb450392ef",
         "event_log_ref": "event-log:ws-native-coding-agent-proof",
         "created_at": "2026-07-03T09:01:00Z",
         "updated_at": "2026-07-03T09:25:00Z",
@@ -454,9 +461,30 @@
         },
         "event_hash": "hash:b8fa0dc7139219e3c691bc9cbe2cfc9190385939ceb1573ef3a50264bd3e1d0b"
       },
+      "framework_trace_captured": {
+        "id": "event-framework-trace-captured",
+        "sequence": 7,
+        "type": "evidence.captured",
+        "work_session_id": "ws-native-coding-agent-proof",
+        "actor_id": "actor-agent-proof",
+        "timestamp": "2026-07-03T09:12:30Z",
+        "payload": {
+          "object_type": "evidence_manifest",
+          "object_id": "evidence-langgraph-stategraph-trace",
+          "action": "evidence_item_captured",
+          "summary": "AgentWorker captured the external native framework trace as portable evidence."
+        },
+        "previous_hash": "hash:b8fa0dc7139219e3c691bc9cbe2cfc9190385939ceb1573ef3a50264bd3e1d0b",
+        "canonicalization": {
+          "serialization": "json-c14n",
+          "hash_method": "sha256",
+          "profile_ref": "canonicalization:v0.1"
+        },
+        "event_hash": "hash:af21c69c3327edf795a6f20351f13a15de146f34a54763810c7562d9ba2c7bfc"
+      },
       "contribution_recorded": {
         "id": "event-contribution-recorded",
-        "sequence": 7,
+        "sequence": 8,
         "type": "contribution.recorded",
         "work_session_id": "ws-native-coding-agent-proof",
         "actor_id": "actor-human-proof",
@@ -467,17 +495,17 @@
           "action": "recorded",
           "summary": "Shared contribution recorded for HumanWorker and AgentWorker."
         },
-        "previous_hash": "hash:b8fa0dc7139219e3c691bc9cbe2cfc9190385939ceb1573ef3a50264bd3e1d0b",
+        "previous_hash": "hash:af21c69c3327edf795a6f20351f13a15de146f34a54763810c7562d9ba2c7bfc",
         "canonicalization": {
           "serialization": "json-c14n",
           "hash_method": "sha256",
           "profile_ref": "canonicalization:v0.1"
         },
-        "event_hash": "hash:4ed07cd284c5de8ada58c26be5e6bdc3dc003fa05581f44981af268a3e64574d"
+        "event_hash": "hash:664205882131967aa31328cb6875da2839fda4f243623a17a507a7f292d43760"
       },
       "learning_recorded": {
         "id": "event-learning-recorded",
-        "sequence": 8,
+        "sequence": 9,
         "type": "learning.recorded",
         "work_session_id": "ws-native-coding-agent-proof",
         "actor_id": "actor-human-proof",
@@ -488,17 +516,17 @@
           "action": "recorded",
           "summary": "Pair learning recorded from Request and Review resolution."
         },
-        "previous_hash": "hash:4ed07cd284c5de8ada58c26be5e6bdc3dc003fa05581f44981af268a3e64574d",
+        "previous_hash": "hash:664205882131967aa31328cb6875da2839fda4f243623a17a507a7f292d43760",
         "canonicalization": {
           "serialization": "json-c14n",
           "hash_method": "sha256",
           "profile_ref": "canonicalization:v0.1"
         },
-        "event_hash": "hash:43d9a302fdc122a7042dcca75bbe3e596e5d2e38a3c80864c977df782f2498ec"
+        "event_hash": "hash:d1ee3ad53ac4b2d9d4ac9fd6167b71e14aac7ee74eaf9306f178d9b3017e7246"
       },
       "memory_proposal_created": {
         "id": "event-memory-proposal-created",
-        "sequence": 9,
+        "sequence": 10,
         "type": "memory_proposal.created",
         "work_session_id": "ws-native-coding-agent-proof",
         "actor_id": "actor-human-proof",
@@ -509,17 +537,17 @@
           "action": "created",
           "summary": "MemoryProposal created for future bounded-source work."
         },
-        "previous_hash": "hash:43d9a302fdc122a7042dcca75bbe3e596e5d2e38a3c80864c977df782f2498ec",
+        "previous_hash": "hash:d1ee3ad53ac4b2d9d4ac9fd6167b71e14aac7ee74eaf9306f178d9b3017e7246",
         "canonicalization": {
           "serialization": "json-c14n",
           "hash_method": "sha256",
           "profile_ref": "canonicalization:v0.1"
         },
-        "event_hash": "hash:3383855e9ac0607ad508218d6e42f3a0110add89417b1c53e8a99f9edef0764e"
+        "event_hash": "hash:8d7e2345968da29d15f002832e16f1bd17a55f297179c8e40bc92c3183d4b713"
       },
       "skill_proposal_created": {
         "id": "event-skill-proposal-created",
-        "sequence": 10,
+        "sequence": 11,
         "type": "skill_proposal.created",
         "work_session_id": "ws-native-coding-agent-proof",
         "actor_id": "actor-human-proof",
@@ -530,17 +558,17 @@
           "action": "created",
           "summary": "SkillProposal created for future bounded-source work."
         },
-        "previous_hash": "hash:3383855e9ac0607ad508218d6e42f3a0110add89417b1c53e8a99f9edef0764e",
+        "previous_hash": "hash:8d7e2345968da29d15f002832e16f1bd17a55f297179c8e40bc92c3183d4b713",
         "canonicalization": {
           "serialization": "json-c14n",
           "hash_method": "sha256",
           "profile_ref": "canonicalization:v0.1"
         },
-        "event_hash": "hash:419b7e5386af3402002289531cf486944ff1d44a683389f96deb6425d7d294aa"
+        "event_hash": "hash:84f710c18631685932f9cbb52ed46459be43803583900596b1ae4aaf63b285a4"
       },
       "worksession_completed": {
         "id": "event-worksession-completed",
-        "sequence": 11,
+        "sequence": 12,
         "type": "work_session.completed",
         "work_session_id": "ws-native-coding-agent-proof",
         "actor_id": "actor-human-proof",
@@ -551,13 +579,13 @@
           "action": "completed",
           "summary": "WorkSession completed with evidence and governed learning."
         },
-        "previous_hash": "hash:419b7e5386af3402002289531cf486944ff1d44a683389f96deb6425d7d294aa",
+        "previous_hash": "hash:84f710c18631685932f9cbb52ed46459be43803583900596b1ae4aaf63b285a4",
         "canonicalization": {
           "serialization": "json-c14n",
           "hash_method": "sha256",
           "profile_ref": "canonicalization:v0.1"
         },
-        "event_hash": "hash:1042ebfb8f26eff875afa07080705c79c7314ac1982a36d98eef223bae0db578"
+        "event_hash": "hash:215f68ceb350e16a95fbad73a752eb29cdc40aba7bcbfd4b1b1bf3fb450392ef"
       }
     },
     "policy_decisions": {
@@ -767,17 +795,20 @@
         "contribution_type": "artifact",
         "event_refs": [
           "event-evidence-captured",
+          "event-framework-trace-captured",
           "event-contribution-recorded"
         ],
         "created_at": "2026-07-03T09:16:00Z",
         "artifact_refs": [
-          "artifact:reviewed-agent-output"
+          "artifact:reviewed-agent-output",
+          "artifact:langgraph-stategraph-trace"
         ],
         "review_refs": [
           "review-native-agent-source-approval"
         ],
         "evidence_refs": [
-          "evidence-source-summary"
+          "evidence-source-summary",
+          "evidence-langgraph-stategraph-trace"
         ],
         "confidence": 0.92,
         "limitations": [
@@ -796,7 +827,8 @@
         "source_event_refs": [
           "event-request-created",
           "event-review-approved",
-          "event-evidence-captured"
+          "event-evidence-captured",
+          "event-framework-trace-captured"
         ],
         "review_state": "accepted",
         "scope": "scope:future-source-collection",
@@ -826,6 +858,7 @@
         "provenance": [
           "event-request-created",
           "event-review-approved",
+          "event-framework-trace-captured",
           "learning-native-agent-pair"
         ],
         "confidence": 0.9,
@@ -874,6 +907,7 @@
           "event-request-created",
           "event-review-approved",
           "event-evidence-captured",
+          "event-framework-trace-captured",
           "learning-native-agent-pair"
         ],
         "status": "pending_review",
@@ -884,7 +918,8 @@
         "source_event_refs": [
           "event-request-created",
           "event-review-approved",
-          "event-evidence-captured"
+          "event-evidence-captured",
+          "event-framework-trace-captured"
         ],
         "learning_record_refs": [
           "learning-native-agent-pair"
@@ -917,7 +952,7 @@
         "work_session_id": "ws-native-coding-agent-proof",
         "generated_by_actor_id": "actor-human-proof",
         "objective": "Show an existing coding agent participating through Jarvis protocol records.",
-        "event_chain_root": "hash:1042ebfb8f26eff875afa07080705c79c7314ac1982a36d98eef223bae0db578",
+        "event_chain_root": "hash:215f68ceb350e16a95fbad73a752eb29cdc40aba7bcbfd4b1b1bf3fb450392ef",
         "evidence_item_refs": [
           {
             "id": "evidence-source-summary",
@@ -932,6 +967,23 @@
             "trust_label": "reviewed",
             "redaction_state": "redacted",
             "captured_at": "2026-07-03T09:12:00Z",
+            "limitation_refs": [
+              "limitation:none-recorded"
+            ]
+          },
+          {
+            "id": "evidence-langgraph-stategraph-trace",
+            "work_session_id": "ws-native-coding-agent-proof",
+            "source_event_refs": [
+              "event-framework-trace-captured"
+            ],
+            "captured_by_actor_id": "actor-agent-proof",
+            "evidence_type": "native_framework_trace",
+            "artifact_ref": "artifact:langgraph-stategraph-trace",
+            "content_hash": "hash:8b987a4c3be5c2586871c7b57d47390a54023e7a8629593ea13b649f9e2b30b1",
+            "trust_label": "generated_framework_trace",
+            "redaction_state": "portable",
+            "captured_at": "2026-07-03T09:12:30Z",
             "limitation_refs": [
               "limitation:none-recorded"
             ]
@@ -959,7 +1011,8 @@
         "generated_at": "2026-07-03T09:26:00Z",
         "artifact_refs": [
           "artifact:reviewed-agent-output",
-          "artifact:source-summary"
+          "artifact:source-summary",
+          "artifact:langgraph-stategraph-trace"
         ],
         "limitation_refs": [
           "limitation:none-recorded"
@@ -1140,6 +1193,24 @@
       "body_ref": "records.jarvis_events.evidence_captured"
     },
     {
+      "operation_id": "appendJarvisEvent",
+      "method": "POST",
+      "path": "/work-sessions/ws-native-coding-agent-proof/events",
+      "headers": {
+        "Authorization": "HostAuth proof",
+        "Jarvis-Protocol-Version": "v0.1",
+        "Jarvis-Actor-Id": "actor-agent-proof",
+        "Jarvis-Idempotency-Key": "idem-framework-trace-captured-proof",
+        "Jarvis-Request-Timestamp": "2026-07-03T09:12:30Z",
+        "Jarvis-Expected-WorkSession-Revision": 6,
+        "Jarvis-Previous-Event-Hash": "hash:b8fa0dc7139219e3c691bc9cbe2cfc9190385939ceb1573ef3a50264bd3e1d0b"
+      },
+      "actor_id": "actor-agent-proof",
+      "expected_status": 201,
+      "work_session_id": "ws-native-coding-agent-proof",
+      "body_ref": "records.jarvis_events.framework_trace_captured"
+    },
+    {
       "operation_id": "recordContribution",
       "method": "POST",
       "path": "/work-sessions/ws-native-coding-agent-proof/contributions",
@@ -1149,8 +1220,8 @@
         "Jarvis-Actor-Id": "actor-human-proof",
         "Jarvis-Idempotency-Key": "idem-contribution-proof",
         "Jarvis-Request-Timestamp": "2026-07-03T09:16:00Z",
-        "Jarvis-Expected-WorkSession-Revision": 6,
-        "Jarvis-Previous-Event-Hash": "hash:b8fa0dc7139219e3c691bc9cbe2cfc9190385939ceb1573ef3a50264bd3e1d0b"
+        "Jarvis-Expected-WorkSession-Revision": 7,
+        "Jarvis-Previous-Event-Hash": "hash:af21c69c3327edf795a6f20351f13a15de146f34a54763810c7562d9ba2c7bfc"
       },
       "actor_id": "actor-human-proof",
       "expected_status": 201,
@@ -1167,8 +1238,8 @@
         "Jarvis-Actor-Id": "actor-human-proof",
         "Jarvis-Idempotency-Key": "idem-learning-proof",
         "Jarvis-Request-Timestamp": "2026-07-03T09:18:00Z",
-        "Jarvis-Expected-WorkSession-Revision": 7,
-        "Jarvis-Previous-Event-Hash": "hash:4ed07cd284c5de8ada58c26be5e6bdc3dc003fa05581f44981af268a3e64574d"
+        "Jarvis-Expected-WorkSession-Revision": 8,
+        "Jarvis-Previous-Event-Hash": "hash:664205882131967aa31328cb6875da2839fda4f243623a17a507a7f292d43760"
       },
       "actor_id": "actor-human-proof",
       "expected_status": 201,
@@ -1185,8 +1256,8 @@
         "Jarvis-Actor-Id": "actor-human-proof",
         "Jarvis-Idempotency-Key": "idem-memory-proposal-proof",
         "Jarvis-Request-Timestamp": "2026-07-03T09:19:00Z",
-        "Jarvis-Expected-WorkSession-Revision": 8,
-        "Jarvis-Previous-Event-Hash": "hash:43d9a302fdc122a7042dcca75bbe3e596e5d2e38a3c80864c977df782f2498ec"
+        "Jarvis-Expected-WorkSession-Revision": 9,
+        "Jarvis-Previous-Event-Hash": "hash:d1ee3ad53ac4b2d9d4ac9fd6167b71e14aac7ee74eaf9306f178d9b3017e7246"
       },
       "actor_id": "actor-human-proof",
       "expected_status": 201,
@@ -1203,8 +1274,8 @@
         "Jarvis-Actor-Id": "actor-human-proof",
         "Jarvis-Idempotency-Key": "idem-skill-proposal-proof",
         "Jarvis-Request-Timestamp": "2026-07-03T09:20:00Z",
-        "Jarvis-Expected-WorkSession-Revision": 9,
-        "Jarvis-Previous-Event-Hash": "hash:3383855e9ac0607ad508218d6e42f3a0110add89417b1c53e8a99f9edef0764e"
+        "Jarvis-Expected-WorkSession-Revision": 10,
+        "Jarvis-Previous-Event-Hash": "hash:8d7e2345968da29d15f002832e16f1bd17a55f297179c8e40bc92c3183d4b713"
       },
       "actor_id": "actor-human-proof",
       "expected_status": 201,
@@ -1221,8 +1292,8 @@
         "Jarvis-Actor-Id": "actor-human-proof",
         "Jarvis-Idempotency-Key": "idem-worksession-completed-proof",
         "Jarvis-Request-Timestamp": "2026-07-03T09:25:00Z",
-        "Jarvis-Expected-WorkSession-Revision": 10,
-        "Jarvis-Previous-Event-Hash": "hash:419b7e5386af3402002289531cf486944ff1d44a683389f96deb6425d7d294aa"
+        "Jarvis-Expected-WorkSession-Revision": 11,
+        "Jarvis-Previous-Event-Hash": "hash:84f710c18631685932f9cbb52ed46459be43803583900596b1ae4aaf63b285a4"
       },
       "actor_id": "actor-human-proof",
       "expected_status": 201,
