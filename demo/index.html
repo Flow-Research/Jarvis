@@ -27,7 +27,7 @@
           <a href="#spec">Spec</a>
           <a href="./openapi/">OpenAPI</a>
           <a href="./conformance/">Conformance</a>
-          <a href="#guides">Guides</a>
+          <a href="./guides/">Guides</a>
           <a href="#examples">Examples</a>
           <a href="#sdk">SDK</a>
           <a href="#implementation">Implementation</a>
@@ -66,6 +66,7 @@
             >
               Conformance
             </a>
+            <a class="command" href="./guides/">Guides</a>
             <a class="command" href="#implementation">Implementation Path</a>
             <a class="command" href="#walkthrough-controls">Run Walkthrough</a>
             <a class="command ghost" href="https://github.com/Flow-Research/jarvis">
@@ -353,17 +354,17 @@
           <article>
             <h3>Protocol Records</h3>
             <p>Concrete Worker, Actor, WorkSession, Request, Review, Contribution, EvidenceManifest, and LearningRecord examples.</p>
-            <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/protocol-records.md">Read record examples</a>
+            <a href="./guides/examples.html">Read record examples</a>
           </article>
           <article>
             <h3>Existing Agent Compatibility</h3>
             <p>How an existing agent participates through Jarvis records without being rewritten as a Jarvis agent.</p>
-            <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/existing-agent-compatibility.md">Read compatibility example</a>
+            <a href="./guides/existing-agent.html">Read compatibility guide</a>
           </article>
           <article>
             <h3>Compatible Host Mapping</h3>
             <p>How a host maps native collaboration events into Jarvis protocol records while keeping implementation private.</p>
-            <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/compatible-host-mapping.md">Read host mapping</a>
+            <a href="./conformance/compatible-host-mapping.html">Read host mapping</a>
           </article>
           <article>
             <h3>Evidence Packs</h3>
@@ -378,25 +379,35 @@
           <p class="kicker">Implementer guides</p>
           <h2 id="guides-title">Implementer guides define protocol obligations.</h2>
           <p>
-            Guides explain what compatible implementations store, emit,
-            validate, reject, export, and preserve. They do not define host UI,
-            runtime behavior, model routing, tool execution, or storage.
+            Implementer guides define what compatible implementations MUST
+            store, emit, validate, reject, export, and preserve. They do not
+            define host UI, auth, storage, runtime behavior, model routing,
+            tool execution, billing, scoring, payment, deployment, monitoring,
+            or host workflow.
           </p>
         </div>
         <div class="guide-grid" aria-label="Implementer guide links">
-          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/existing-agent-compatibility.md">
+          <a href="./guides/implementer.html">
+            <span>Implementer guide</span>
+            <small>Store, emit, validate, reject, and export protocol records.</small>
+          </a>
+          <a href="./guides/existing-agent.html">
             <span>Existing-agent compatibility</span>
             <small>Map native agent work into Jarvis records without rewriting the agent.</small>
           </a>
-          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/12-request-protocol.md">
+          <a href="./guides/request-review-takeover.html">
             <span>Request, Review, ApprovalScope, and Takeover</span>
             <small>Use scoped blockers, human judgment, ApprovalScope, and takeover lock epochs.</small>
           </a>
-          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/13-contribution-evidence-learning.md">
+          <a href="./guides/evidence-learning.html">
             <span>Evidence and Learning</span>
             <small>Record contribution, export evidence, and carry governed learning forward.</small>
           </a>
-          <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">
+          <a href="./guides/extensions.html">
+            <span>Extensions</span>
+            <small>Use version, capability, and namespace rules without overriding core fields.</small>
+          </a>
+          <a href="./guides/protocol-errors.html">
             <span>Protocol errors</span>
             <small>Return stable error ids and portable error envelopes.</small>
           </a>
@@ -591,7 +602,7 @@ python3 scripts/check_example_evidence_packs.py</code></pre>
             <div class="node host" data-node="host">
               <span>Host</span>
               <strong>owns implementation</strong>
-              <small>UI storage tools execution</small>
+              <small>UI, storage, tool execution</small>
             </div>
 
             <div class="node request" data-node="request">

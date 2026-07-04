@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Request, Review, Takeover Guide | Jarvis v0.1</title>
+    <meta
+      name="description"
+      content="Jarvis v0.1 guide for scoped Request blockers, Review resolution, ApprovalScope, Takeover lock epochs, and rejection behavior."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=guides1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=guides1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span><strong>Jarvis</strong><small>control plane</small></span>
+        </a>
+        <nav class="topnav" aria-label="Guide navigation">
+          <a href="../">Home</a>
+          <a href="../spec/">Spec</a>
+          <a href="../openapi/">OpenAPI</a>
+          <a href="../conformance/">Conformance</a>
+          <a href="./" aria-current="location">Guides</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">Request, Review, Takeover</p>
+          <h1>Blocked scope resolves through human judgment.</h1>
+          <p>
+            Request is a structured scoped deferral. It is not chat,
+            notification, or authority. Review grants, narrows, denies, answers,
+            corrects, or requires revision. Takeover transfers control of the
+            affected scope and protects resumption with lock_epoch.
+          </p>
+        </div>
+        <a class="command primary" href="./examples.html#request-review">Open example</a>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Implementer guide pages">
+          <a href="./">Overview</a>
+          <a href="./implementer.html">Implementer guide</a>
+          <a href="./existing-agent.html">Existing-agent compatibility</a>
+          <a href="./request-review-takeover.html" aria-current="page">Request, Review, Takeover</a>
+          <a href="./evidence-learning.html">Evidence and Learning</a>
+          <a href="./extensions.html">Extensions</a>
+          <a href="./protocol-errors.html">Protocol errors</a>
+          <a href="./examples.html">Protocol examples</a>
+        </nav>
+
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Must store</h2>
+            <ul>
+              <li>Request records with id, protocol_version, work_session_id, requester_actor_id, requester_worker_id, target_human_worker_id, policy_decision_id, type, status, blocking_scope, reason_code, reason_summary, requested_action, requested_outcome, risk_class, human_decision_needed, options, default_if_no_response, created_at, expires_at, and resolver refs when resolved or closed.</li>
+              <li>Review records with reviewer_actor_id, target_ref, decision, created_at, comments, and ApprovalScope when authority is granted.</li>
+              <li>Takeover records with requested_by_actor_id, controlling_actor_id, affected_scope, request_id, reason, state, lock_epoch, created_at, reconciliation refs, and resolved_at.</li>
+            </ul>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Must validate and reject</h2>
+            <div class="field-grid">
+              <div class="field-card">
+                <h3>Request</h3>
+                <p>Reject Request resolution without Review or Takeover. Reject unresolved Request at terminal WorkSession export.</p>
+              </div>
+              <div class="field-card">
+                <h3>ApprovalScope</h3>
+                <p>Reject approval outside normalized_action_hash, applies_to_work_session_id, applies_to_actor_id, max_uses, and expires_at.</p>
+              </div>
+              <div class="field-card">
+                <h3>Takeover</h3>
+                <p>Reject stale AgentWorker continuation when attempted_lock_epoch is older than the active lock_epoch.</p>
+              </div>
+              <div class="field-card">
+                <h3>Mutation gate</h3>
+                <p>Reject missing mutating headers, stale WorkSession revision, previous event hash mismatch, actor/body mismatch, and unauthorized Actor.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Lifecycle</h2>
+            <pre class="code-sample"><code>PolicyDecision denies or flags action
+  -> Request created with blocking_scope
+  -> HumanWorker Review or Takeover
+  -> Request status records resolver ref
+  -> AgentWorker resumes only inside approved or reconciled scope</code></pre>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Host boundary</h2>
+            <p>Hosts own UI, auth, storage, runtime behavior, model routing, tool execution, billing, scoring, payment, deployment, monitoring, and host workflow.</p>
+            <p>Jarvis owns Request, Review, ApprovalScope, and Takeover protocol records.</p>
+          </article>
+
+          <article class="spec-panel" id="sources">
+            <h2>Source contracts</h2>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/12-request-protocol.md">Source: Request protocol</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">Source: core protocol objects</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/failure-modes.md">Source: failure modes</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

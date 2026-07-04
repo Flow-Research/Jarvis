@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Implementer Guides | Jarvis v0.1</title>
+    <meta
+      name="description"
+      content="Jarvis v0.1 implementer guides for protocol storage, emission, validation, rejection, examples, extensions, and errors."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=guides1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=guides1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span><strong>Jarvis</strong><small>implementer guides</small></span>
+        </a>
+        <nav class="topnav" aria-label="Guide navigation">
+          <a href="../">Home</a>
+          <a href="../spec/">Spec</a>
+          <a href="../openapi/">OpenAPI</a>
+          <a href="../conformance/">Conformance</a>
+          <a href="./" aria-current="page">Guides</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">Implementation without runtime drift</p>
+          <h1>Implement Jarvis as protocol records.</h1>
+          <p>
+            Compatible implementations store, emit, validate, reject, export,
+            and preserve Jarvis records. Hosts own runtime behavior, adapters,
+            wrappers, UI, auth, storage, model routing, tool execution, billing,
+            scoring, payment, deployment, monitoring, and host workflow.
+          </p>
+        </div>
+        <div class="inline-actions">
+          <a class="command primary" href="./implementer.html">Start guide</a>
+          <a class="command" href="./examples.html">Record examples</a>
+        </div>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Implementer guide pages">
+          <a href="./" aria-current="page">Overview</a>
+          <a href="./implementer.html">Implementer guide</a>
+          <a href="./existing-agent.html">Existing-agent compatibility</a>
+          <a href="./request-review-takeover.html">Request, Review, Takeover</a>
+          <a href="./evidence-learning.html">Evidence and Learning</a>
+          <a href="./extensions.html">Extensions</a>
+          <a href="./protocol-errors.html">Protocol errors</a>
+          <a href="./examples.html">Protocol examples</a>
+        </nav>
+
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Guide contract</h2>
+            <div class="rule-grid">
+              <div class="rule-card">
+                <h3>Store</h3>
+                <p>Persist protocol records with stable ids, Actor refs, WorkSession refs, revision, and event-hash lineage.</p>
+              </div>
+              <div class="rule-card">
+                <h3>Emit</h3>
+                <p>Emit JarvisEvent-backed state when policy, Request, Review, Takeover, Contribution, Evidence, or Learning changes.</p>
+              </div>
+              <div class="rule-card">
+                <h3>Validate</h3>
+                <p>Validate headers, Actor authority, body/path ids, WorkSession revision, previous event hash, and protocol object shape.</p>
+              </div>
+              <div class="rule-card">
+                <h3>Reject</h3>
+                <p>Reject missing PolicyDecision, unresolved Request, stale Takeover continuation, forbidden export fields, and silent learning mutation.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Guide pages</h2>
+            <div class="link-table" aria-label="Implementer guide links">
+              <a href="./implementer.html"><span>Implementer guide</span><small>Storage, emission, validation, rejection, and export duties</small></a>
+              <a href="./existing-agent.html"><span>Existing-agent compatibility</span><small>Map native agent work into Jarvis records</small></a>
+              <a href="./request-review-takeover.html"><span>Request, Review, Takeover</span><small>Scoped blockers, human judgment, ApprovalScope, and lock epochs</small></a>
+              <a href="./evidence-learning.html"><span>Evidence and Learning</span><small>Contribution, EvidenceManifest, LearningRecord, proposals, and OutcomeReport</small></a>
+              <a href="./extensions.html"><span>Extensions</span><small>Capability negotiation and extension namespace rules</small></a>
+              <a href="./protocol-errors.html"><span>Protocol errors</span><small>Error envelope, rejection ids, and forbidden fields</small></a>
+              <a href="./examples.html"><span>Protocol examples</span><small>Minimal v0.1 record flow examples</small></a>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Boundary</h2>
+            <ul>
+              <li>Guides define protocol implementation obligations.</li>
+              <li>Guides do not define runtime behavior.</li>
+              <li>Guides do not define adapters, wrappers, model routing, tool execution, auth provider, storage backend, UI, billing, scoring, payment, deployment, or host workflow.</li>
+              <li>Hosts own UI, auth, storage, runtime behavior, model routing, tool execution, billing, scoring, payment, deployment, monitoring, and host workflow.</li>
+              <li>Hosts own implementation behavior. Jarvis owns the portable collaboration record.</li>
+            </ul>
+          </article>
+
+          <article class="spec-panel" id="sources">
+            <h2>Source contracts</h2>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/protocol-records.md">Source: protocol record examples</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/existing-agent-compatibility.md">Source: existing-agent compatibility</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">Source: OpenAPI binding</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

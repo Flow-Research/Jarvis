@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Protocol Errors Guide | Jarvis v0.1</title>
+    <meta
+      name="description"
+      content="Jarvis v0.1 protocol errors guide for rejection ids, error envelope fields, and forbidden host-private response fields."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=guides1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=guides1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span><strong>Jarvis</strong><small>protocol errors</small></span>
+        </a>
+        <nav class="topnav" aria-label="Guide navigation">
+          <a href="../">Home</a>
+          <a href="../spec/">Spec</a>
+          <a href="../openapi/">OpenAPI</a>
+          <a href="../conformance/">Conformance</a>
+          <a href="./" aria-current="location">Guides</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">Protocol errors</p>
+          <h1>Every rejection returns a public protocol error.</h1>
+          <p>
+            Compatible implementations reject invalid protocol operations with
+            stable error ids and a portable error envelope. Error responses
+            exclude host-private fields, credentials, secrets, raw runtime
+            state, auth tokens, session cookies, provider secrets, and private
+            keys.
+          </p>
+        </div>
+        <a class="command primary" href="../conformance/failure-modes.html">Open failure modes</a>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Implementer guide pages">
+          <a href="./">Overview</a>
+          <a href="./implementer.html">Implementer guide</a>
+          <a href="./existing-agent.html">Existing-agent compatibility</a>
+          <a href="./request-review-takeover.html">Request, Review, Takeover</a>
+          <a href="./evidence-learning.html">Evidence and Learning</a>
+          <a href="./extensions.html">Extensions</a>
+          <a href="./protocol-errors.html" aria-current="page">Protocol errors</a>
+          <a href="./examples.html">Protocol examples</a>
+        </nav>
+
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Error envelope</h2>
+            <pre class="code-sample"><code>{
+  "error_id": "missing_policy_decision",
+  "protocol_version": "v0.1",
+  "object_type": "PolicyDecision",
+  "field": "policy_decision_id",
+  "reason": "AgentWorker action requires PolicyDecision before accepted protocol state.",
+  "remediation": "Record PolicyDecision before accepting the AgentWorker action.",
+  "trace_id": "trace:example"
+}</code></pre>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Required rejection surfaces</h2>
+            <div class="schema-list">
+              <span>missing_protocol_version</span>
+              <span>unsupported_protocol_version</span>
+              <span>missing_actor</span>
+              <span>missing_idempotency_key</span>
+              <span>missing_request_timestamp</span>
+              <span>stale_request_timestamp</span>
+              <span>missing_expected_work_session_revision</span>
+              <span>missing_previous_event_hash</span>
+              <span>invalid_previous_event_hash</span>
+              <span>missing_policy_decision</span>
+              <span>missing_review_resolution</span>
+              <span>missing_takeover_resolution</span>
+              <span>stale_takeover_continuation</span>
+              <span>forbidden_host_private_field</span>
+              <span>sealed_work_session_mutation</span>
+              <span>sealed_evidence_mutation</span>
+              <span>outcome_report_without_learning_record</span>
+              <span>outcome_report_requires_terminal_source</span>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Must validate and reject</h2>
+            <ul>
+              <li>Return the required public envelope fields: error_id, protocol_version, object_type, field, reason, remediation, and trace_id.</li>
+              <li>Do not include host-private response fields.</li>
+              <li>Use fixture-backed rejection ids when a fixture proves the behavior.</li>
+              <li>Use checklist-only rejection ids without claiming fixture coverage.</li>
+            </ul>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Host boundary</h2>
+            <p>Hosts own UI, auth, storage, runtime behavior, model routing, tool execution, billing, scoring, payment, deployment, monitoring, and host workflow.</p>
+            <p>Jarvis owns public protocol errors and rejection semantics.</p>
+          </article>
+
+          <article class="spec-panel" id="sources">
+            <h2>Source contracts</h2>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">Source: OpenAPI communication binding</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/failure-modes.md">Source: failure modes</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/openapi/jarvis-openapi.yaml">Source: OpenAPI YAML</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
