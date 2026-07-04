@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Evidence and Learning Guide | Jarvis v0.1</title>
+    <meta
+      name="description"
+      content="Jarvis v0.1 guide for Contribution, EvidenceManifest export, LearningRecord, MemoryProposal, SkillProposal, and OutcomeReport."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=guides1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=guides1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span><strong>Jarvis</strong><small>evidence and learning</small></span>
+        </a>
+        <nav class="topnav" aria-label="Guide navigation">
+          <a href="../">Home</a>
+          <a href="../spec/">Spec</a>
+          <a href="../openapi/">OpenAPI</a>
+          <a href="../conformance/">Conformance</a>
+          <a href="./">Guides</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">Evidence and governed learning</p>
+          <h1>Useful work leaves proof and governed improvement.</h1>
+          <p>
+            Contribution records who did what. EvidenceManifest exports
+            portable proof. LearningRecord captures accepted learning for the
+            human, agent, or pair. MemoryProposal and SkillProposal remain
+            proposals until governed review accepts them. OutcomeReport brings
+            terminal-source feedback into the learning loop.
+          </p>
+        </div>
+        <a class="command primary" href="./examples.html#evidence-learning">Open example</a>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Implementer guide pages">
+          <a href="./">Overview</a>
+          <a href="./implementer.html">Implementer guide</a>
+          <a href="./existing-agent.html">Existing-agent compatibility</a>
+          <a href="./request-review-takeover.html">Request, Review, Takeover</a>
+          <a href="./evidence-learning.html" aria-current="page">Evidence and Learning</a>
+          <a href="./extensions.html">Extensions</a>
+          <a href="./protocol-errors.html">Protocol errors</a>
+          <a href="./examples.html">Protocol examples</a>
+        </nav>
+
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Must store and emit</h2>
+            <div class="field-grid">
+              <div class="field-card">
+                <h3>Contribution</h3>
+                <p>Store contributor_refs for human, agent, service, tool, or shared contributors. Shared Contribution preserves individual contributor refs.</p>
+              </div>
+              <div class="field-card">
+                <h3>EvidenceManifest</h3>
+                <p>Export only from valid terminal WorkSession states and include event-backed evidence_item_refs, policy_decision_refs, request_refs, review_refs, takeover_refs, and contribution_refs.</p>
+              </div>
+              <div class="field-card">
+                <h3>LearningRecord</h3>
+                <p>Store subject_type as human, agent, or pair, with source_event_refs and review_state.</p>
+              </div>
+              <div class="field-card">
+                <h3>OutcomeReport</h3>
+                <p>Accept post-session feedback only for terminal source WorkSession state and require learning_record_refs.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Must reject</h2>
+            <ul>
+              <li>EvidenceManifest export with forbidden host-private fields.</li>
+              <li>EvidenceManifest export from a non-terminal source WorkSession.</li>
+              <li>Mutation of sealed WorkSession or sealed EvidenceManifest records.</li>
+              <li>MemoryProposal self-confirmed from model or tool output.</li>
+              <li>SkillProposal activation without review.</li>
+              <li>SkillProposal tool-access expansion without Policy review.</li>
+              <li>OutcomeReport without LearningRecord reference.</li>
+              <li>OutcomeReport whose source WorkSession is not terminal.</li>
+            </ul>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Learning loop</h2>
+            <pre class="code-sample"><code>WorkSession completed
+  -&gt; EvidenceManifest exported
+  -&gt; OutcomeReport submitted
+  -&gt; LearningRecord accepted
+  -&gt; MemoryProposal or SkillProposal remains governed
+  -&gt; future WorkSession carries accepted learning forward</code></pre>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Host boundary</h2>
+            <p>Hosts own UI, auth, storage, runtime behavior, model routing, tool execution, billing, scoring, payment, deployment, monitoring, and host workflow.</p>
+            <p>Jarvis owns Contribution, EvidenceManifest, LearningRecord, MemoryProposal, SkillProposal, and OutcomeReport protocol records.</p>
+          </article>
+
+          <article class="spec-panel" id="sources">
+            <h2>Source contracts</h2>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/13-contribution-evidence-learning.md">Source: evidence and learning</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/protocol-records.md">Source: protocol record examples</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/failure-modes.md">Source: failure modes</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

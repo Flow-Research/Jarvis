@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Extension Guide | Jarvis v0.1</title>
+    <meta
+      name="description"
+      content="Jarvis v0.1 extension guide for version negotiation, capability negotiation, namespace rules, and rejected extension behavior."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=guides1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=guides1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span><strong>Jarvis</strong><small>extensions</small></span>
+        </a>
+        <nav class="topnav" aria-label="Guide navigation">
+          <a href="../">Home</a>
+          <a href="../spec/">Spec</a>
+          <a href="../openapi/">OpenAPI</a>
+          <a href="../conformance/">Conformance</a>
+          <a href="./">Guides</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">Extensions</p>
+          <h1>Extensions add namespaced protocol data without overriding core fields.</h1>
+          <p>
+            Jarvis v0.1 preserves compatibility through protocol version
+            negotiation, capability negotiation, and namespaced extension
+            records. Extensions do not add host runtime behavior to Jarvis and
+            do not override core protocol fields.
+          </p>
+        </div>
+        <a class="command primary" href="../spec/versioning-extensions.html">Open spec page</a>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Implementer guide pages">
+          <a href="./">Overview</a>
+          <a href="./implementer.html">Implementer guide</a>
+          <a href="./existing-agent.html">Existing-agent compatibility</a>
+          <a href="./request-review-takeover.html">Request, Review, Takeover</a>
+          <a href="./evidence-learning.html">Evidence and Learning</a>
+          <a href="./extensions.html" aria-current="page">Extensions</a>
+          <a href="./protocol-errors.html">Protocol errors</a>
+          <a href="./examples.html">Protocol examples</a>
+        </nav>
+
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Extension rules</h2>
+            <ul>
+              <li>Extensions MUST use a namespace owned by the extension author.</li>
+              <li>Extensions MUST NOT override core Jarvis fields.</li>
+              <li>Extensions MUST NOT weaken required headers, Actor authority, WorkSession revision, previous event hash, Request resolution, Takeover lock epochs, export redaction, or governed learning.</li>
+              <li>Unsupported required capabilities reject as <code>unsupported_capability</code>.</li>
+              <li>Invalid extension namespace rejects as <code>invalid_extension_namespace</code>.</li>
+              <li>Core field override rejects as <code>extension_core_field_override</code>.</li>
+            </ul>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Implementation duties</h2>
+            <div class="field-grid">
+              <div class="field-card">
+                <h3>Must store</h3>
+                <p>Store declared protocol version, declared capabilities, extension namespace, and extension refs when accepted.</p>
+              </div>
+              <div class="field-card">
+                <h3>Must validate</h3>
+                <p>Validate protocol version, capability support, namespace ownership, and closed-schema core field protection.</p>
+              </div>
+              <div class="field-card">
+                <h3>Must reject</h3>
+                <p>Reject silent downgrade, unsupported required capability, invalid namespace, and extension core field override.</p>
+              </div>
+              <div class="field-card">
+                <h3>Host boundary</h3>
+                <p>Hosts own UI, auth, storage, runtime behavior, model routing, tool execution, billing, scoring, payment, deployment, monitoring, and host workflow.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel" id="sources">
+            <h2>Source contracts</h2>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">Source: OpenAPI communication binding</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/14-protocol-lock.md">Source: protocol lock</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">Source: core protocol objects</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

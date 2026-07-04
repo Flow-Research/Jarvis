@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Protocol Examples | Jarvis v0.1</title>
+    <meta
+      name="description"
+      content="Jarvis v0.1 protocol-only examples for WorkSession flow, PolicyDecision, Request, Review, Takeover, EvidenceManifest, and OutcomeReport learning."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=guides1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=guides1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span><strong>Jarvis</strong><small>protocol examples</small></span>
+        </a>
+        <nav class="topnav" aria-label="Guide navigation">
+          <a href="../">Home</a>
+          <a href="../spec/">Spec</a>
+          <a href="../openapi/">OpenAPI</a>
+          <a href="../conformance/">Conformance</a>
+          <a href="./">Guides</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">Protocol-only examples</p>
+          <h1>Use v0.1 records to prove the collaboration loop.</h1>
+          <p>
+            These examples show protocol records only. They do not implement
+            agent runtime behavior, adapters, wrappers, model routing, tool
+            execution, auth provider, storage backend, UI, billing, scoring,
+            payment, deployment, or host workflow.
+          </p>
+        </div>
+        <a class="command primary" href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/protocol-records.md">Full source examples</a>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Implementer guide pages">
+          <a href="./">Overview</a>
+          <a href="./implementer.html">Implementer guide</a>
+          <a href="./existing-agent.html">Existing-agent compatibility</a>
+          <a href="./request-review-takeover.html">Request, Review, Takeover</a>
+          <a href="./evidence-learning.html">Evidence and Learning</a>
+          <a href="./extensions.html">Extensions</a>
+          <a href="./protocol-errors.html">Protocol errors</a>
+          <a href="./examples.html" aria-current="page">Protocol examples</a>
+        </nav>
+
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel" id="minimal-worksession">
+            <h2>Minimal WorkSession record flow</h2>
+            <pre class="code-sample"><code>{
+  "object_type": "WorkSession",
+  "record": {
+    "id": "ws-golden-001",
+    "protocol_version": "v0.1",
+    "created_by_actor_id": "actor-human-golden",
+    "objective": "Produce an evidence-backed answer with human review and governed learning.",
+    "human_worker_id": "worker-human-golden",
+    "agent_worker_id": "worker-agent-golden",
+    "policy_id": "policy-golden-bounded",
+    "status": "completed",
+    "revision": 11,
+    "last_event_hash": "hash:event-worksession-completed",
+    "event_log_ref": "event-log:ws-golden-001",
+    "created_at": "2026-06-16T10:01:00Z",
+    "updated_at": "2026-06-16T10:25:00Z",
+    "source_ref": "source:golden-path-fixture",
+    "context_manifest_ref": "context:task-brief",
+    "contribution_ledger_ref": "ledger:ws-golden-001",
+    "evidence_manifest_ref": "evidence-manifest-golden",
+    "learning_record_refs": [
+      "learning-golden-pair"
+    ]
+  }
+}</code></pre>
+          </article>
+
+          <article class="spec-panel" id="policy-decision">
+            <h2>PolicyDecision before AgentWorker action</h2>
+            <pre class="code-sample"><code>{
+  "object_type": "PolicyDecision",
+  "record": {
+    "id": "pd-golden-source-denied",
+    "work_session_id": "ws-golden-001",
+    "actor_id": "actor-agent-golden",
+    "policy_id": "policy-golden-bounded",
+    "requested_action": {
+      "action": "fetch_external_source",
+      "target_ref": "source:external-reference",
+      "scope_ref": "scope:external-source"
+    },
+    "normalized_action_hash": "hash:action-fetch-external-source",
+    "risk_class": "medium",
+    "result": "deny",
+    "reason": "Policy requires HumanWorker review before external source collection.",
+    "created_at": "2026-06-16T10:04:00Z",
+    "data_sensitivity": "public",
+    "denied_grant_refs": [
+      "grant:external-source-read"
+    ],
+    "request_id": "req-golden-source"
+  }
+}</code></pre>
+          </article>
+
+          <article class="spec-panel" id="request-review">
+            <h2>Scoped Request and Review resolution</h2>
+            <pre class="code-sample"><code>{
+  "object_type": "Request",
+  "record": {
+    "id": "req-golden-source",
+    "protocol_version": "v0.1",
+    "work_session_id": "ws-golden-001",
+    "requester_actor_id": "actor-agent-golden",
+    "requester_worker_id": "worker-agent-golden",
+    "target_human_worker_id": "worker-human-golden",
+    "policy_decision_id": "pd-golden-source-denied",
+    "type": "permission",
+    "blocking_scope": "action",
+    "reason_code": "policy_denied",
+    "reason_summary": "External source access is outside current Policy until HumanWorker review.",
+    "requested_action": {
+      "action": "fetch_external_source",
+      "target_ref": "source:external-reference",
+      "scope_ref": "scope:external-source"
+    },
+    "requested_outcome": "Approve external source collection for this WorkSession only.",
+    "risk_class": "medium",
+    "human_decision_needed": "Approve, narrow, deny, correct, or take over the blocked action.",
+    "options": [
+      {
+        "id": "option-approve-current-session",
+        "label": "Approve current WorkSession scope",
+        "effect": "AgentWorker collects the referenced source for this WorkSession only.",
+        "risk_class": "medium",
+        "scope_ref": "scope:external-source"
+      },
+      {
+        "id": "option-deny",
+        "label": "Deny external collection",
+        "effect": "AgentWorker continues with existing evidence and records the limitation.",
+        "risk_class": "low",
+        "scope_ref": "scope:local-worksession"
+      }
+    ],
+    "default_if_no_response": {
+      "action": "continue_with_limited_evidence",
+      "reason": "The blocked action remains stopped and the WorkSession records an evidence limitation.",
+      "limitation_ref": "limitation:external-source-not-reviewed"
+    },
+    "status": "approved",
+    "created_at": "2026-06-16T10:05:00Z",
+    "expires_at": "2026-06-16T10:35:00Z",
+    "missing_permission_or_context": "Policy grant for external source collection",
+    "policy_refs": [
+      "policy-golden-bounded"
+    ],
+    "data_sensitivity": "public",
+    "recommended_option": "option-approve-current-session",
+    "resolved_at": "2026-06-16T10:08:00Z",
+    "resolved_by_review_id": "review-golden-source-approval"
+  }
+}</code></pre>
+            <pre class="code-sample"><code>{
+  "object_type": "Review",
+  "record": {
+    "id": "review-golden-source-approval",
+    "work_session_id": "ws-golden-001",
+    "reviewer_actor_id": "actor-human-golden",
+    "reviewer_worker_id": "worker-human-golden",
+    "target_ref": "request:req-golden-source",
+    "decision": "approve",
+    "created_at": "2026-06-16T10:08:00Z",
+    "comments": "Approved for the referenced source and current WorkSession only.",
+    "approval_scope": {
+      "request_id": "req-golden-source",
+      "review_id": "review-golden-source-approval",
+      "policy_decision_id": "pd-golden-source-denied",
+      "request_revision": 3,
+      "request_event_hash": "hash:event-request-created",
+      "normalized_action_hash": "hash:action-fetch-external-source",
+      "approved_action": {
+        "action": "fetch_external_source",
+        "target_ref": "source:external-reference",
+        "scope_ref": "scope:external-source"
+      },
+      "allowed_scope": {
+        "scope_ref": "scope:external-source",
+        "grant_refs": [
+          "grant:review-approved-external-source"
+        ]
+      },
+      "denied_scope": {
+        "scope_ref": "scope:all-other-external-sources"
+      },
+      "expires_at": "2026-06-16T10:35:00Z",
+      "max_uses": 1,
+      "applies_to_work_session_id": "ws-golden-001",
+      "applies_to_actor_id": "actor-agent-golden"
+    }
+  }
+}</code></pre>
+          </article>
+
+          <article class="spec-panel" id="takeover">
+            <h2>Takeover and reconciliation</h2>
+            <pre class="code-sample"><code>{
+  "object_type": "Takeover",
+  "record": {
+    "id": "takeover-final-submission",
+    "work_session_id": "ws-takeover-001",
+    "requested_by_actor_id": "actor-agent-takeover",
+    "controlling_actor_id": "actor-human-takeover",
+    "request_id": "req-takeover-final",
+    "affected_scope": {
+      "blocking_scope": "final_submission",
+      "scope_ref": "scope:final-output",
+      "normalized_action_hash": "hash:action-final-submission",
+      "artifact_refs": [
+        "artifact:final-draft"
+      ]
+    },
+    "reason": "HumanWorker completed direct control and returned reconciliation refs.",
+    "lock_epoch": 2,
+    "state": "resumed",
+    "created_at": "2026-06-17T10:12:00Z",
+    "resumed_by_actor_id": "actor-human-takeover",
+    "reconciliation_notes": "HumanWorker edited final claim and approved AgentWorker continuation inside reconciled scope.",
+    "reconciliation_refs": [
+      "artifact:final-draft-human-edited",
+      "event:event-takeover-resumed"
+    ],
+    "resolved_at": "2026-06-17T10:12:00Z"
+  }
+}</code></pre>
+          </article>
+
+          <article class="spec-panel" id="evidence-learning">
+            <h2>Contribution and EvidenceManifest export</h2>
+            <pre class="code-sample"><code>{
+  "object_type": "Contribution",
+  "record": {
+    "id": "contribution-golden-shared-answer",
+    "work_session_id": "ws-golden-001",
+    "contributor_type": "shared",
+    "contributor_refs": [
+      {
+        "worker_id": "worker-human-golden",
+        "actor_id": "actor-human-golden",
+        "contribution_role": "human"
+      },
+      {
+        "worker_id": "worker-agent-golden",
+        "actor_id": "actor-agent-golden",
+        "contribution_role": "agent"
+      }
+    ],
+    "contribution_type": "artifact",
+    "event_refs": [
+      "event-evidence-captured",
+      "event-contribution-recorded"
+    ],
+    "created_at": "2026-06-16T10:16:00Z",
+    "artifact_refs": [
+      "artifact:reviewed-answer"
+    ],
+    "review_refs": [
+      "review-golden-source-approval"
+    ],
+    "evidence_refs": [
+      "evidence-source-summary"
+    ],
+    "confidence": 0.92,
+    "limitations": [
+      "limitation:none-recorded"
+    ]
+  }
+}</code></pre>
+            <pre class="code-sample"><code>{
+  "evidence_manifest": {
+    "id": "evidence-manifest-golden",
+    "work_session_id": "ws-golden-001",
+    "generated_by_actor_id": "actor-human-golden",
+    "objective": "Produce an evidence-backed answer with human review and governed learning.",
+    "event_chain_root": "hash:event-worksession-completed",
+    "evidence_item_refs": [
+      {
+        "id": "evidence-source-summary",
+        "work_session_id": "ws-golden-001",
+        "source_event_refs": [
+          "event-evidence-captured"
+        ],
+        "captured_by_actor_id": "actor-agent-golden",
+        "evidence_type": "source_summary",
+        "artifact_ref": "artifact:source-summary",
+        "content_hash": "hash:source-summary",
+        "trust_label": "reviewed",
+        "redaction_state": "redacted",
+        "captured_at": "2026-06-16T10:12:00Z",
+        "limitation_refs": [
+          "limitation:none-recorded"
+        ]
+      }
+    ],
+    "policy_decision_refs": [
+      "pd-golden-source-denied",
+      "pd-golden-source-approved"
+    ],
+    "request_refs": [
+      "req-golden-source"
+    ],
+    "review_refs": [
+      "review-golden-source-approval"
+    ],
+    "takeover_refs": [],
+    "contribution_refs": [
+      "contribution-golden-shared-answer"
+    ],
+    "export_profile": {
+      "profile": "portable_evidence_manifest",
+      "version": "v0.1",
+      "redaction_profile_ref": "redaction:portable-safe"
+    },
+    "generated_at": "2026-06-16T10:26:00Z",
+    "artifact_refs": [
+      "artifact:reviewed-answer",
+      "artifact:source-summary"
+    ],
+    "limitation_refs": [
+      "limitation:none-recorded"
+    ],
+    "redaction_refs": [
+      "redaction:portable-safe"
+    ]
+  }
+}</code></pre>
+          </article>
+
+          <article class="spec-panel" id="outcome-learning">
+            <h2>OutcomeReport to LearningRecord</h2>
+            <pre class="code-sample"><code>{
+  "object_type": "OutcomeReport",
+  "record": {
+    "id": "outcome-report-golden",
+    "work_session_id": "ws-golden-001",
+    "source_ref": "source:completed-worksession:ws-golden-001",
+    "reporter_ref": "reporter:fixture-evaluator",
+    "accepted_by_actor_id": "actor-human-golden",
+    "outcome": "accepted",
+    "learning_record_refs": [
+      "learning-golden-pair"
+    ],
+    "received_at": "2026-06-16T10:30:00Z",
+    "external_system_ref": "external:evaluation-system",
+    "reporter_actor_id": "actor-human-golden",
+    "reason": "Post-session feedback confirms the bounded Request and Review loop improved future source collection.",
+    "reviewer_feedback_refs": [
+      "feedback:bounded-source-loop-accepted"
+    ]
+  }
+}</code></pre>
+            <pre class="code-sample"><code>{
+  "object_type": "LearningRecord",
+  "record": {
+    "id": "learning-golden-pair",
+    "work_session_id": "ws-golden-001",
+    "created_by_actor_id": "actor-human-golden",
+    "subject_type": "pair",
+    "subject_ref": "pair:worker-human-golden+worker-agent-golden",
+    "lesson_type": "bounded_external_source_approval",
+    "source_event_refs": [
+      "event-request-created",
+      "event-review-approved",
+      "event-evidence-captured"
+    ],
+    "review_state": "accepted",
+    "scope": "scope:future-source-collection",
+    "created_at": "2026-06-16T10:18:00Z",
+    "proposed_change": {
+      "pattern": "Ask for bounded external source approval before collecting evidence outside local context."
+    },
+    "memory_proposal_refs": [
+      "memory-proposal-golden"
+    ],
+    "skill_proposal_refs": [
+      "skill-proposal-golden"
+    ]
+  }
+}</code></pre>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Host boundary</h2>
+            <p>Hosts own UI, auth, storage, runtime behavior, model routing, tool execution, billing, scoring, payment, deployment, monitoring, and host workflow.</p>
+            <p>Examples show protocol records only.</p>
+          </article>
+
+          <article class="spec-panel" id="sources">
+            <h2>Source contracts</h2>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/protocol-records.md">Source: protocol record examples</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/evidence-packs/existing-agent-review/README.md">Source: review evidence pack</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/evidence-packs/existing-agent-takeover/README.md">Source: takeover evidence pack</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/valid/golden-path.json">Source: golden-path fixture</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/fixtures/valid/takeover-path.json">Source: takeover-path fixture</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

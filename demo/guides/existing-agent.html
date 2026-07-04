@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Existing-Agent Compatibility | Jarvis v0.1</title>
+    <meta
+      name="description"
+      content="Jarvis v0.1 guide for integrating existing agents through protocol records without rewriting native execution."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=guides1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=guides1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span><strong>Jarvis</strong><small>existing agents</small></span>
+        </a>
+        <nav class="topnav" aria-label="Guide navigation">
+          <a href="../">Home</a>
+          <a href="../spec/">Spec</a>
+          <a href="../openapi/">OpenAPI</a>
+          <a href="../conformance/">Conformance</a>
+          <a href="./">Guides</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">Existing-agent compatibility</p>
+          <h1>Existing agents keep native execution.</h1>
+          <p>
+            A compatible host maps native human-agent work into Jarvis records.
+            Jarvis does not replace the agent, rewrite the agent, route models,
+            execute tools, own adapters, own wrappers, or own host integration
+            code.
+          </p>
+        </div>
+        <a class="command primary" href="./examples.html">Open record flow</a>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Implementer guide pages">
+          <a href="./">Overview</a>
+          <a href="./implementer.html">Implementer guide</a>
+          <a href="./existing-agent.html" aria-current="page">Existing-agent compatibility</a>
+          <a href="./request-review-takeover.html">Request, Review, Takeover</a>
+          <a href="./evidence-learning.html">Evidence and Learning</a>
+          <a href="./extensions.html">Extensions</a>
+          <a href="./protocol-errors.html">Protocol errors</a>
+          <a href="./examples.html">Protocol examples</a>
+        </nav>
+
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Mapping contract</h2>
+            <div class="field-grid">
+              <div class="field-card">
+                <h3>Native human participant</h3>
+                <p>Map to HumanWorker and Actor records with protocol authority and contribution scope.</p>
+              </div>
+              <div class="field-card">
+                <h3>Native agent session</h3>
+                <p>Map to AgentWorker and Actor records. The native agent keeps its own runtime and tools.</p>
+              </div>
+              <div class="field-card">
+                <h3>Native task scope</h3>
+                <p>Map to WorkSession, Policy, PolicyDecision, Request, Review, Takeover, Contribution, EvidenceManifest, and LearningRecord records.</p>
+              </div>
+              <div class="field-card">
+                <h3>Native feedback</h3>
+                <p>Map post-session result, reviewer feedback, or external evaluation to OutcomeReport and governed LearningRecord refs.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>What the host must emit</h2>
+            <ul>
+              <li>Worker and Actor refs for the protocol-visible human and agent.</li>
+              <li>WorkSession state with objective, Policy, revision, and last_event_hash.</li>
+              <li>PolicyDecision before every AgentWorker action that affects WorkSession state.</li>
+              <li>Request when policy blocks or human judgment is required.</li>
+              <li>Review or Takeover when human judgment resolves the blocked scope.</li>
+              <li>Contribution and EvidenceManifest refs before portable export.</li>
+              <li>LearningRecord, MemoryProposal, SkillProposal, and OutcomeReport records only through governed review paths.</li>
+            </ul>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Rejected implementation claims</h2>
+            <ul>
+              <li>Jarvis-compatible does not mean Jarvis-certified.</li>
+              <li>Jarvis-compatible does not mean official Jarvis host.</li>
+              <li>Jarvis-compatible does not prove production adoption.</li>
+              <li>Jarvis-compatible does not give the native agent a Jarvis-owned runtime.</li>
+            </ul>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Host boundary</h2>
+            <p>Hosts own UI, auth, storage, runtime behavior, model routing, tool execution, billing, scoring, payment, deployment, monitoring, and host workflow.</p>
+            <p>Jarvis owns protocol records for governed collaboration, portable evidence, and shared learning.</p>
+          </article>
+
+          <article class="spec-panel" id="sources">
+            <h2>Source contracts</h2>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/existing-agent-compatibility.md">Source: existing-agent compatibility example</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/examples/implementation-proof/native-coding-agent/README.md">Source: native coding-agent proof</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/16-positioning-adoption-lock.md">Source: positioning and adoption lock</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

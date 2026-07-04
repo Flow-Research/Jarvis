@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Implementer Guide | Jarvis v0.1</title>
+    <meta
+      name="description"
+      content="Jarvis v0.1 implementer guide for protocol storage, event emission, validation, rejection, and export obligations."
+    />
+    <link rel="icon" href="../assets/favicon.svg?v=guides1" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css?v=guides1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main class="shell spec-page">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="Jarvis documentation home">
+          <span class="brand-mark">J</span>
+          <span><strong>Jarvis</strong><small>implementer guide</small></span>
+        </a>
+        <nav class="topnav" aria-label="Guide navigation">
+          <a href="../">Home</a>
+          <a href="../spec/">Spec</a>
+          <a href="../openapi/">OpenAPI</a>
+          <a href="../conformance/">Conformance</a>
+          <a href="./">Guides</a>
+        </nav>
+        <span class="status-chip">v0.1.0</span>
+      </header>
+
+      <section class="spec-hero">
+        <div>
+          <p class="kicker">Implementer guide</p>
+          <h1>Store, emit, validate, reject, and export protocol state.</h1>
+          <p>
+            A compatible implementation records Jarvis protocol behavior around
+            host-owned execution. The implementation does not become a Jarvis
+            runtime, adapter, wrapper, model router, tool executor, UI, auth
+            provider, storage backend, billing system, scoring system, payment
+            system, deployment system, or host workflow engine.
+          </p>
+        </div>
+        <a class="command primary" href="./examples.html">Open examples</a>
+      </section>
+
+      <section class="spec-layout">
+        <nav class="spec-side" aria-label="Implementer guide pages">
+          <a href="./">Overview</a>
+          <a href="./implementer.html" aria-current="page">Implementer guide</a>
+          <a href="./existing-agent.html">Existing-agent compatibility</a>
+          <a href="./request-review-takeover.html">Request, Review, Takeover</a>
+          <a href="./evidence-learning.html">Evidence and Learning</a>
+          <a href="./extensions.html">Extensions</a>
+          <a href="./protocol-errors.html">Protocol errors</a>
+          <a href="./examples.html">Protocol examples</a>
+        </nav>
+
+        <div class="spec-main" id="main-content">
+          <article class="spec-panel">
+            <h2>Implementation duties</h2>
+            <div class="field-grid">
+              <div class="field-card">
+                <h3>Must store</h3>
+                <p>Store Worker, Actor, WorkSession, JarvisEvent, Policy, PolicyDecision, Request, Review, Takeover, Contribution, EvidenceManifest, LearningRecord, MemoryProposal, SkillProposal, and OutcomeReport records.</p>
+              </div>
+              <div class="field-card">
+                <h3>Must emit</h3>
+                <p>Emit append-only events for accepted WorkSession-scoped state changes and preserve Actor, revision, and previous event hash linkage.</p>
+              </div>
+              <div class="field-card">
+                <h3>Must validate</h3>
+                <p>Validate mutation headers, read headers, Actor authority, path/body identity, actor/body identity, required fields, enum values, and forbidden export fields.</p>
+              </div>
+              <div class="field-card">
+                <h3>Must reject</h3>
+                <p>Reject missing PolicyDecision, unresolved Request, missing Review or Takeover resolution, stale Takeover continuation, sealed WorkSession mutation, sealed EvidenceManifest mutation, silent memory mutation, and silent skill activation.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Mutation header contract</h2>
+            <p>Every WorkSession-scoped mutating operation MUST include:</p>
+            <pre class="code-sample"><code>Jarvis-Protocol-Version
+Jarvis-Actor-Id
+Jarvis-Idempotency-Key
+Jarvis-Request-Timestamp
+Jarvis-Expected-WorkSession-Revision
+Jarvis-Previous-Event-Hash</code></pre>
+            <p>Worker registration, Actor registration, and OutcomeReport submission are non-WorkSession protocol mutations. They require protocol version, Actor id, idempotency key, and request timestamp.</p>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Operation order</h2>
+            <ol>
+              <li>Register Worker and Actor refs.</li>
+              <li>Create WorkSession under human-defined Policy.</li>
+              <li>Record PolicyDecision before an AgentWorker action becomes accepted protocol state.</li>
+              <li>Create Request when the AgentWorker is blocked.</li>
+              <li>Resolve Request through Review or Takeover.</li>
+              <li>Record Contribution, EvidenceManifest refs, governed LearningRecord, and governed proposals.</li>
+              <li>Submit OutcomeReport after the source WorkSession is terminal.</li>
+            </ol>
+          </article>
+
+          <article class="spec-panel">
+            <h2>Host boundary</h2>
+            <ul>
+              <li>Hosts own UI, auth, storage, runtime behavior, model routing, tool execution, billing, scoring, payment, deployment, monitoring, and host workflow.</li>
+              <li>Jarvis records protocol state and portable evidence.</li>
+              <li>Protocol helpers validate records; they do not run the work.</li>
+            </ul>
+          </article>
+
+          <article class="spec-panel" id="sources">
+            <h2>Source contracts</h2>
+            <div class="source-list">
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/15-openapi-communication-binding.md">Source: OpenAPI communication binding</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/protocol/11-core-protocol-objects.md">Source: core protocol objects</a>
+              <a href="https://github.com/Flow-Research/jarvis/blob/main/docs/conformance/checklist.md">Source: conformance checklist</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
