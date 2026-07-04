@@ -108,6 +108,12 @@
     "execution_owner": "LangGraph host application",
     "jarvis_scope": "protocol_records_only",
     "native_execution_preserved": true,
-    "adapter_or_wrapper_added": false
+    "adapter_or_wrapper_added": false,
+    "runtime_behavior_added": false,
+    "host_integration_added": false,
+    "host_workflow_added": false,
+    "host_ui_added": false,
+    "model_calls_added": false,
+    "tool_execution_added": false
   }
 }

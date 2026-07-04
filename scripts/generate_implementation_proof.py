@@ -920,7 +920,7 @@ def build_proof() -> dict[str, Any]:
                 "content_hash": trace_hash,
                 "trust_label": "generated_framework_trace",
                 "redaction_state": "portable",
-                "captured_at": "2026-07-03T09:12:00Z",
+                "captured_at": "2026-07-03T09:12:30Z",
                 "limitation_refs": ["limitation:none-recorded"],
             },
         ],

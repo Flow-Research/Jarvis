@@ -15,8 +15,9 @@ Implementation proof records do not define runtime behavior, host UI, storage,
 auth, model calls, tool execution, billing, scoring, payment, deployment,
 monitoring, host integration, adapters, wrappers, or host workflow.
 
-The proof validates protocol records and committed native framework trace
-mapping only.
+The proof validates protocol records, the committed native framework trace,
+and the trace-to-record mapping. The checker also enforces hash linkage,
+operation ordering, and fixture shape.
 
 ## Validation
 

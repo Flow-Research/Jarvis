@@ -485,6 +485,14 @@ def validate_native_framework_trace(proof: dict[str, Any]) -> None:
     for field in ("name", "package", "package_version", "api"):
         if not isinstance(framework.get(field), str) or not framework[field]:
             raise ImplementationProofError(f"native framework trace framework.{field} MUST be present")
+    if native_boundary.get("framework_trace_id") != trace.get("trace_id"):
+        raise ImplementationProofError("native_agent_boundary.framework_trace_id MUST match the native framework trace")
+    if native_boundary.get("framework_package") != framework.get("package"):
+        raise ImplementationProofError("native_agent_boundary.framework_package MUST match the native framework trace")
+    if native_boundary.get("framework_package_version") != framework.get("package_version"):
+        raise ImplementationProofError("native_agent_boundary.framework_package_version MUST match the native framework trace")
+    if native_boundary.get("framework_api") != framework.get("api"):
+        raise ImplementationProofError("native_agent_boundary.framework_api MUST match the native framework trace")
     mapping = trace.get("jarvis_mapping")
     if not isinstance(mapping, dict):
         raise ImplementationProofError("native framework trace MUST map native execution to Jarvis records")
@@ -528,8 +536,18 @@ def validate_native_framework_trace(proof: dict[str, Any]) -> None:
         raise ImplementationProofError("native framework trace boundary MUST keep Jarvis limited to protocol records")
     if boundary.get("native_execution_preserved") is not True:
         raise ImplementationProofError("native framework trace boundary MUST preserve native execution")
-    if boundary.get("adapter_or_wrapper_added") is not False:
-        raise ImplementationProofError("native framework trace MUST NOT add adapter or wrapper behavior")
+    rejected_boundary_flags = {
+        "adapter_or_wrapper_added": "adapter or wrapper behavior",
+        "runtime_behavior_added": "runtime behavior",
+        "host_integration_added": "host integration behavior",
+        "host_workflow_added": "host workflow behavior",
+        "host_ui_added": "host UI behavior",
+        "model_calls_added": "model calls",
+        "tool_execution_added": "tool execution",
+    }
+    for flag, label in rejected_boundary_flags.items():
+        if boundary.get(flag) is not False:
+            raise ImplementationProofError(f"native framework trace MUST NOT add {label}")
 
 
 def validate_proof(proof: dict[str, Any]) -> int:
