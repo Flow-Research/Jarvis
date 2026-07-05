@@ -29,6 +29,10 @@ adapters, wrappers, SDK implementation, or host workflow.
   live external-host proof for LangGraph, DeepAgents, and AgentScope mapped
   into Jarvis protocol records.
 
+Runnable external proof harness:
+
+- [Flow-Research/jarvis-live-agent-proof](https://github.com/Flow-Research/jarvis-live-agent-proof)
+
 ## Validation
 
 Validate evidence packs from the repository root:

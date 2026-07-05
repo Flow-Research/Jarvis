@@ -33,6 +33,7 @@ implementation-proof work without changing normative protocol rules.
 - [post-v0.1-sdk-helper-tooling/README.md](./planning/post-v0.1-sdk-helper-tooling/README.md)
 - [examples/implementation-proof/native-coding-agent/README.md](./examples/implementation-proof/native-coding-agent/README.md)
 - [examples/implementation-proof/live-agent-frameworks/README.md](./examples/implementation-proof/live-agent-frameworks/README.md)
+- [External live-agent proof harness](https://github.com/Flow-Research/jarvis-live-agent-proof)
 
 ## Planning Archive
 
@@ -65,6 +66,7 @@ defining host-owned execution.
 - [examples/evidence-packs/existing-agent-takeover/README.md](./examples/evidence-packs/existing-agent-takeover/README.md)
 - [examples/implementation-proof/native-coding-agent/README.md](./examples/implementation-proof/native-coding-agent/README.md)
 - [examples/implementation-proof/live-agent-frameworks/README.md](./examples/implementation-proof/live-agent-frameworks/README.md)
+- [External live-agent proof harness](https://github.com/Flow-Research/jarvis-live-agent-proof)
 
 ## OpenAPI
 

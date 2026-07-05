@@ -12,6 +12,11 @@ Jarvis records protocol state. Hosts own native execution.
   live external-host proof for LangGraph, DeepAgents, and AgentScope with
   OpenAI model execution mapped into Jarvis protocol records.
 
+The runnable host-side harness for the live framework proof stays outside this
+repository:
+
+- [Flow-Research/jarvis-live-agent-proof](https://github.com/Flow-Research/jarvis-live-agent-proof)
+
 ## Boundary
 
 Implementation proof records do not define runtime behavior, host UI, storage,
