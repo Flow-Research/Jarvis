@@ -35,6 +35,17 @@ keep only portable proof evidence.
 - [agentscope_trace.json](./agentscope_trace.json)
 - [agentscope_protocol_export.json](./agentscope_protocol_export.json)
 
+## Runnable Harness
+
+The host-side live harness lives outside Jarvis:
+
+- [Flow-Research/jarvis-live-agent-proof](https://github.com/Flow-Research/jarvis-live-agent-proof)
+
+That repository owns live framework execution for proof runs. Jarvis keeps only
+the sanitized traces, protocol exports, validation rules, and evidence records.
+The harness does not become a Jarvis runtime, adapter, wrapper, host, or
+official implementation.
+
 ## Boundary
 
 This proof does not add runtime behavior to Jarvis.

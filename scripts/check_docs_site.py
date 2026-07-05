@@ -206,6 +206,8 @@ def github_target_exists(value: str) -> bool:
     parsed = urlparse(value)
     if parsed.netloc == "github.com" and parsed.path == "/Flow-Research/jarvis":
         return True
+    if parsed.netloc == "github.com" and parsed.path == "/Flow-Research/jarvis-live-agent-proof":
+        return True
     if parsed.netloc == "github.com" and parsed.path.startswith(BLOB_PREFIX):
         target = parsed.path.removeprefix(BLOB_PREFIX)
         return (ROOT / target).exists()
