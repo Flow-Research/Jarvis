@@ -1,0 +1,15 @@
+# CODEOWNERS for Flow-Research/jarvis
+# Security team must review changes to autonomy policy and critical protocol docs
+
+# Autonomy policy - require security review
+docs/protocol/03-autonomy-policy.md      @Flow-Research/security
+docs/protocol/                            @Flow-Research/security
+
+# Package configuration - require security review
+packages/                                 @Flow-Research/security
+
+# CI/CD workflows - require security review
+.github/workflows/                        @Flow-Research/security
+
+# Environment / secrets config
+.env*                                     @Flow-Research/security
