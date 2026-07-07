@@ -2,6 +2,11 @@
 
 Jarvis docs are organized by use.
 
+## Complete Reference
+
+- [reference/complete-protocol-reference.md](./reference/complete-protocol-reference.md) -
+  consolidated v0.1 protocol reference for education and onboarding.
+
 ## Protocol
 
 Protocol docs define what Jarvis is and what compatible implementations keep
