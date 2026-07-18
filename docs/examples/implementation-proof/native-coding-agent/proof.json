@@ -11,7 +11,7 @@
   "native_agent_boundary": {
     "agent_ref": "agent:langgraph-stategraph",
     "framework_ref": "framework:langgraph-stategraph",
-    "framework_trace_ref": "docs\\examples\\implementation-proof\\native-coding-agent\\langgraph_trace.json",
+    "framework_trace_ref": "docs/examples/implementation-proof/native-coding-agent/langgraph_trace.json",
     "framework_trace_hash": "hash:8b987a4c3be5c2586871c7b57d47390a54023e7a8629593ea13b649f9e2b30b1",
     "framework_trace_id": "langgraph-stategraph-native-run-v01",
     "framework_package": "langgraph",
